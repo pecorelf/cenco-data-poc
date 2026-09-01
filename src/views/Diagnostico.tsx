@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { MARGEN_EN_CONFLICTO, MARGEN_CERTIFICADO } from "../data/comercial";
 import { porId } from "../data/semantica";
-import { Encabezado, Panel, Sello } from "../components/UI";
+import { Boton, Encabezado, Panel, Sello } from "../components/UI";
 import { useStore } from "../lib/store";
 
 export default function Diagnostico() {
@@ -22,13 +22,13 @@ export default function Diagnostico() {
           {MARGEN_EN_CONFLICTO.map((c) => (
             <article
               key={c.sistema}
-              className="bg-white border border-cenco-line p-5 flex flex-col"
+              className="bg-white border border-cenco-line rounded-card shadow-suave p-6 flex flex-col"
             >
               <div className="num text-[42px] font-semibold text-naranjo leading-none">
                 {c.valor.toLocaleString("es-CL", { minimumFractionDigits: 1 })}
                 <span className="text-[20px] font-normal text-gris ml-0.5">%</span>
               </div>
-              <div className="mt-3 text-[13.5px] font-medium text-tinta">
+              <div className="mt-3 text-[13.5px] font-medium text-tuna">
                 {c.sistema}
               </div>
               <div className="text-micro text-gris mt-0.5">{c.responsable}</div>
@@ -36,7 +36,7 @@ export default function Diagnostico() {
                 {c.definicion}
               </p>
               {revelado && (
-                <p className="mt-3 pt-3 border-t border-cenco-line text-[13px] text-tinta leading-relaxed">
+                <p className="mt-3 pt-3 border-t border-cenco-line text-[13px] text-tuna leading-relaxed">
                   {c.porQueDifiere}
                 </p>
               )}
@@ -45,18 +45,13 @@ export default function Diagnostico() {
         </div>
 
         {!revelado && (
-          <button
-            onClick={() => setRevelado(true)}
-            className="bg-cenco text-white px-5 py-2.5 text-[14px] font-medium rounded-sm hover:bg-cenco-deep transition-colors"
-          >
-            Mostrar la cifra certificada
-          </button>
+          <Boton onClick={() => setRevelado(true)}>Mostrar la cifra certificada</Boton>
         )}
 
         {/* La cifra certificada */}
         {revelado && (
           <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)] gap-5">
-            <div className="bg-white border-2 border-certif p-6">
+            <div className="bg-white border-2 border-certif rounded-card shadow-suave p-6">
               <Sello estado="certificado" />
               <div className="num text-[56px] font-semibold text-certif leading-none mt-4">
                 {MARGEN_CERTIFICADO.toLocaleString("es-CL", {
@@ -64,7 +59,7 @@ export default function Diagnostico() {
                 })}
                 <span className="text-[24px] font-normal text-gris ml-1">%</span>
               </div>
-              <div className="mt-3 text-[14px] font-medium text-tinta">
+              <div className="mt-3 text-[14px] font-medium text-tuna">
                 {ind.nombre}
               </div>
               <div className="text-micro text-gris mt-1">
@@ -75,12 +70,7 @@ export default function Diagnostico() {
                 que devuelven el portal, Power BI y Cuenco, porque los tres leen
                 la misma definición.
               </div>
-              <button
-                onClick={() => setVista("semantica")}
-                className="mt-4 text-[13.5px] font-medium text-cenco underline underline-offset-4"
-              >
-                Ver la ficha completa del indicador
-              </button>
+              <div className="mt-5"><Boton variante="contorno" onClick={() => setVista("semantica")}>Ver la ficha completa del indicador</Boton></div>
             </div>
 
             <Panel titulo="Qué costaba esto antes de acordar la definición">
@@ -106,7 +96,7 @@ export default function Diagnostico() {
                   <li key={t} className="flex gap-3">
                     <span className="mt-2 w-1.5 h-1.5 rounded-full bg-naranjo shrink-0" />
                     <div>
-                      <div className="text-[14px] font-medium text-tinta">{t}</div>
+                      <div className="text-[14px] font-medium text-tuna">{t}</div>
                       <p className="text-[13px] text-gris leading-relaxed mt-0.5">
                         {d}
                       </p>

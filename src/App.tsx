@@ -4,6 +4,7 @@ import Diagnostico from "./views/Diagnostico";
 import CapaSemantica from "./views/CapaSemantica";
 import Certificados from "./views/Certificados";
 import Constructor from "./views/Constructor";
+import MisGraficos from "./views/MisGraficos";
 import Cuenco from "./views/Cuenco";
 
 const NAV: Array<{ id: Vista; label: string; desc: string }> = [
@@ -11,41 +12,41 @@ const NAV: Array<{ id: Vista; label: string; desc: string }> = [
   { id: "semantica", label: "Capa semántica", desc: "Definiciones oficiales" },
   { id: "certificados", label: "Informes certificados", desc: "Venta, margen, share" },
   { id: "constructor", label: "Informes personalizados", desc: "Construye el tuyo" },
-  { id: "cuenco", label: "Cuenco", desc: "Pregunta en lenguaje natural" },
+  { id: "cuenco", label: "Cuenco", desc: "Pregunta y cruza datos" },
+  { id: "graficos", label: "Mis gráficos", desc: "Lo que has guardado" },
 ];
 
 export default function App() {
-  const { vista, setVista, usuario, setUsuario } = useStore();
+  const { vista, setVista, usuario, setUsuario, graficos } = useStore();
 
   return (
     <div className="min-h-screen flex flex-col">
-      {/* Cabecera */}
       <header className="bg-cenco-deep text-white">
-        <div className="px-6 h-16 flex items-center gap-6">
+        <div className="px-6 h-[68px] flex items-center gap-6">
           <img
             src="/cencosud.webp"
             alt="Cencosud"
-            className="h-9 w-auto rounded-sm"
+            className="h-10 w-auto rounded-control"
           />
-          <div className="border-l border-white/25 pl-6">
-            <div className="text-[15px] font-medium leading-tight">
+          <div className="border-l border-white/20 pl-6">
+            <div className="text-[15.5px] font-semibold leading-tight">
               Portal BI &amp; Analytics Unificado 360°
             </div>
-            <div className="text-micro text-white/60 leading-tight">
+            <div className="text-micro text-white/60 leading-tight mt-0.5">
               Marcas Propias &amp; Supermercados Chile
             </div>
           </div>
 
           <div className="ml-auto flex items-center gap-5">
-            <label className="flex items-center gap-2">
-              <span className="text-micro text-white/60">Sesión</span>
+            <label className="flex items-center gap-2.5">
+              <span className="text-micro text-white/60 font-medium">Sesión</span>
               <select
                 value={usuario.id}
                 onChange={(e) => setUsuario(e.target.value)}
-                className="bg-white/10 border border-white/20 rounded-sm px-3 py-1.5 text-[13px] text-white"
+                className="estado bg-white/10 border border-white/20 px-3.5 py-2 text-[13px] text-white hover:bg-white/15 cursor-pointer"
               >
                 {USUARIOS.map((u) => (
-                  <option key={u.id} value={u.id} className="text-tinta">
+                  <option key={u.id} value={u.id} className="text-tuna">
                     {u.nombre} · {u.cargo}
                   </option>
                 ))}
@@ -54,16 +55,15 @@ export default function App() {
             <img
               src="/deloitte-digital.png"
               alt="Deloitte Digital"
-              className="h-7 w-auto bg-white rounded-sm px-2 py-1"
+              className="h-8 w-auto bg-white rounded-control px-2.5 py-1.5"
             />
           </div>
         </div>
       </header>
 
       <div className="flex flex-1 min-h-0">
-        {/* Navegación */}
-        <nav className="w-60 shrink-0 bg-white border-r border-cenco-line">
-          <ul className="py-3">
+        <nav className="w-64 shrink-0 bg-white border-r border-cenco-line">
+          <ul className="py-4 px-3 space-y-1">
             {NAV.map((n) => {
               const activo = vista === n.id;
               return (
@@ -71,43 +71,58 @@ export default function App() {
                   <button
                     onClick={() => setVista(n.id)}
                     aria-current={activo ? "page" : undefined}
-                    className={`w-full text-left px-5 py-3 border-l-[3px] transition-colors ${
+                    className={`estado w-full text-left px-4 py-3 rounded-control ${
                       activo
-                        ? "border-cenco bg-cenco-soft"
-                        : "border-transparent hover:bg-papel"
+                        ? "bg-cenco text-white shadow-suave"
+                        : "text-tuna hover:bg-cenco-soft"
                     }`}
                   >
+                    <div className="flex items-center gap-2">
+                      <span
+                        className={`text-[14px] ${activo ? "font-semibold" : "font-medium"}`}
+                      >
+                        {n.label}
+                      </span>
+                      {n.id === "graficos" && graficos.length > 0 && (
+                        <span
+                          className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
+                            activo ? "bg-white/20" : "bg-naranjo text-white"
+                          }`}
+                        >
+                          {graficos.length}
+                        </span>
+                      )}
+                    </div>
                     <div
-                      className={`text-[14px] ${
-                        activo ? "font-medium text-cenco-deep" : "text-tinta"
+                      className={`text-micro mt-0.5 ${
+                        activo ? "text-white/70" : "text-gris"
                       }`}
                     >
-                      {n.label}
+                      {n.desc}
                     </div>
-                    <div className="text-micro text-gris">{n.desc}</div>
                   </button>
                 </li>
               );
             })}
           </ul>
 
-          <div className="mx-5 mt-2 pt-4 border-t border-cenco-line">
-            <div className="text-micro text-gris leading-relaxed">
-              Tu alcance se hereda de Unity Catalog.
+          <div className="mx-6 mt-3 pt-5 border-t border-cenco-line">
+            <div className="text-micro text-gris font-medium">
+              Alcance heredado de Unity Catalog
             </div>
-            <div className="mt-2 text-[12.5px] text-tinta leading-snug">
+            <div className="mt-2 text-[12.5px] text-tuna leading-relaxed">
               {usuario.nota}
             </div>
           </div>
         </nav>
 
-        {/* Contenido */}
         <main className="flex-1 min-w-0 overflow-y-auto">
           {vista === "diagnostico" && <Diagnostico />}
           {vista === "semantica" && <CapaSemantica />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
           {vista === "cuenco" && <Cuenco />}
+          {vista === "graficos" && <MisGraficos />}
         </main>
       </div>
     </div>

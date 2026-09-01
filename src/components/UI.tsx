@@ -13,11 +13,11 @@ export function Encabezado({
   children?: ReactNode;
 }) {
   return (
-    <div className="px-8 pt-7 pb-5 bg-white border-b border-cenco-line">
-      <h1 className="text-[26px] font-semibold text-cenco-deep leading-tight">
+    <div className="px-8 pt-8 pb-6 bg-white border-b border-cenco-line">
+      <h1 className="text-[27px] font-semibold text-cenco-deep leading-tight tracking-[-0.01em]">
         {titulo}
       </h1>
-      <p className="mt-1.5 text-[14px] text-gris max-w-[68ch] leading-relaxed">
+      <p className="mt-2 text-[14px] text-gris max-w-[70ch] leading-relaxed">
         {bajada}
       </p>
       {children}
@@ -25,21 +25,18 @@ export function Encabezado({
   );
 }
 
-const SELLO: Record<
-  EstadoIndicador,
-  { texto: string; clase: string }
-> = {
+const SELLO: Record<EstadoIndicador, { texto: string; clase: string }> = {
   certificado: {
     texto: "Certificado",
-    clase: "bg-certifsoft text-certif border-certif/30",
+    clase: "bg-certif-soft text-certif border-certif/25",
   },
   en_certificacion: {
     texto: "En certificación",
-    clase: "bg-cenco-soft text-cenco-deep border-cenco/30",
+    clase: "bg-cenco-soft text-cenco-deep border-cenco/25",
   },
   exploratorio: {
     texto: "Sin certificar",
-    clase: "bg-orange-50 text-naranjo border-naranjo/40",
+    clase: "bg-naranjo-soft text-naranjo-deep border-naranjo/30",
   },
 };
 
@@ -47,11 +44,48 @@ export function Sello({ estado }: { estado: EstadoIndicador }) {
   const s = SELLO[estado];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 border rounded-sm px-2 py-0.5 text-micro font-medium ${s.clase}`}
+      className={`inline-flex items-center gap-1.5 border rounded-full px-2.5 py-1 text-micro font-semibold ${s.clase}`}
     >
       <span className="w-1.5 h-1.5 rounded-full bg-current" aria-hidden />
       {s.texto}
     </span>
+  );
+}
+
+type Variante = "solido" | "contorno" | "sutil";
+
+export function Boton({
+  children,
+  onClick,
+  variante = "solido",
+  disabled,
+  ancho,
+  tipo = "button",
+}: {
+  children: ReactNode;
+  onClick?: () => void;
+  variante?: Variante;
+  disabled?: boolean;
+  ancho?: boolean;
+  tipo?: "button" | "submit";
+}) {
+  const base =
+    "estado inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[14px] font-semibold disabled:opacity-40 disabled:cursor-not-allowed disabled:shadow-none";
+  const v =
+    variante === "solido"
+      ? "bg-cenco text-white shadow-suave hover:bg-cenco-deep hover:shadow-alto"
+      : variante === "contorno"
+      ? "border border-cenco/45 text-cenco bg-white hover:bg-cenco-soft hover:border-cenco"
+      : "text-cenco hover:bg-cenco-soft";
+  return (
+    <button
+      type={tipo}
+      onClick={onClick}
+      disabled={disabled}
+      className={`${base} ${v} ${ancho ? "w-full" : ""}`}
+    >
+      {children}
+    </button>
   );
 }
 
@@ -61,7 +95,7 @@ export function Cifra({
   etiqueta,
   tono = "neutro",
 }: {
-  valor: string | number;
+  valor: ReactNode;
   unidad?: string;
   etiqueta: string;
   tono?: "neutro" | "positivo" | "alerta";
@@ -70,19 +104,17 @@ export function Cifra({
     tono === "positivo"
       ? "text-certif"
       : tono === "alerta"
-      ? "text-naranjo"
+      ? "text-naranjo-deep"
       : "text-cenco-deep";
   return (
     <div>
-      <div className={`num text-[30px] font-semibold leading-none ${color}`}>
+      <div className={`num text-[31px] font-semibold leading-none ${color}`}>
         {valor}
         {unidad && (
-          <span className="text-[16px] font-normal ml-0.5 text-gris">
-            {unidad}
-          </span>
+          <span className="text-[16px] font-normal ml-0.5 text-gris">{unidad}</span>
         )}
       </div>
-      <div className="mt-1.5 text-[12.5px] text-gris">{etiqueta}</div>
+      <div className="mt-2 text-[12.5px] text-gris">{etiqueta}</div>
     </div>
   );
 }
@@ -97,36 +129,34 @@ export function Panel({
   accion?: ReactNode;
 }) {
   return (
-    <section className="bg-white border border-cenco-line">
+    <section className="bg-white border border-cenco-line rounded-card shadow-suave overflow-hidden">
       {titulo && (
-        <div className="flex items-center justify-between px-5 py-3 border-b border-cenco-line">
-          <h2 className="text-[14px] font-medium text-cenco-deep">{titulo}</h2>
+        <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-cenco-line">
+          <h2 className="text-[14.5px] font-semibold text-cenco-deep">{titulo}</h2>
           {accion}
         </div>
       )}
-      <div className="p-5">{children}</div>
+      <div className="p-6">{children}</div>
     </section>
   );
 }
 
-/** Filtros que respetan el RLS del usuario en sesión. */
+const SELECT =
+  "estado border border-cenco-line bg-white px-3.5 py-2 text-[13.5px] text-tuna hover:border-cenco/50 cursor-pointer";
+
 export function Filtros() {
   const { usuario, bandera, categoria, mes, setBandera, setCategoria, setMes } =
     useStore();
   const { banderas, categorias } = alcance(usuario);
-
   const opcionesBandera = banderas ?? BANDERAS;
   const opcionesCategoria = categorias ?? CATEGORIAS;
 
-  const sel =
-    "border border-cenco-line bg-white rounded-sm px-3 py-1.5 text-[13px] text-tinta";
-
   return (
-    <div className="mt-5 flex flex-wrap items-end gap-4">
-      <label className="flex flex-col gap-1">
-        <span className="text-micro text-gris">Bandera</span>
+    <div className="mt-6 flex flex-wrap items-end gap-4">
+      <label className="flex flex-col gap-1.5">
+        <span className="text-micro text-gris font-medium">Bandera</span>
         <select
-          className={sel}
+          className={SELECT}
           value={bandera}
           onChange={(e) => setBandera(e.target.value as never)}
         >
@@ -139,10 +169,10 @@ export function Filtros() {
         </select>
       </label>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-micro text-gris">Categoría</span>
+      <label className="flex flex-col gap-1.5">
+        <span className="text-micro text-gris font-medium">Categoría</span>
         <select
-          className={sel}
+          className={SELECT}
           value={categoria}
           onChange={(e) => setCategoria(e.target.value as never)}
         >
@@ -155,10 +185,10 @@ export function Filtros() {
         </select>
       </label>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-micro text-gris">Mes</span>
+      <label className="flex flex-col gap-1.5">
+        <span className="text-micro text-gris font-medium">Mes</span>
         <select
-          className={sel}
+          className={SELECT}
           value={mes}
           onChange={(e) => setMes(e.target.value as never)}
         >
@@ -171,7 +201,7 @@ export function Filtros() {
       </label>
 
       {(banderas || categorias) && (
-        <p className="text-micro text-gris pb-1.5 max-w-[42ch] leading-relaxed">
+        <p className="text-micro text-gris pb-2 max-w-[40ch] leading-relaxed">
           Las opciones que no aparecen quedan fuera del alcance que Unity Catalog
           asignó a {usuario.nombre}.
         </p>

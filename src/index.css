@@ -5,23 +5,110 @@
 @layer base {
   html {
     -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
   body {
-    @apply bg-papel text-tinta font-sans;
+    @apply bg-papel text-tuna font-sans;
   }
   .num {
     font-variant-numeric: tabular-nums;
     font-feature-settings: "tnum";
   }
   :focus-visible {
-    outline: 2px solid #0b57a4;
+    outline: 2px solid #095aa5;
     outline-offset: 2px;
+    border-radius: 10px;
+  }
+  select,
+  input {
+    @apply rounded-control;
   }
 }
 
+@layer components {
+  /* Estados de control: elevación sutil al pasar, hundido al presionar. */
+  .estado {
+    @apply transition-all duration-200 ease-cenco;
+  }
+  .estado:active {
+    transform: translateY(1px);
+  }
+}
+
+/* --- Animaciones de los gráficos ------------------------------------ */
+
+@keyframes crecer {
+  from {
+    transform: scaleY(0);
+  }
+  to {
+    transform: scaleY(1);
+  }
+}
+
+@keyframes crecer-x {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+@keyframes trazar {
+  to {
+    stroke-dashoffset: 0;
+  }
+}
+
+@keyframes aparecer {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes pulso-suave {
+  0%,
+  100% {
+    opacity: 0.35;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+
+.anim-crecer {
+  transform-origin: bottom;
+  animation: crecer 0.75s cubic-bezier(0.22, 0.7, 0.28, 1) both;
+}
+.anim-crecer-x {
+  transform-origin: left;
+  animation: crecer-x 0.75s cubic-bezier(0.22, 0.7, 0.28, 1) both;
+}
+.anim-trazar {
+  animation: trazar 1.1s cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+.anim-aparecer {
+  animation: aparecer 0.5s cubic-bezier(0.22, 0.7, 0.28, 1) both;
+}
+.anim-pulso {
+  animation: pulso-suave 1.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
-  * {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+  }
+  .anim-trazar {
+    stroke-dashoffset: 0 !important;
   }
 }

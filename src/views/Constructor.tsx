@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { INDICADORES, porId } from "../data/semantica";
-import { Encabezado, Panel, Sello } from "../components/UI";
+import { Boton, Encabezado, Panel, Sello } from "../components/UI";
 import { useStore } from "../lib/store";
 
 export default function Constructor() {
@@ -93,7 +93,7 @@ export default function Constructor() {
                       />
                       <span className="flex-1">
                         <span className="flex items-center gap-2.5 flex-wrap">
-                          <span className="text-[14px] text-tinta">{i.nombre}</span>
+                          <span className="text-[14px] text-tuna">{i.nombre}</span>
                           <Sello estado={i.estado} />
                         </span>
                         <span className="block text-[12.5px] text-gris mt-0.5 leading-relaxed">
@@ -116,7 +116,7 @@ export default function Constructor() {
                 {reportes.map((r) => (
                   <li key={r.id} className="py-3 flex items-start justify-between gap-4">
                     <div>
-                      <div className="text-[14px] text-tinta">{r.nombre}</div>
+                      <div className="text-[14px] text-tuna">{r.nombre}</div>
                       <div className="text-micro text-gris mt-0.5">
                         {r.creadoPor} · {r.creadoEn} · {r.descripcion}
                       </div>
@@ -141,7 +141,7 @@ export default function Constructor() {
               <input
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                className="mt-1 w-full border border-cenco-line rounded-sm px-3 py-2 text-[14px]"
+                className="mt-1 w-full border border-cenco-line px-3.5 py-2.5 text-[14px]"
               />
             </label>
 
@@ -151,7 +151,7 @@ export default function Constructor() {
                   key={i.id}
                   className="flex items-center justify-between gap-2 text-[13px]"
                 >
-                  <span className="text-tinta truncate">{i.nombre}</span>
+                  <span className="text-tuna truncate">{i.nombre}</span>
                   <span
                     className={`shrink-0 w-2 h-2 rounded-full ${
                       i.estado === "certificado" ? "bg-certif" : "bg-naranjo"
@@ -168,29 +168,17 @@ export default function Constructor() {
             </ul>
 
             <div className="mt-5 flex flex-col gap-2">
-              <button
-                onClick={guardar}
-                disabled={!elegidos.length}
-                className="w-full bg-cenco text-white py-2.5 text-[14px] font-medium rounded-sm hover:bg-cenco-deep disabled:opacity-40 transition-colors"
-              >
-                Guardar en mi espacio
-              </button>
-              <button
-                onClick={publicar}
-                disabled={!elegidos.length}
-                className="w-full border border-cenco text-cenco py-2.5 text-[14px] font-medium rounded-sm hover:bg-cenco-soft disabled:opacity-40 transition-colors"
-              >
-                Publicar como oficial
-              </button>
+              <Boton ancho onClick={guardar} disabled={!elegidos.length}>Guardar en mi espacio</Boton>
+              <Boton ancho variante="contorno" onClick={publicar} disabled={!elegidos.length}>Publicar como oficial</Boton>
             </div>
 
             {aviso && (
               <div
                 role="status"
-                className={`mt-4 p-3.5 border text-[13px] leading-relaxed ${
+                className={`mt-4 p-4 border rounded-card text-[13px] leading-relaxed ${
                   aviso.tono === "ok"
-                    ? "border-certif/40 bg-certifsoft text-certif"
-                    : "border-naranjo/40 bg-orange-50 text-naranjo"
+                    ? "border-certif/40 bg-certif-soft text-certif"
+                    : "border-naranjo/40 bg-naranjo-soft text-naranjo-deep"
                 }`}
               >
                 {aviso.texto}
@@ -198,7 +186,7 @@ export default function Constructor() {
             )}
           </Panel>
 
-          <div className="border border-cenco-line bg-white p-4">
+          <div className="border border-cenco-line bg-white rounded-card shadow-suave p-5">
             <h3 className="text-[13px] font-medium text-cenco-deep">
               Cómo funcionan las dos velocidades
             </h3>

@@ -14,7 +14,7 @@ export default function CapaSemantica() {
 
       <div className="p-8 grid grid-cols-1 lg:grid-cols-[300px_minmax(0,1fr)] gap-6 items-start">
         {/* Catálogo */}
-        <div className="bg-white border border-cenco-line">
+        <div className="bg-white border border-cenco-line rounded-card shadow-suave overflow-hidden">
           <div className="px-4 py-3 border-b border-cenco-line text-[14px] font-medium text-cenco-deep">
             {INDICADORES.length} indicadores
           </div>
@@ -31,7 +31,7 @@ export default function CapaSemantica() {
                         : "border-l-transparent hover:bg-papel"
                     }`}
                   >
-                    <div className="text-[13.5px] text-tinta leading-snug">
+                    <div className="text-[13.5px] text-tuna leading-snug">
                       {i.nombre}
                     </div>
                     <div className="mt-1.5 flex items-center gap-2">
@@ -46,7 +46,7 @@ export default function CapaSemantica() {
         </div>
 
         {/* Ficha — el documento sellado */}
-        <article className="bg-white border border-cenco-line">
+        <article className="bg-white border border-cenco-line rounded-card shadow-suave overflow-hidden">
           <header className="px-6 pt-6 pb-5 border-b-2 border-cenco-deep">
             <div className="flex items-start justify-between gap-6">
               <div>
@@ -72,7 +72,7 @@ export default function CapaSemantica() {
               <h3 className="text-[13px] font-medium text-cenco-deep mb-2">
                 Cómo se calcula
               </h3>
-              <pre className="bg-papel border border-cenco-line p-4 text-[12.5px] leading-relaxed text-tinta overflow-x-auto whitespace-pre-wrap">
+              <pre className="bg-papel border border-cenco-line rounded-control p-4 text-[12.5px] leading-relaxed text-tuna overflow-x-auto whitespace-pre-wrap">
                 {sel.formula}
               </pre>
               <div className="mt-2 flex gap-6 text-micro text-gris">
@@ -88,8 +88,8 @@ export default function CapaSemantica() {
                 <h3 className="text-[13px] font-medium text-cenco-deep mb-2">
                   Quién responde por este número
                 </h3>
-                <div className="border border-cenco-line p-4">
-                  <div className="text-[15px] text-tinta">{sel.owner.nombre}</div>
+                <div className="border border-cenco-line rounded-control p-4">
+                  <div className="text-[15px] text-tuna">{sel.owner.nombre}</div>
                   <div className="text-[13px] text-gris">{sel.owner.cargo}</div>
                   <div className="text-micro text-gris mt-1">{sel.owner.area}</div>
                 </div>
@@ -105,11 +105,11 @@ export default function CapaSemantica() {
                 <h3 className="text-[13px] font-medium text-cenco-deep mb-2">
                   De dónde viene el dato
                 </h3>
-                <ol className="border border-cenco-line divide-y divide-cenco-line">
+                <ol className="border border-cenco-line rounded-control divide-y divide-cenco-line overflow-hidden">
                   {sel.linaje.map((t) => (
                     <li
                       key={t}
-                      className="px-4 py-2.5 text-[12.5px] text-tinta break-all"
+                      className="px-4 py-2.5 text-[12.5px] text-tuna break-all"
                     >
                       {t}
                     </li>
@@ -128,7 +128,7 @@ export default function CapaSemantica() {
                   {sel.incluye.map((x) => (
                     <li
                       key={x}
-                      className="text-[13px] text-tinta leading-relaxed pl-4 relative"
+                      className="text-[13px] text-tuna leading-relaxed pl-4 relative"
                     >
                       <span className="absolute left-0 top-2 w-1.5 h-1.5 rounded-full bg-certif" />
                       {x}
@@ -144,7 +144,7 @@ export default function CapaSemantica() {
                   {sel.excluye.map((x) => (
                     <li
                       key={x}
-                      className="text-[13px] text-tinta leading-relaxed pl-4 relative"
+                      className="text-[13px] text-tuna leading-relaxed pl-4 relative"
                     >
                       <span className="absolute left-0 top-2 w-1.5 h-1.5 rounded-full bg-naranjo" />
                       {x}
@@ -165,7 +165,7 @@ export default function CapaSemantica() {
                   return (
                     <span
                       key={c}
-                      className={`px-3 py-1.5 text-[13px] border rounded-sm ${
+                      className={`px-3.5 py-2 text-[13px] border rounded-full  ${
                         activo
                           ? "border-cenco bg-cenco-soft text-cenco-deep"
                           : "border-cenco-line text-gris line-through"
