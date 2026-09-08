@@ -9,6 +9,7 @@ import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
 import ExploradorDatos from "./views/ExploradorDatos";
 import Notificaciones from "./components/Notificaciones";
+import { ICONO_SECCION, IconoSalir } from "./components/Iconos";
 import MisGraficos from "./views/MisGraficos";
 
 const NAV: Array<{ id: Vista; label: string; desc: string }> = [
@@ -98,8 +99,9 @@ export default function App() {
             />
             <button
               onClick={cerrarSesion}
-              className="estado text-micro font-semibold text-white/70 hover:text-white border border-white/20 rounded-full px-3.5 py-2"
+              className="estado flex items-center gap-1.5 text-micro font-semibold text-white/70 hover:text-white border border-white/20 rounded-full pl-3 pr-3.5 py-2"
             >
+              <IconoSalir size={14} />
               Salir
             </button>
           </div>
@@ -111,37 +113,44 @@ export default function App() {
           <ul className="py-4 px-3 space-y-1">
             {NAV.map((n) => {
               const activo = vista === n.id;
+              const Icono = ICONO_SECCION[n.id];
               return (
                 <li key={n.id}>
                   <button
                     onClick={() => setVista(n.id)}
                     aria-current={activo ? "page" : undefined}
-                    className={`estado w-full text-left px-4 py-3 rounded-control ${
+                    className={`estado w-full text-left px-4 py-3 rounded-control flex items-start gap-3 ${
                       activo
                         ? "bg-cenco text-white shadow-suave"
                         : "text-tuna hover:bg-cenco-soft"
                     }`}
                   >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-[14px] ${activo ? "font-semibold" : "font-medium"}`}
-                      >
-                        {n.label}
-                      </span>
-                      {n.id === "graficos" && graficos.length > 0 && (
+                    <Icono
+                      size={19}
+                      className={`shrink-0 mt-0.5 ${activo ? "text-white" : "text-cenco"}`}
+                    />
+                    <div className="min-w-0">
+                      <div className="flex items-center gap-2">
                         <span
-                          className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
-                            activo ? "bg-white/20" : "bg-naranjo text-white"
-                          }`}
+                          className={`text-[14px] ${activo ? "font-semibold" : "font-medium"}`}
                         >
-                          {graficos.length}
+                          {n.label}
                         </span>
-                      )}
-                    </div>
-                    <div
-                      className={`text-micro mt-0.5 ${activo ? "text-white/70" : "text-gris"}`}
-                    >
-                      {n.desc}
+                        {n.id === "graficos" && graficos.length > 0 && (
+                          <span
+                            className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
+                              activo ? "bg-white/20" : "bg-naranjo text-white"
+                            }`}
+                          >
+                            {graficos.length}
+                          </span>
+                        )}
+                      </div>
+                      <div
+                        className={`text-micro mt-0.5 ${activo ? "text-white/70" : "text-gris"}`}
+                      >
+                        {n.desc}
+                      </div>
                     </div>
                   </button>
                 </li>

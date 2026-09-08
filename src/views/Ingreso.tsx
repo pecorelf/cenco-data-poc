@@ -1,15 +1,22 @@
 import { useStore } from "../lib/store";
 import { Boton } from "../components/UI";
+import {
+  IconoReportes,
+  IconoIngesta,
+  IconoDestellos,
+  IconoTerminal,
+  IconoCampana,
+} from "../components/Iconos";
 
 // Home de ingreso. La portada admite una foto real: basta dejar
 // public/portada.jpg y se usa encima del fondo gráfico, sin tocar código.
 
 const MODULOS = [
-  { titulo: "KPIs y Reportes Certificados", detalle: "Venta, margen y participación" },
-  { titulo: "Portal de ingesta certificada", detalle: "Cargas con plantilla y traza" },
-  { titulo: "Analítica conversacional", detalle: "Preguntas en lenguaje natural" },
-  { titulo: "Consultas SQL Gobernadas", detalle: "Sobre objetos autorizados" },
-  { titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y freshness" },
+  { Icono: IconoReportes, titulo: "KPIs y Reportes Certificados", detalle: "Venta, margen y participación" },
+  { Icono: IconoIngesta, titulo: "Portal de ingesta certificada", detalle: "Cargas con plantilla y traza" },
+  { Icono: IconoDestellos, titulo: "Analítica conversacional", detalle: "Preguntas en lenguaje natural" },
+  { Icono: IconoTerminal, titulo: "Consultas SQL Gobernadas", detalle: "Sobre objetos autorizados" },
+  { Icono: IconoCampana, titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y freshness" },
 ];
 
 export default function Ingreso() {
@@ -138,13 +145,16 @@ export default function Ingreso() {
             {MODULOS.map((m, i) => (
               <li
                 key={m.titulo}
-                className="border border-cenco-line rounded-control px-4 py-3 anim-aparecer"
+                className="border border-cenco-line rounded-control px-4 py-3 anim-aparecer flex items-start gap-2.5"
                 style={{ animationDelay: `${i * 70}ms` }}
               >
-                <div className="text-[13px] font-semibold text-cenco-deep leading-snug">
-                  {m.titulo}
+                <m.Icono size={16} className="text-cenco mt-0.5 shrink-0" />
+                <div>
+                  <div className="text-[13px] font-semibold text-cenco-deep leading-snug">
+                    {m.titulo}
+                  </div>
+                  <div className="text-micro text-gris mt-0.5">{m.detalle}</div>
                 </div>
-                <div className="text-micro text-gris mt-0.5">{m.detalle}</div>
               </li>
             ))}
           </ul>

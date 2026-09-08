@@ -77,6 +77,30 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Iconografía y heurísticas de usabilidad
+
+`src/components/Iconos.tsx` define un set propio de íconos de línea (trazo 1.75,
+puntas redondeadas, 24×24) — no una librería importada, para mantener el estilo
+uniforme y el bundle liviano. `ICONO_SECCION` mapea cada sección a un único símbolo,
+reutilizado sin variación en el nav, en las tarjetas del Inicio y en los módulos del
+login: el mismo ícono para lo mismo en toda la app (heurística de consistencia y
+reconocimiento antes que memoria).
+
+Mejoras de usabilidad aplicadas en esta pasada:
+- **El Sello ya no depende solo del color** — cada estado (certificado, en
+  certificación, sin certificar) tiene además una forma de ícono distinta, para que
+  se lea igual con dificultad para distinguir colores.
+- **Confirmación en dos pasos antes de borrar** — en Mis gráficos y en Consultas
+  guardadas, "Eliminar" pide un segundo clic ("¿Eliminar?") antes de ejecutar, y se
+  desarma solo a los 3 segundos si no se confirma.
+- **Tooltips en los controles deshabilitados** — Mercado, Producto de datos y los
+  dominios "Próximamente" explican por qué están apagados en vez de solo mostrarse
+  grises.
+- **Estados vacíos con ícono** en Historial, Consultas guardadas y Mis gráficos, en
+  vez de una línea de texto sola.
+- **Indicador de carga visible** — un ícono de spinner acompaña los botones mientras
+  hay una acción asíncrona en curso (enviar a BIA, cargar Mis gráficos).
+
 ## Diseño
 
 Los tokens salen del design system de Cencosud, no de un tema genérico:

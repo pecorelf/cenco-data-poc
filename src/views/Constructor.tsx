@@ -14,6 +14,7 @@ import {
   type Mes,
 } from "../data/comercial";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
+import { IconoMarcador, IconoCheckEscudo, IconoCheck, IconoAlerta } from "../components/Iconos";
 import { Grafico, type EspecGrafico } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
 
@@ -273,9 +274,11 @@ export default function Constructor() {
 
             <div className="mt-5 flex flex-col gap-2.5">
               <Boton ancho onClick={guardar} disabled={!espec}>
+                <IconoMarcador size={14} />
                 Guardar en Mis gráficos
               </Boton>
               <Boton ancho variante="contorno" onClick={publicar} disabled={!espec}>
+                <IconoCheckEscudo size={14} />
                 Publicar como oficial
               </Boton>
             </div>
@@ -289,7 +292,14 @@ export default function Constructor() {
                     : "border-naranjo/35 bg-naranjo-soft text-naranjo-deep"
                 }`}
               >
-                {aviso.texto}
+                <span className="flex gap-2">
+                  {aviso.tono === "ok" ? (
+                    <IconoCheck size={15} className="shrink-0 mt-0.5" />
+                  ) : (
+                    <IconoAlerta size={15} className="shrink-0 mt-0.5" />
+                  )}
+                  <span>{aviso.texto}</span>
+                </span>
                 {aviso.tono === "ok" && (
                   <button
                     onClick={() => setVista("graficos")}

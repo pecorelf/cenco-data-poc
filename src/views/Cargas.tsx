@@ -8,6 +8,14 @@ import {
   type Resultado,
 } from "../data/plantilla";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
+import {
+  IconoSubir,
+  IconoDescargar,
+  IconoFilas,
+  IconoCheck,
+  IconoAlerta,
+  IconoReloj,
+} from "../components/Iconos";
 import { useStore, alcance } from "../lib/store";
 
 export default function Cargas() {
@@ -75,6 +83,7 @@ export default function Cargas() {
             titulo="Plan regional por categoría · 2026"
             accion={
               <Boton variante="sutil" onClick={descargarPlantilla}>
+                <IconoDescargar size={14} />
                 Descargar plantilla
               </Boton>
             }
@@ -96,7 +105,8 @@ export default function Cargas() {
                   : "border-cenco-line bg-papel"
               }`}
             >
-              <p className="text-[14.5px] text-tuna">
+              <IconoSubir size={28} className="mx-auto text-cenco/50" />
+              <p className="mt-3 text-[14.5px] text-tuna">
                 Arrastra tu archivo CSV o
                 <button
                   onClick={() => inputRef.current?.click()}
@@ -162,22 +172,25 @@ export default function Cargas() {
                 <>
                   <div className="grid grid-cols-3 gap-6">
                     <div>
-                      <div className="num text-[30px] font-semibold text-tuna leading-none">
+                      <IconoFilas size={16} className="text-gris" />
+                      <div className="num text-[30px] font-semibold text-tuna leading-none mt-1.5">
                         {resultado.filas.length}
                       </div>
-                      <div className="text-[12.5px] text-gris mt-1.5">Filas leídas</div>
+                      <div className="text-[12.5px] text-gris mt-1">Filas leídas</div>
                     </div>
                     <div>
-                      <div className="num text-[30px] font-semibold text-certif leading-none">
+                      <IconoCheck size={16} className="text-certif" />
+                      <div className="num text-[30px] font-semibold text-certif leading-none mt-1.5">
                         {resultado.aceptadas.length}
                       </div>
-                      <div className="text-[12.5px] text-gris mt-1.5">Aceptadas</div>
+                      <div className="text-[12.5px] text-gris mt-1">Aceptadas</div>
                     </div>
                     <div>
-                      <div className="num text-[30px] font-semibold text-naranjo-deep leading-none">
+                      <IconoAlerta size={16} className="text-naranjo-deep" />
+                      <div className="num text-[30px] font-semibold text-naranjo-deep leading-none mt-1.5">
                         {resultado.rechazadas.length}
                       </div>
-                      <div className="text-[12.5px] text-gris mt-1.5">Rechazadas</div>
+                      <div className="text-[12.5px] text-gris mt-1">Rechazadas</div>
                     </div>
                   </div>
 

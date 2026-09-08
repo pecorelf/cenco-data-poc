@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Boton, Encabezado, Sello } from "../components/UI";
 import { Grafico } from "../components/Graficos";
 import { useStore } from "../lib/store";
+import { IconoMarcador, IconoLapiz, IconoPapelera, IconoSpinner } from "../components/Iconos";
 
 export default function MisGraficos() {
   const {
@@ -15,6 +16,7 @@ export default function MisGraficos() {
   } = useStore();
   const [editando, setEditando] = useState<string | null>(null);
   const [borrador, setBorrador] = useState("");
+  const [confirmarBorrado, setConfirmarBorrado] = useState<string | null>(null);
 
   if (cargandoGraficos) {
     return (
@@ -24,7 +26,10 @@ export default function MisGraficos() {
           bajada="Acá se guardan los gráficos que armas con BIA o en Informes personalizados."
         />
         <div className="px-8 py-14">
-          <p className="anim-pulso text-[14px] text-gris">Cargando tus gráficos…</p>
+          <p className="anim-pulso text-[14px] text-gris flex items-center gap-2">
+            <IconoSpinner size={15} />
+            Cargando tus gráficos…
+          </p>
         </div>
       </div>
     );
@@ -39,7 +44,10 @@ export default function MisGraficos() {
         />
         <div className="px-8 py-14">
           <div className="max-w-[54ch] bg-white border border-cenco-line rounded-card shadow-suave p-8">
-            <h2 className="text-[17px] font-semibold text-cenco-deep">
+            <span className="inline-flex w-11 h-11 rounded-control bg-cenco-soft text-cenco items-center justify-center">
+              <IconoMarcador size={20} />
+            </span>
+            <h2 className="mt-4 text-[17px] font-semibold text-cenco-deep">
               Todavía no guardas ninguno
             </h2>
             <p className="mt-2.5 text-[14px] text-gris leading-relaxed">
@@ -117,10 +125,36 @@ export default function MisGraficos() {
                     setBorrador(g.nombre);
                   }}
                 >
+                  <IconoLapiz size={13} />
                   Renombrar
                 </Boton>
-                <Boton variante="sutil" onClick={() => borrarGrafico(g.id)}>
-                  Eliminar
+                <Boton
+                  variante="sutil"
+                  onClick={() => {
+                    if (confirmarBorrado === g.id) {
+                      borrarGrafico(g.id);
+                      setConfirmarBorrado(null);
+                    } else {
+                      setConfirmarBorrado(g.id);
+                      setTimeout(
+                        () =>
+                          setConfirmarBorrado((actual) => (actual === g.id ? null : actual)),
+                        3000
+                      );
+                    }
+                  }}
+                >
+                  {confirmarBorrado === g.id ? (
+                    <span className="text-naranjo-deep flex items-center gap-1.5">
+                      <IconoPapelera size={13} />
+                      ¿Eliminar?
+                    </span>
+                  ) : (
+                    <span className="flex items-center gap-1.5">
+                      <IconoPapelera size={13} />
+                      Eliminar
+                    </span>
+                  )}
                 </Boton>
               </div>
             </header>

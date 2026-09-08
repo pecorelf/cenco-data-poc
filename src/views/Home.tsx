@@ -2,6 +2,15 @@ import { useStore } from "../lib/store";
 import { Boton, Panel } from "../components/UI";
 import { Contador } from "../components/Graficos";
 import {
+  ICONO_SECCION,
+  IconoRayo,
+  IconoCheckEscudo,
+  IconoCheck,
+  IconoMoneda,
+  IconoReportes,
+  IconoInsignia,
+} from "../components/Iconos";
+import {
   cumplimiento,
   filtrar,
   margenPonderado,
@@ -14,16 +23,19 @@ import {
 
 const VALOR = [
   {
+    Icono: IconoRayo,
     titulo: "Responde sin que nadie arme el reporte",
     detalle:
       "Venta, margen, participación o quiebre, por mes, categoría o bandera. Si el cruce sirve, lo grafica.",
   },
   {
+    Icono: IconoCheckEscudo,
     titulo: "Dice de dónde sale cada cifra",
     detalle:
       "Cita el indicador, su versión y quién responde por él. Si algo no está certificado, lo advierte antes.",
   },
   {
+    Icono: IconoCheck,
     titulo: "No inventa",
     detalle:
       "Solo usa indicadores definidos en la capa semántica y dentro de tu alcance. Lo que no existe, lo dice.",
@@ -98,13 +110,18 @@ export default function Home() {
             {VALOR.map((v, i) => (
               <li
                 key={v.titulo}
-                className="bg-white/10 border border-white/15 rounded-card px-5 py-4 anim-aparecer"
+                className="bg-white/10 border border-white/15 rounded-card px-5 py-4 anim-aparecer flex gap-3.5"
                 style={{ animationDelay: `${i * 110}ms` }}
               >
-                <div className="text-[14.5px] font-semibold">{v.titulo}</div>
-                <p className="mt-1 text-[13px] text-white/70 leading-relaxed">
-                  {v.detalle}
-                </p>
+                <span className="mt-0.5 w-8 h-8 rounded-full bg-white/15 flex items-center justify-center shrink-0">
+                  <v.Icono size={16} />
+                </span>
+                <div>
+                  <div className="text-[14.5px] font-semibold">{v.titulo}</div>
+                  <p className="mt-1 text-[13px] text-white/70 leading-relaxed">
+                    {v.detalle}
+                  </p>
+                </div>
               </li>
             ))}
           </ul>
@@ -116,32 +133,36 @@ export default function Home() {
         <Panel titulo="Cómo va marca propia · agosto 2026">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <div>
-              <div className="num text-[30px] font-semibold text-cenco-deep leading-none">
+              <IconoMoneda size={16} className="text-gris" />
+              <div className="num text-[30px] font-semibold text-cenco-deep leading-none mt-1.5">
                 <Contador valor={sumaVenta(mes)} decimales={0} />
                 <span className="text-[16px] font-normal text-gris ml-0.5"> MM</span>
               </div>
-              <div className="mt-2 text-[12.5px] text-gris">Venta neta</div>
+              <div className="mt-1 text-[12.5px] text-gris">Venta neta</div>
             </div>
             <div>
-              <div className="num text-[30px] font-semibold text-naranjo-deep leading-none">
+              <IconoCheckEscudo size={16} className="text-gris" />
+              <div className="num text-[30px] font-semibold text-naranjo-deep leading-none mt-1.5">
                 <Contador valor={cumplimiento(mes)} />
                 <span className="text-[16px] font-normal text-gris ml-0.5">%</span>
               </div>
-              <div className="mt-2 text-[12.5px] text-gris">Cumplimiento de plan</div>
+              <div className="mt-1 text-[12.5px] text-gris">Cumplimiento de plan</div>
             </div>
             <div>
-              <div className="num text-[30px] font-semibold text-cenco-deep leading-none">
+              <IconoReportes size={16} className="text-gris" />
+              <div className="num text-[30px] font-semibold text-cenco-deep leading-none mt-1.5">
                 <Contador valor={margenPonderado(mes)} />
                 <span className="text-[16px] font-normal text-gris ml-0.5">%</span>
               </div>
-              <div className="mt-2 text-[12.5px] text-gris">Margen bruto</div>
+              <div className="mt-1 text-[12.5px] text-gris">Margen bruto</div>
             </div>
             <div>
-              <div className="num text-[30px] font-semibold text-certif leading-none">
+              <IconoInsignia size={16} className="text-gris" />
+              <div className="num text-[30px] font-semibold text-certif leading-none mt-1.5">
                 <Contador valor={sharePonderado(mes)} />
                 <span className="text-[16px] font-normal text-gris ml-0.5">%</span>
               </div>
-              <div className="mt-2 text-[12.5px] text-gris">Participación</div>
+              <div className="mt-1 text-[12.5px] text-gris">Participación</div>
             </div>
           </div>
           <p className="mt-5 text-[13px] text-gris leading-relaxed max-w-[76ch]">
@@ -153,22 +174,28 @@ export default function Home() {
 
         {/* Accesos */}
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-          {ACCESOS.map((a, i) => (
-            <button
-              key={a.id}
-              onClick={() => setVista(a.id)}
-              className="estado text-left bg-white border border-cenco-line rounded-card shadow-suave p-6 hover:border-cenco/50 hover:shadow-alto anim-aparecer"
-              style={{ animationDelay: `${i * 70}ms` }}
-            >
-              <div className="text-[15px] font-semibold text-cenco-deep leading-snug">
-                {a.titulo}
-              </div>
-              <p className="mt-2 text-[13px] text-gris leading-relaxed">{a.detalle}</p>
-              <span className="mt-4 inline-block text-[13px] font-semibold text-cenco">
-                Entrar →
-              </span>
-            </button>
-          ))}
+          {ACCESOS.map((a, i) => {
+            const Icono = ICONO_SECCION[a.id];
+            return (
+              <button
+                key={a.id}
+                onClick={() => setVista(a.id)}
+                className="estado text-left bg-white border border-cenco-line rounded-card shadow-suave p-6 hover:border-cenco/50 hover:shadow-alto anim-aparecer"
+                style={{ animationDelay: `${i * 70}ms` }}
+              >
+                <span className="w-10 h-10 rounded-control bg-cenco-soft text-cenco flex items-center justify-center">
+                  <Icono size={20} />
+                </span>
+                <div className="mt-3.5 text-[15px] font-semibold text-cenco-deep leading-snug">
+                  {a.titulo}
+                </div>
+                <p className="mt-2 text-[13px] text-gris leading-relaxed">{a.detalle}</p>
+                <span className="mt-4 inline-block text-[13px] font-semibold text-cenco">
+                  Entrar →
+                </span>
+              </button>
+            );
+          })}
         </div>
       </div>
     </div>

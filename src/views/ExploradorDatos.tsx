@@ -15,6 +15,28 @@ import { PRESUPUESTO_TOTAL_USUARIO, PRESUPUESTO_TOTAL_AREA } from "../data/usuar
 import { Boton, Panel, Sello } from "../components/UI";
 import { BarraProgreso, Contador } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
+import {
+  IconoGlobo,
+  IconoCapas,
+  IconoCarpeta,
+  IconoInsignia,
+  IconoDestellos,
+  IconoSliders,
+  IconoTerminal,
+  IconoCheckEscudo,
+  IconoReloj,
+  IconoFilas,
+  IconoMoneda,
+  IconoServidor,
+  IconoDescargar,
+  IconoSubir,
+  IconoPlay,
+  IconoLupa,
+  IconoPapelera,
+  IconoMas,
+  IconoCerrar,
+  IconoChat,
+} from "../components/Iconos";
 
 type Modo = "asistente" | "constructor" | "sql";
 
@@ -96,6 +118,7 @@ export default function ExploradorDatos() {
   const [nombreGuardado, setNombreGuardado] = useState("");
   const [verHistorial, setVerHistorial] = useState(false);
   const [verGuardadas, setVerGuardadas] = useState(false);
+  const [confirmarBorrado, setConfirmarBorrado] = useState<string | null>(null);
 
   // Constructor visual
   const [metricasSel, setMetricasSel] = useState<string[]>(["venta_neta", "margen_bruto"]);
@@ -213,7 +236,12 @@ export default function ExploradorDatos() {
                   ))}
               </ul>
             ) : (
-              <p className="text-[13.5px] text-gris">Todavía no ejecutas ninguna consulta.</p>
+              <div className="flex flex-col items-center text-center py-6">
+                <IconoReloj size={22} className="text-cenco-line" />
+                <p className="mt-2 text-[13.5px] text-gris">
+                  Todavía no ejecutas ninguna consulta.
+                </p>
+              </div>
             )}
           </Panel>
         )}
@@ -240,14 +268,41 @@ export default function ExploradorDatos() {
                         {c.creadaPor} · {c.creadaEn}
                       </div>
                     </button>
-                    <Boton variante="sutil" onClick={() => borrarConsulta(c.id)}>
-                      Eliminar
+                    <Boton
+                      variante="sutil"
+                      onClick={() => {
+                        if (confirmarBorrado === c.id) {
+                          borrarConsulta(c.id);
+                          setConfirmarBorrado(null);
+                        } else {
+                          setConfirmarBorrado(c.id);
+                          setTimeout(
+                            () =>
+                              setConfirmarBorrado((actual) => (actual === c.id ? null : actual)),
+                            3000
+                          );
+                        }
+                      }}
+                    >
+                      {confirmarBorrado === c.id ? (
+                        <span className="text-naranjo-deep flex items-center gap-1.5">
+                          <IconoPapelera size={14} />
+                          ¿Eliminar?
+                        </span>
+                      ) : (
+                        "Eliminar"
+                      )}
                     </Boton>
                   </li>
                 ))}
               </ul>
             ) : (
-              <p className="text-[13.5px] text-gris">Todavía no guardas ninguna consulta.</p>
+              <div className="flex flex-col items-center text-center py-6">
+                <IconoCapas size={22} className="text-cenco-line" />
+                <p className="mt-2 text-[13.5px] text-gris">
+                  Todavía no guardas ninguna consulta.
+                </p>
+              </div>
             )}
           </Panel>
         )}
@@ -273,10 +328,13 @@ export default function ExploradorDatos() {
           <div className="space-y-5 xl:sticky xl:top-6">
             <Panel titulo="Contexto de datos">
               <label className="block mb-4">
-                <span className="text-micro text-gris font-medium">Mercado</span>
+                <span className="flex items-center gap-1.5 text-micro text-gris font-medium">
+                  <IconoGlobo size={13} /> Mercado
+                </span>
                 <select
                   disabled
                   value="Chile"
+                  title="Los demás países quedan fuera del alcance de este piloto"
                   className="estado mt-1.5 w-full border border-cenco-line px-3 py-2 text-[13.5px] bg-papel text-gris cursor-not-allowed"
                 >
                   <option>Chile</option>
@@ -287,9 +345,12 @@ export default function ExploradorDatos() {
               </label>
 
               <label className="block mb-5">
-                <span className="text-micro text-gris font-medium">Producto de datos</span>
+                <span className="flex items-center gap-1.5 text-micro text-gris font-medium">
+                  <IconoCapas size={13} /> Producto de datos
+                </span>
                 <select
                   disabled
+                  title="Único producto de datos publicado en este piloto"
                   className="estado mt-1.5 w-full border border-cenco-line px-3 py-2 text-[13.5px] bg-papel text-gris cursor-not-allowed"
                 >
                   <option>Vista 360° · Marca Propia</option>
@@ -297,7 +358,9 @@ export default function ExploradorDatos() {
               </label>
 
               <div className="mb-5">
-                <span className="text-micro text-gris font-medium">Dominios</span>
+                <span className="flex items-center gap-1.5 text-micro text-gris font-medium">
+                  <IconoCarpeta size={13} /> Dominios
+                </span>
                 <ul className="mt-1.5 space-y-1">
                   <li className="px-3 py-2 rounded-control bg-cenco-soft text-cenco-deep text-[13.5px] font-medium flex items-center justify-between">
                     Comercial
@@ -308,7 +371,8 @@ export default function ExploradorDatos() {
                   {["Clientes", "Operaciones", "Finanzas", "E-commerce"].map((d) => (
                     <li
                       key={d}
-                      className="px-3 py-2 rounded-control text-[13.5px] text-gris flex items-center justify-between"
+                      title="Todavía no modelado en este piloto"
+                      className="px-3 py-2 rounded-control text-[13.5px] text-gris flex items-center justify-between cursor-help"
                     >
                       {d}
                       <span className="text-micro">Próximamente</span>
@@ -318,7 +382,9 @@ export default function ExploradorDatos() {
               </div>
 
               <div>
-                <span className="text-micro text-gris font-medium">Métricas certificadas</span>
+                <span className="flex items-center gap-1.5 text-micro text-gris font-medium">
+                  <IconoInsignia size={13} /> Métricas certificadas
+                </span>
                 <ul className="mt-1.5 space-y-1">
                   {OBJETO_PRINCIPAL.columnas
                     .filter((c) => c.tipo === "numero")
@@ -357,31 +423,25 @@ export default function ExploradorDatos() {
               <div className="inline-flex bg-cenco-soft rounded-full p-1">
                 {(
                   [
-                    ["asistente", "Asistente"],
-                    ["constructor", "Constructor visual"],
-                    ["sql", "SQL"],
+                    ["asistente", "Asistente", IconoDestellos],
+                    ["constructor", "Constructor visual", IconoSliders],
+                    ["sql", "SQL", IconoTerminal],
                   ] as const
-                ).map(([id, label]) => (
+                ).map(([id, label, Icono]) => (
                   <button
                     key={id}
                     onClick={() => setModo(id)}
-                    className={`estado px-4 py-2 text-[13.5px] font-semibold rounded-full ${
+                    className={`estado flex items-center gap-2 px-4 py-2 text-[13.5px] font-semibold rounded-full ${
                       modo === id ? "bg-cenco text-white shadow-suave" : "text-cenco-deep"
                     }`}
                   >
+                    <Icono size={15} />
                     {label}
                   </button>
                 ))}
               </div>
               <span className="inline-flex items-center gap-1.5 text-micro font-semibold text-certif bg-certif-soft border border-certif/25 rounded-full px-3 py-1.5">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" aria-hidden>
-                  <path
-                    d="M12 3 4 6v6c0 5 3.4 8.7 8 9 4.6-.3 8-4 8-9V6l-8-3Z"
-                    stroke="currentColor"
-                    strokeWidth="2"
-                    strokeLinejoin="round"
-                  />
-                </svg>
+                <IconoCheckEscudo size={13} />
                 Entorno gobernado
               </span>
             </div>
@@ -421,7 +481,7 @@ export default function ExploradorDatos() {
                   ))}
                 </div>
                 <div className="mt-4 flex items-center gap-3">
-                  <Boton onClick={() => analizar(sql)}>Analizar consulta</Boton>
+                  <Boton onClick={() => analizar(sql)}><IconoLupa size={14} />Analizar consulta</Boton>
                   <span className="text-micro text-gris">Ctrl + Enter también analiza.</span>
                 </div>
               </Panel>
@@ -446,9 +506,9 @@ export default function ExploradorDatos() {
                         {ETIQUETA_METRICA[m]}
                         <button
                           onClick={() => setMetricasSel((s) => s.filter((x) => x !== m))}
-                          className="hover:bg-white/20 rounded-full w-4 h-4 flex items-center justify-center text-[12px]"
+                          className="hover:bg-white/20 rounded-full w-4 h-4 flex items-center justify-center"
                         >
-                          ×
+                          <IconoCerrar size={10} />
                         </button>
                       </span>
                     ))}
@@ -515,7 +575,8 @@ export default function ExploradorDatos() {
                     }}
                     className="estado text-[13px] font-semibold text-cenco border border-cenco-line rounded-full px-4 py-2 hover:bg-cenco-soft"
                   >
-                    + Agregar filtro
+                    <IconoMas size={13} />
+                    Agregar filtro
                   </button>
                 </div>
 
@@ -547,9 +608,9 @@ export default function ExploradorDatos() {
                           </select>
                           <button
                             onClick={() => setFiltrosExtra((arr) => arr.filter((_, j) => j !== i))}
-                            className="hover:bg-cenco-line rounded-full w-4 h-4 flex items-center justify-center text-[12px]"
+                            className="hover:bg-cenco-line rounded-full w-4 h-4 flex items-center justify-center"
                           >
-                            ×
+                            <IconoCerrar size={10} />
                           </button>
                         </span>
                       );
@@ -559,6 +620,7 @@ export default function ExploradorDatos() {
 
                 <div className="mt-6 pt-5 border-t border-cenco-line">
                   <Boton onClick={evaluarDiseno} disabled={!metricasSel.length}>
+                    <IconoPlay size={14} />
                     Evaluar diseño
                   </Boton>
                 </div>
@@ -591,6 +653,7 @@ export default function ExploradorDatos() {
                 </div>
                 <div className="mt-5 pt-4 border-t border-cenco-line">
                   <Boton variante="contorno" onClick={alternarChat}>
+                    <IconoChat size={14} />
                     Preguntarle a BIA
                   </Boton>
                 </div>
@@ -749,14 +812,23 @@ export default function ExploradorDatos() {
                 </div>
 
                 <ul className="mt-4 space-y-3">
-                  {[
-                    ["Tiempo estimado", resultado.consumo.tiempoEstimado],
-                    ["Filas estimadas", resultado.consumo.filasEstimadas.toLocaleString("es-CL")],
-                    ["Consumo estimado", `${resultado.consumo.creditos} créditos`],
-                    ["Warehouse", "BI Explorer"],
-                  ].map(([k, v]) => (
+                  {(
+                    [
+                      ["Tiempo estimado", resultado.consumo.tiempoEstimado, IconoReloj],
+                      [
+                        "Filas estimadas",
+                        resultado.consumo.filasEstimadas.toLocaleString("es-CL"),
+                        IconoFilas,
+                      ],
+                      ["Consumo estimado", `${resultado.consumo.creditos} créditos`, IconoMoneda],
+                      ["Warehouse", "BI Explorer", IconoServidor],
+                    ] as const
+                  ).map(([k, v, Icono]) => (
                     <li key={k} className="flex items-center justify-between text-[13px]">
-                      <span className="text-gris">{k}</span>
+                      <span className="flex items-center gap-2 text-gris">
+                        <Icono size={14} className="text-cenco-line" />
+                        {k}
+                      </span>
                       <span className="num text-tuna font-medium">{v}</span>
                     </li>
                   ))}
@@ -771,6 +843,7 @@ export default function ExploradorDatos() {
                         </div>
                         <div className="mt-3">
                           <Boton ancho onClick={ejecutarYVer}>
+                            <IconoPlay size={14} />
                             Ejecutar y ver resultados
                           </Boton>
                         </div>

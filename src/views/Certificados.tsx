@@ -9,6 +9,7 @@ import {
   MESES,
 } from "../data/comercial";
 import { Cifra, Encabezado, Filtros, Panel, Sello, clp } from "../components/UI";
+import { IconoMoneda, IconoCheckEscudo, IconoReportes, IconoInsignia } from "../components/Iconos";
 import { Contador, Grafico } from "../components/Graficos";
 import { useStore } from "../lib/store";
 
@@ -35,22 +36,26 @@ export default function Certificados() {
         <Panel titulo={`Resumen · ${mes} 2026`} accion={<Sello estado="certificado" />}>
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <Cifra
+              icono={IconoMoneda}
               valor={<Contador valor={sumaVenta(filasMes)} decimales={0} />}
               unidad=" MM"
               etiqueta="Venta neta marca propia"
             />
             <Cifra
+              icono={IconoCheckEscudo}
               valor={<Contador valor={cumpl} />}
               unidad="%"
               etiqueta="Cumplimiento de plan"
               tono={cumpl >= 100 ? "positivo" : "alerta"}
             />
             <Cifra
+              icono={IconoReportes}
               valor={<Contador valor={margenPonderado(filasMes)} />}
               unidad="%"
               etiqueta="Margen bruto"
             />
             <Cifra
+              icono={IconoInsignia}
               valor={<Contador valor={sharePonderado(filasMes)} />}
               unidad="%"
               etiqueta="Participación en categoría"

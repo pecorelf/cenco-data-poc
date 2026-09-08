@@ -5,6 +5,7 @@ import { Boton, Sello } from "./UI";
 import { Grafico, type EspecGrafico } from "./Graficos";
 import { extraer } from "../lib/espec";
 import { useStore, alcance } from "../lib/store";
+import { IconoChat, IconoCerrar, IconoSpinner, IconoDestellos } from "./Iconos";
 
 interface Mensaje {
   role: "user" | "assistant";
@@ -245,13 +246,16 @@ export default function BIA() {
         aria-label={chatAbierto ? "Cerrar BIA" : "Abrir BIA"}
         className="estado fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-cenco text-white rounded-full pl-5 pr-6 py-3.5 shadow-alto hover:bg-cenco-deep"
       >
-        <span className="relative flex w-2.5 h-2.5">
-          <span className="absolute inset-0 rounded-full bg-naranjo anim-pulso" />
-          <span className="relative w-2.5 h-2.5 rounded-full bg-naranjo" />
-        </span>
+        <IconoChat size={19} />
         <span className="text-[14px] font-semibold">
           {chatAbierto ? "Cerrar BIA" : "BIA"}
         </span>
+        {!chatAbierto && (
+          <span className="relative flex w-2 h-2 -ml-1">
+            <span className="absolute inset-0 rounded-full bg-naranjo anim-pulso" />
+            <span className="relative w-2 h-2 rounded-full bg-naranjo" />
+          </span>
+        )}
         {!chatAbierto && noLeidos > 0 && (
           <span className="num text-micro font-bold bg-naranjo rounded-full px-1.5 py-0.5">
             {noLeidos}
@@ -272,19 +276,24 @@ export default function BIA() {
         }`}
       >
         <header className="flex items-start justify-between gap-3 px-5 py-4 border-b border-cenco-line">
-          <div>
-            <div className="text-[15px] font-semibold text-cenco-deep">BIA</div>
-            <p className="text-micro text-gris mt-0.5 leading-relaxed">
-              Usa las definiciones de la capa semántica, dentro del alcance de{" "}
-              {usuario.nombre.split(" ")[0]}.
-            </p>
+          <div className="flex items-start gap-2.5">
+            <span className="mt-0.5 w-7 h-7 rounded-full bg-cenco-soft text-cenco flex items-center justify-center shrink-0">
+              <IconoDestellos size={15} />
+            </span>
+            <div>
+              <div className="text-[15px] font-semibold text-cenco-deep">BIA</div>
+              <p className="text-micro text-gris mt-0.5 leading-relaxed">
+                Usa las definiciones de la capa semántica, dentro del alcance de{" "}
+                {usuario.nombre.split(" ")[0]}.
+              </p>
+            </div>
           </div>
           <button
             onClick={cerrarChat}
             aria-label="Cerrar"
-            className="estado text-gris hover:text-cenco-deep text-[20px] leading-none px-1"
+            className="estado text-gris hover:text-cenco-deep p-1 -mt-0.5"
           >
-            ×
+            <IconoCerrar size={16} />
           </button>
         </header>
 
@@ -362,7 +371,8 @@ export default function BIA() {
               onClick={() => preguntar(entrada)}
               disabled={cargando || !entrada.trim()}
             >
-              {cargando ? "…" : "Enviar"}
+              {cargando && <IconoSpinner size={14} />}
+              {cargando ? "Enviando" : "Enviar"}
             </Boton>
           </div>
         </div>

@@ -1,5 +1,12 @@
 import { useEffect, useRef } from "react";
 import { useStore } from "../lib/store";
+import {
+  IconoCampana,
+  IconoAlerta,
+  IconoIngesta,
+  IconoReloj,
+  IconoCheckEscudo,
+} from "./Iconos";
 
 // Centro de notificaciones y alertas. Vive en la cabecera y no como pestaña:
 // es algo que se consulta al pasar, no un lugar donde uno trabaja.
@@ -13,12 +20,15 @@ export interface Notificacion {
   leida: boolean;
 }
 
-const ETIQUETA: Record<Notificacion["tipo"], { texto: string; clase: string }> = {
-  incidente: { texto: "Incidente", clase: "bg-naranjo-soft text-naranjo-deep" },
-  carga: { texto: "Carga", clase: "bg-cenco-soft text-cenco-deep" },
-  freshness: { texto: "Frescura", clase: "bg-cenco-soft text-cenco-deep" },
-  definicion: { texto: "Definición", clase: "bg-certif-soft text-certif" },
-  alerta: { texto: "Mi alerta", clase: "bg-naranjo-soft text-naranjo-deep" },
+const ETIQUETA: Record<
+  Notificacion["tipo"],
+  { texto: string; clase: string; Icono: typeof IconoAlerta }
+> = {
+  incidente: { texto: "Incidente", clase: "bg-naranjo-soft text-naranjo-deep", Icono: IconoAlerta },
+  carga: { texto: "Carga", clase: "bg-cenco-soft text-cenco-deep", Icono: IconoIngesta },
+  freshness: { texto: "Frescura", clase: "bg-cenco-soft text-cenco-deep", Icono: IconoReloj },
+  definicion: { texto: "Definición", clase: "bg-certif-soft text-certif", Icono: IconoCheckEscudo },
+  alerta: { texto: "Mi alerta", clase: "bg-naranjo-soft text-naranjo-deep", Icono: IconoCampana },
 };
 
 export default function Notificaciones() {
@@ -56,15 +66,7 @@ export default function Notificaciones() {
         aria-label={`Notificaciones${sinLeer ? `, ${sinLeer} sin leer` : ""}`}
         className="estado relative flex items-center justify-center w-10 h-10 rounded-full border border-white/20 hover:bg-white/10"
       >
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden>
-          <path
-            d="M12 3a5.5 5.5 0 0 0-5.5 5.5v3.2L5 15h14l-1.5-3.3V8.5A5.5 5.5 0 0 0 12 3Z"
-            stroke="currentColor"
-            strokeWidth="1.7"
-            strokeLinejoin="round"
-          />
-          <path d="M10 18a2 2 0 0 0 4 0" stroke="currentColor" strokeWidth="1.7" />
-        </svg>
+        <IconoCampana size={18} />
         {sinLeer > 0 && (
           <span className="num absolute -top-1 -right-1 bg-naranjo text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
             {sinLeer}
@@ -103,8 +105,9 @@ export default function Notificaciones() {
                 >
                   <div className="flex items-center gap-2.5">
                     <span
-                      className={`text-micro font-semibold px-2 py-0.5 rounded-full ${e.clase}`}
+                      className={`inline-flex items-center gap-1.5 text-micro font-semibold px-2 py-0.5 rounded-full ${e.clase}`}
                     >
+                      <e.Icono size={11} />
                       {e.texto}
                     </span>
                     <span className="text-micro text-gris ml-auto">{n.cuando}</span>

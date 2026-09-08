@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 import type { EstadoIndicador } from "../data/semantica";
 import { BANDERAS, CATEGORIAS, MESES } from "../data/comercial";
 import { useStore, alcance } from "../lib/store";
+import { IconoCheckEscudo, IconoReloj, IconoAlerta } from "./Iconos";
 
 export function Encabezado({
   titulo,
@@ -25,28 +26,34 @@ export function Encabezado({
   );
 }
 
-const SELLO: Record<EstadoIndicador, { texto: string; clase: string }> = {
+const SELLO: Record<EstadoIndicador, { texto: string; clase: string; Icono: typeof IconoCheckEscudo }> = {
   certificado: {
     texto: "Certificado",
     clase: "bg-certif-soft text-certif border-certif/25",
+    Icono: IconoCheckEscudo,
   },
   en_certificacion: {
     texto: "En certificación",
     clase: "bg-cenco-soft text-cenco-deep border-cenco/25",
+    Icono: IconoReloj,
   },
   exploratorio: {
     texto: "Sin certificar",
     clase: "bg-naranjo-soft text-naranjo-deep border-naranjo/30",
+    Icono: IconoAlerta,
   },
 };
 
+// El ícono cambia de forma según el estado, no solo el color: así se lee
+// igual de claro para alguien con dificultad para distinguir colores, y
+// reconocer "certificado" no depende de memorizar qué tono es cuál.
 export function Sello({ estado }: { estado: EstadoIndicador }) {
   const s = SELLO[estado];
   return (
     <span
-      className={`inline-flex items-center gap-1.5 border rounded-full px-2.5 py-1 text-micro font-semibold ${s.clase}`}
+      className={`inline-flex items-center gap-1.5 border rounded-full pl-2 pr-2.5 py-1 text-micro font-semibold ${s.clase}`}
     >
-      <span className="w-1.5 h-1.5 rounded-full bg-current" aria-hidden />
+      <s.Icono size={12} />
       {s.texto}
     </span>
   );
@@ -94,11 +101,13 @@ export function Cifra({
   unidad,
   etiqueta,
   tono = "neutro",
+  icono: Icono,
 }: {
   valor: ReactNode;
   unidad?: string;
   etiqueta: string;
   tono?: "neutro" | "positivo" | "alerta";
+  icono?: (p: { size?: number; className?: string }) => ReactNode;
 }) {
   const color =
     tono === "positivo"
@@ -108,7 +117,8 @@ export function Cifra({
       : "text-cenco-deep";
   return (
     <div>
-      <div className={`num text-[31px] font-semibold leading-none ${color}`}>
+      {Icono && <Icono size={16} className="text-gris" />}
+      <div className={`num text-[31px] font-semibold leading-none ${color} ${Icono ? "mt-1.5" : ""}`}>
         {valor}
         {unidad && (
           <span className="text-[16px] font-normal ml-0.5 text-gris">{unidad}</span>
