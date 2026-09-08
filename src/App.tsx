@@ -4,16 +4,42 @@ import Diagnostico from "./views/Diagnostico";
 import CapaSemantica from "./views/CapaSemantica";
 import Certificados from "./views/Certificados";
 import Constructor from "./views/Constructor";
+import Catalogo from "./views/Catalogo";
+import Interoperabilidad from "./views/Interoperabilidad";
 import MisGraficos from "./views/MisGraficos";
 import Cuenco from "./views/Cuenco";
 
-const NAV: Array<{ id: Vista; label: string; desc: string }> = [
-  { id: "diagnostico", label: "Diagnóstico", desc: "Dónde estamos hoy" },
-  { id: "semantica", label: "Capa semántica", desc: "Definiciones oficiales" },
-  { id: "certificados", label: "Informes certificados", desc: "Venta, margen, share" },
-  { id: "constructor", label: "Informes personalizados", desc: "Construye el tuyo" },
-  { id: "cuenco", label: "Cuenco", desc: "Pregunta y cruza datos" },
-  { id: "graficos", label: "Mis gráficos", desc: "Lo que has guardado" },
+const NAV: Array<{
+  seccion: string;
+  items: Array<{ id: Vista; label: string; desc: string }>;
+}> = [
+  {
+    seccion: "Entender",
+    items: [
+      { id: "diagnostico", label: "Diagnóstico", desc: "Dónde estamos hoy" },
+      { id: "catalogo", label: "Catálogo unificado", desc: "Todo lo que existe" },
+    ],
+  },
+  {
+    seccion: "Gobernar",
+    items: [
+      { id: "semantica", label: "Capa semántica", desc: "Definiciones oficiales" },
+      {
+        id: "interoperabilidad",
+        label: "Portal, Power BI y agente",
+        desc: "Una definición, tres motores",
+      },
+    ],
+  },
+  {
+    seccion: "Consumir",
+    items: [
+      { id: "certificados", label: "Informes certificados", desc: "Venta, margen, share" },
+      { id: "constructor", label: "Informes personalizados", desc: "Construye el tuyo" },
+      { id: "cuenco", label: "Cuenco", desc: "Pregunta y cruza datos" },
+      { id: "graficos", label: "Mis gráficos", desc: "Lo que has guardado" },
+    ],
+  },
 ];
 
 export default function App() {
@@ -62,49 +88,60 @@ export default function App() {
       </header>
 
       <div className="flex flex-1 min-h-0">
-        <nav className="w-64 shrink-0 bg-white border-r border-cenco-line">
-          <ul className="py-4 px-3 space-y-1">
-            {NAV.map((n) => {
-              const activo = vista === n.id;
-              return (
-                <li key={n.id}>
-                  <button
-                    onClick={() => setVista(n.id)}
-                    aria-current={activo ? "page" : undefined}
-                    className={`estado w-full text-left px-4 py-3 rounded-control ${
-                      activo
-                        ? "bg-cenco text-white shadow-suave"
-                        : "text-tuna hover:bg-cenco-soft"
-                    }`}
-                  >
-                    <div className="flex items-center gap-2">
-                      <span
-                        className={`text-[14px] ${activo ? "font-semibold" : "font-medium"}`}
-                      >
-                        {n.label}
-                      </span>
-                      {n.id === "graficos" && graficos.length > 0 && (
-                        <span
-                          className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
-                            activo ? "bg-white/20" : "bg-naranjo text-white"
+        <nav className="w-64 shrink-0 overflow-y-auto bg-white border-r border-cenco-line">
+          <div className="py-4 px-3 space-y-5">
+            {NAV.map((grupo) => (
+              <div key={grupo.seccion}>
+                <div className="px-4 pb-2 text-micro font-semibold text-gris uppercase tracking-wider">
+                  {grupo.seccion}
+                </div>
+                <ul className="space-y-1">
+                  {grupo.items.map((n) => {
+                    const activo = vista === n.id;
+                    return (
+                      <li key={n.id}>
+                        <button
+                          onClick={() => setVista(n.id)}
+                          aria-current={activo ? "page" : undefined}
+                          className={`estado w-full text-left px-4 py-2.5 rounded-control ${
+                            activo
+                              ? "bg-cenco text-white shadow-suave"
+                              : "text-tuna hover:bg-cenco-soft"
                           }`}
                         >
-                          {graficos.length}
-                        </span>
-                      )}
-                    </div>
-                    <div
-                      className={`text-micro mt-0.5 ${
-                        activo ? "text-white/70" : "text-gris"
-                      }`}
-                    >
-                      {n.desc}
-                    </div>
-                  </button>
-                </li>
-              );
-            })}
-          </ul>
+                          <div className="flex items-center gap-2">
+                            <span
+                              className={`text-[14px] ${
+                                activo ? "font-semibold" : "font-medium"
+                              }`}
+                            >
+                              {n.label}
+                            </span>
+                            {n.id === "graficos" && graficos.length > 0 && (
+                              <span
+                                className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
+                                  activo ? "bg-white/20" : "bg-naranjo text-white"
+                                }`}
+                              >
+                                {graficos.length}
+                              </span>
+                            )}
+                          </div>
+                          <div
+                            className={`text-micro mt-0.5 ${
+                              activo ? "text-white/70" : "text-gris"
+                            }`}
+                          >
+                            {n.desc}
+                          </div>
+                        </button>
+                      </li>
+                    );
+                  })}
+                </ul>
+              </div>
+            ))}
+          </div>
 
           <div className="mx-6 mt-3 pt-5 border-t border-cenco-line">
             <div className="text-micro text-gris font-medium">
@@ -118,7 +155,9 @@ export default function App() {
 
         <main className="flex-1 min-w-0 overflow-y-auto">
           {vista === "diagnostico" && <Diagnostico />}
+          {vista === "catalogo" && <Catalogo />}
           {vista === "semantica" && <CapaSemantica />}
+          {vista === "interoperabilidad" && <Interoperabilidad />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
           {vista === "cuenco" && <Cuenco />}

@@ -5,7 +5,9 @@ import type { EspecGrafico } from "../components/Graficos";
 
 export type Vista =
   | "diagnostico"
+  | "catalogo"
   | "semantica"
+  | "interoperabilidad"
   | "certificados"
   | "constructor"
   | "graficos"

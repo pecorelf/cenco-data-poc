@@ -9,27 +9,38 @@ La tesis de la demo no es que se puede hacer un dashboard bonito. Es que **una m
 tiene una sola definición, un solo responsable y un solo linaje**, y que tres motores de
 consumo distintos devuelven exactamente la misma cifra.
 
-El recorrido tiene seis pantallas:
+El recorrido tiene ocho pantallas, agrupadas en entender, gobernar y consumir:
 
 1. **Diagnóstico** — tres áreas reportan el margen de marca propia de agosto con tres
    cifras distintas. Ninguna calculó mal; cada una respondió a una definición que nunca
    se acordó. Al revelar la cifra certificada se explica por qué cada una difiere.
-2. **Capa semántica** — el catálogo de indicadores. Cada uno con su fórmula, su owner
+2. **Catálogo unificado** (CR-06) — los 14 activos que hoy viven repartidos entre Power BI,
+   MicroStrategy, Looker Studio y el Centralizador, buscables desde un solo lugar y
+   clasificados en mantener, converger, reemplazar o descontinuar. Es la racionalización
+   del Frente 4 hecha pantalla: migrar los catorce cuesta lo mismo que migrar nueve y
+   apagar cinco, con la diferencia de que la deuda no viaja.
+3. **Capa semántica** — el catálogo de indicadores. Cada uno con su fórmula, su owner
    nombrado, su linaje hasta las tablas Gold, qué considera y qué deja fuera, y qué
    motores lo consumen. Es el equivalente a Unity Catalog Metric Views.
-3. **Informes certificados** — venta contra plan, margen y participación, los tres
+4. **Portal, Power BI y agente** (SH-19, SH-21) — la misma métrica resuelta al mismo tiempo
+   en los tres motores, con la cadena Gold → Metric View → mirroring a OneLake → Direct
+   Lake. Un botón publica la versión 2.2 de la definición y las tres cifras cambian a la
+   vez, sin tocar el portal ni reescribir DAX.
+5. **Informes certificados** — venta contra plan, margen y participación, los tres
    reportes que el RFP nombra textualmente. Todo resuelve contra la capa semántica.
-4. **Informes personalizados** — el report builder y el modelo de dos velocidades. Se
-   puede usar un indicador sin certificar: el sistema lo permite, lo marca y bloquea su
-   publicación hasta que el owner lo revise.
-5. **Cuenco** — el copiloto. Anclado a la capa semántica, cita de qué indicador y versión
+6. **Informes personalizados** (MH-06) — armador de dimensión por métricas que calcula de
+   verdad sobre el dataset: se elige agrupar por mes, categoría o bandera, se marcan las
+   métricas y la vista previa se rearma. Incluye el modelo de dos velocidades: se puede
+   usar una métrica sin certificar, el sistema lo permite, lo marca y bloquea la
+   publicación hasta que el owner la revise.
+7. **Cuenco** (NH-12) — el copiloto. Anclado a la capa semántica, cita de qué indicador y versión
    salió cada cifra, advierte cuando algo no está certificado y respeta el alcance RLS
    del usuario. Además arma gráficos a demanda: se le pide un cruce en lenguaje natural
    y devuelve la especificación, que el portal dibuja y el usuario puede guardar.
-6. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
+8. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
    lo originó y los indicadores de los que salió, para poder auditarlo después.
 
-El selector de sesión de la cabecera cambia el alcance heredado de Unity Catalog: con la
+El selector de sesión de la cabecera cubre CR-01 y cambia el alcance heredado de Unity Catalog: con la
 jefa de categoría de Lácteos, las demás banderas y categorías desaparecen de los filtros
 y Cuenco se niega a responder por ellas.
 

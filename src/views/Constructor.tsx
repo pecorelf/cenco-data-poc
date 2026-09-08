@@ -1,175 +1,282 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { INDICADORES, porId } from "../data/semantica";
+import {
+  CATEGORIAS,
+  BANDERAS,
+  MESES,
+  filtrar,
+  margenPonderado,
+  sharePonderado,
+  sumaVenta,
+  cumplimiento,
+  type Bandera,
+  type Categoria,
+  type Mes,
+} from "../data/comercial";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
-import { useStore } from "../lib/store";
+import { Grafico, type EspecGrafico } from "../components/Graficos";
+import { useStore, alcance } from "../lib/store";
+
+// MH-06: crear un análisis con métricas y dimensiones certificadas,
+// sin depender del equipo BI. El armador es real: calcula sobre el dataset.
+
+type Dimension = "mes" | "categoria" | "bandera";
+
+const DIMENSIONES: Array<{ id: Dimension; nombre: string; detalle: string }> = [
+  { id: "mes", nombre: "Mes", detalle: "Evolución en el tiempo" },
+  { id: "categoria", nombre: "Categoría", detalle: "Comparación entre categorías" },
+  { id: "bandera", nombre: "Bandera", detalle: "Comparación entre banderas" },
+];
+
+// Solo métricas que la capa semántica sabe agregar por estas dimensiones.
+const METRICAS = [
+  { id: "venta_neta_mp", etiqueta: "Venta neta", unidad: " MM" },
+  { id: "cumplimiento_plan", etiqueta: "Cumplimiento de plan", unidad: "%" },
+  { id: "margen_bruto_mp", etiqueta: "Margen bruto", unidad: "%" },
+  { id: "share_mp", etiqueta: "Participación", unidad: "%" },
+  { id: "margen_contribucion_regional", etiqueta: "Margen contribución regional", unidad: "%" },
+] as const;
+
+type MetricaId = (typeof METRICAS)[number]["id"];
+
+function calcular(metrica: MetricaId, filas: ReturnType<typeof filtrar>): number {
+  switch (metrica) {
+    case "venta_neta_mp":
+      return sumaVenta(filas);
+    case "cumplimiento_plan":
+      return cumplimiento(filas);
+    case "margen_bruto_mp":
+      return margenPonderado(filas);
+    case "share_mp":
+      return sharePonderado(filas);
+    case "margen_contribucion_regional":
+      // Cálculo exploratorio: descuenta un supuesto logístico fijo cargado a mano.
+      return +(margenPonderado(filas) - 3.4).toFixed(1);
+  }
+}
 
 export default function Constructor() {
-  const { usuario, reportes, guardarReporte } = useStore();
-  const [seleccion, setSeleccion] = useState<string[]>([
-    "venta_neta_mp",
+  const { usuario, guardarGrafico, setVista } = useStore();
+  const { banderas, categorias } = alcance(usuario);
+
+  const [dimension, setDimension] = useState<Dimension>("mes");
+  const [metricas, setMetricas] = useState<MetricaId[]>([
     "margen_bruto_mp",
+    "share_mp",
   ]);
-  const [nombre, setNombre] = useState("Margen y venta por categoría");
-  const [aviso, setAviso] = useState<{
-    tono: "ok" | "bloqueo";
-    texto: string;
-  } | null>(null);
+  const [nombre, setNombre] = useState("");
+  const [aviso, setAviso] = useState<{ tono: "ok" | "bloqueo"; texto: string } | null>(
+    null
+  );
 
-  const elegidos = seleccion.map((id) => porId(id)!).filter(Boolean);
-  const hayExploratorio = elegidos.some((i) => i.estado !== "certificado");
+  const elegidas = metricas.map((id) => METRICAS.find((m) => m.id === id)!);
+  const indicadores = metricas.map((id) => porId(id)!).filter(Boolean);
+  const hayExploratorio = indicadores.some((i) => i.estado !== "certificado");
+  const mezclaUnidades = new Set(elegidas.map((m) => m.unidad)).size > 1;
 
-  const alternar = (id: string) => {
+  const alternar = (id: MetricaId) => {
     setAviso(null);
-    setSeleccion((s) =>
-      s.includes(id) ? s.filter((x) => x !== id) : [...s, id]
-    );
+    setMetricas((m) => (m.includes(id) ? m.filter((x) => x !== id) : [...m, id]));
   };
 
+  const espec: EspecGrafico | null = useMemo(() => {
+    if (!metricas.length) return null;
+
+    const valoresDim =
+      dimension === "mes"
+        ? [...MESES]
+        : dimension === "categoria"
+        ? (categorias ?? [...CATEGORIAS])
+        : (banderas ?? [...BANDERAS]);
+
+    const series = elegidas.map((m, i) => ({
+      nombre: m.etiqueta,
+      valores: valoresDim.map((v) => {
+        const f =
+          dimension === "mes"
+            ? { mes: v as Mes }
+            : dimension === "categoria"
+            ? { categoria: v as Categoria }
+            : { bandera: v as Bandera };
+        return calcular(m.id, filtrar(f));
+      }),
+      color: (["azul", "verde", "naranjo", "azulMedio", "gris"] as const)[i % 5],
+      tipo: (dimension === "mes" ? "linea" : "barra") as "linea" | "barra",
+    }));
+
+    return {
+      tipo:
+        dimension === "mes"
+          ? "lineas"
+          : series.length === 1
+          ? "barras_horizontal"
+          : "barras",
+      titulo: `${elegidas.map((m) => m.etiqueta).join(" y ")} por ${
+        DIMENSIONES.find((d) => d.id === dimension)!.nombre.toLowerCase()
+      }`,
+      subtitulo: `Marca propia · ${
+        banderas ? banderas.join(", ") : "todas las banderas"
+      } · 2026`,
+      unidad: mezclaUnidades ? "" : elegidas[0].unidad,
+      categorias: [...valoresDim],
+      series,
+      indicadores: metricas,
+      nota: mezclaUnidades
+        ? "Las métricas elegidas tienen unidades distintas, así que la escala del eje es referencial."
+        : undefined,
+    };
+  }, [dimension, metricas, elegidas, banderas, categorias, mezclaUnidades]);
+
   const guardar = () => {
-    guardarReporte({
+    if (!espec) return;
+    guardarGrafico({
       id: crypto.randomUUID(),
-      nombre,
+      nombre: nombre.trim() || espec.titulo,
       creadoPor: usuario.nombre,
       creadoEn: new Date().toLocaleDateString("es-CL"),
-      indicadores: elegidos.map((i) => i.nombre),
-      estado: hayExploratorio ? "exploratorio" : "certificado",
-      descripcion: `${elegidos.length} indicadores`,
+      pregunta: "Construido en Informes personalizados",
+      espec,
+      certificado: !hayExploratorio,
     });
     setAviso({
       tono: "ok",
       texto: hayExploratorio
-        ? "Guardado en tu espacio personal. Queda en el carril exploratorio porque incluye un indicador sin certificar."
-        : "Guardado en tu espacio personal. Todos sus indicadores están certificados.",
+        ? "Guardado en tu espacio personal. Queda en el carril exploratorio porque incluye una métrica sin certificar."
+        : "Guardado en tu espacio personal. Todas sus métricas están certificadas.",
     });
   };
 
   const publicar = () => {
     if (hayExploratorio) {
-      const sinCertificar = elegidos.find((i) => i.estado !== "certificado")!;
+      const sinCert = indicadores.find((i) => i.estado !== "certificado")!;
       setAviso({
         tono: "bloqueo",
-        texto: `No se puede publicar: "${sinCertificar.nombre}" no está certificado. La solicitud se envió a ${
-          sinCertificar.owner.nombre === "Sin owner asignado"
-            ? "la mesa de gobierno de indicadores para que le asigne un responsable"
-            : sinCertificar.owner.nombre
-        }. Mientras tanto el informe sigue disponible en tu espacio personal.`,
+        texto: `No se puede publicar: «${sinCert.nombre}» no está certificado. La solicitud se envió a ${
+          sinCert.owner.nombre === "Sin owner asignado"
+            ? "la mesa de gobierno para que le asigne un responsable"
+            : sinCert.owner.nombre
+        }. El informe sigue disponible en tu espacio personal.`,
       });
       return;
     }
     if (!usuario.puedePublicar) {
       setAviso({
         tono: "bloqueo",
-        texto: `Tus indicadores están todos certificados, pero tu perfil no tiene derecho de publicación. La solicitud quedó en cola para el owner de cada indicador.`,
+        texto:
+          "Las métricas están certificadas, pero tu perfil no tiene derecho de publicación. La solicitud quedó en cola para el owner de cada indicador.",
       });
       return;
     }
     setAviso({
       tono: "ok",
-      texto: "Publicado en el catálogo oficial. Queda visible para todos los usuarios cuyo alcance incluya estas categorías.",
+      texto:
+        "Publicado en el catálogo oficial. Queda visible para todos los usuarios cuyo alcance incluya estas categorías.",
     });
   };
 
+  const chip = "estado px-4 py-2 text-[13.5px] rounded-full border cursor-pointer";
+
   return (
-    <div className="pb-12">
+    <div className="pb-14">
       <Encabezado
         titulo="Informes personalizados"
-        bajada="Arma tu propio informe combinando indicadores de la capa semántica. Puedes usar cualquiera, incluidos los que no están certificados: el sistema no te lo impide, pero sí distingue entre lo que es tuyo y lo que es oficial."
+        bajada="Elige una dimensión y las métricas que quieras cruzar. Todo lo que aparece acá viene de la capa semántica, así que tu análisis usa las mismas definiciones que los informes oficiales."
       />
 
-      <div className="p-8 grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_360px] gap-6 items-start">
+      <div className="p-8 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
         <div className="space-y-6">
-          <Panel titulo="Elige los indicadores">
-            <ul className="divide-y divide-cenco-line -my-2">
-              {INDICADORES.map((i) => {
-                const activo = seleccion.includes(i.id);
-                return (
-                  <li key={i.id}>
-                    <label className="flex items-start gap-3 py-3 cursor-pointer">
-                      <input
-                        type="checkbox"
-                        checked={activo}
-                        onChange={() => alternar(i.id)}
-                        className="mt-1 w-4 h-4 accent-[#0B57A4]"
-                      />
-                      <span className="flex-1">
-                        <span className="flex items-center gap-2.5 flex-wrap">
-                          <span className="text-[14px] text-tuna">{i.nombre}</span>
-                          <Sello estado={i.estado} />
-                        </span>
-                        <span className="block text-[12.5px] text-gris mt-0.5 leading-relaxed">
-                          {i.owner.nombre === "Sin owner asignado"
-                            ? "Sin responsable asignado"
-                            : `Responde ${i.owner.nombre}`}{" "}
-                          · {i.granularidad}
-                        </span>
-                      </span>
-                    </label>
-                  </li>
-                );
-              })}
-            </ul>
+          <Panel titulo="1 · Agrupar por">
+            <div className="flex flex-wrap gap-2.5">
+              {DIMENSIONES.map((d) => (
+                <button
+                  key={d.id}
+                  onClick={() => {
+                    setDimension(d.id);
+                    setAviso(null);
+                  }}
+                  className={`${chip} ${
+                    dimension === d.id
+                      ? "bg-cenco text-white border-cenco"
+                      : "border-cenco-line text-tuna hover:border-cenco/50"
+                  }`}
+                  title={d.detalle}
+                >
+                  {d.nombre}
+                </button>
+              ))}
+            </div>
           </Panel>
 
-          {reportes.length > 0 && (
-            <Panel titulo={`Mis informes (${reportes.length})`}>
-              <ul className="divide-y divide-cenco-line -my-2">
-                {reportes.map((r) => (
-                  <li key={r.id} className="py-3 flex items-start justify-between gap-4">
-                    <div>
-                      <div className="text-[14px] text-tuna">{r.nombre}</div>
-                      <div className="text-micro text-gris mt-0.5">
-                        {r.creadoPor} · {r.creadoEn} · {r.descripcion}
-                      </div>
-                    </div>
-                    <Sello
-                      estado={
-                        r.estado === "certificado" ? "certificado" : "exploratorio"
-                      }
+          <Panel titulo="2 · Métricas">
+            <div className="flex flex-wrap gap-2.5">
+              {METRICAS.map((m) => {
+                const ind = porId(m.id)!;
+                const activa = metricas.includes(m.id);
+                return (
+                  <button
+                    key={m.id}
+                    onClick={() => alternar(m.id)}
+                    className={`${chip} flex items-center gap-2 ${
+                      activa
+                        ? "bg-cenco text-white border-cenco"
+                        : "border-cenco-line text-tuna hover:border-cenco/50"
+                    }`}
+                  >
+                    {m.etiqueta}
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        ind.estado === "certificado" ? "bg-certif" : "bg-naranjo"
+                      }`}
+                      aria-label={ind.estado}
                     />
-                  </li>
-                ))}
-              </ul>
-            </Panel>
-          )}
+                  </button>
+                );
+              })}
+            </div>
+            <p className="mt-4 text-[12.5px] text-gris leading-relaxed">
+              El punto verde marca las métricas certificadas; el naranjo, las que aún no lo
+              están. Puedes usar ambas, pero eso define en qué carril queda tu informe.
+            </p>
+          </Panel>
+
+          <Panel titulo="3 · Vista previa">
+            {espec ? (
+              <Grafico e={espec} key={`${dimension}-${metricas.join(",")}`} />
+            ) : (
+              <p className="text-[14px] text-gris">
+                Elige al menos una métrica para ver el resultado.
+              </p>
+            )}
+          </Panel>
         </div>
 
-        {/* Panel de acción */}
-        <div className="space-y-4 lg:sticky lg:top-6">
-          <Panel titulo="Tu informe">
+        <div className="space-y-4 xl:sticky xl:top-6">
+          <Panel titulo="Guardar o publicar">
             <label className="block">
-              <span className="text-micro text-gris">Nombre</span>
+              <span className="text-micro text-gris font-medium">Nombre del informe</span>
               <input
                 value={nombre}
                 onChange={(e) => setNombre(e.target.value)}
-                className="mt-1 w-full border border-cenco-line px-3.5 py-2.5 text-[14px]"
+                placeholder={espec?.titulo ?? "Sin título"}
+                className="estado mt-1.5 w-full border border-cenco-line px-3.5 py-2.5 text-[14px] focus:border-cenco"
               />
             </label>
 
-            <ul className="mt-4 space-y-1.5">
-              {elegidos.map((i) => (
-                <li
-                  key={i.id}
-                  className="flex items-center justify-between gap-2 text-[13px]"
-                >
-                  <span className="text-tuna truncate">{i.nombre}</span>
-                  <span
-                    className={`shrink-0 w-2 h-2 rounded-full ${
-                      i.estado === "certificado" ? "bg-certif" : "bg-naranjo"
-                    }`}
-                    aria-label={i.estado}
-                  />
-                </li>
-              ))}
-              {!elegidos.length && (
-                <li className="text-[13px] text-gris">
-                  Todavía no eliges ningún indicador.
-                </li>
-              )}
-            </ul>
+            <div className="mt-4 flex items-center gap-2">
+              <Sello estado={hayExploratorio ? "exploratorio" : "certificado"} />
+              <span className="text-micro text-gris">
+                {metricas.length}{" "}
+                {metricas.length === 1 ? "métrica" : "métricas"} seleccionadas
+              </span>
+            </div>
 
-            <div className="mt-5 flex flex-col gap-2">
-              <Boton ancho onClick={guardar} disabled={!elegidos.length}>Guardar en mi espacio</Boton>
-              <Boton ancho variante="contorno" onClick={publicar} disabled={!elegidos.length}>Publicar como oficial</Boton>
+            <div className="mt-5 flex flex-col gap-2.5">
+              <Boton ancho onClick={guardar} disabled={!espec}>
+                Guardar en Mis gráficos
+              </Boton>
+              <Boton ancho variante="contorno" onClick={publicar} disabled={!espec}>
+                Publicar como oficial
+              </Boton>
             </div>
 
             {aviso && (
@@ -177,24 +284,32 @@ export default function Constructor() {
                 role="status"
                 className={`mt-4 p-4 border rounded-card text-[13px] leading-relaxed ${
                   aviso.tono === "ok"
-                    ? "border-certif/40 bg-certif-soft text-certif"
-                    : "border-naranjo/40 bg-naranjo-soft text-naranjo-deep"
+                    ? "border-certif/35 bg-certif-soft text-certif"
+                    : "border-naranjo/35 bg-naranjo-soft text-naranjo-deep"
                 }`}
               >
                 {aviso.texto}
+                {aviso.tono === "ok" && (
+                  <button
+                    onClick={() => setVista("graficos")}
+                    className="block mt-2 underline underline-offset-4 font-medium"
+                  >
+                    Ver Mis gráficos
+                  </button>
+                )}
               </div>
             )}
           </Panel>
 
           <div className="border border-cenco-line bg-white rounded-card shadow-suave p-5">
-            <h3 className="text-[13px] font-medium text-cenco-deep">
+            <h3 className="text-[13.5px] font-semibold text-cenco-deep">
               Cómo funcionan las dos velocidades
             </h3>
-            <p className="mt-1.5 text-[12.5px] text-gris leading-relaxed">
-              El carril exploratorio es libre: cualquiera arma lo que necesite y lo
-              guarda. El carril certificado exige que cada indicador tenga
-              definición acordada y responsable. Pasar de uno al otro es una
-              decisión del owner, no un permiso de la herramienta.
+            <p className="mt-2 text-[12.5px] text-gris leading-relaxed">
+              El carril exploratorio es libre: cualquiera arma lo que necesite y lo guarda.
+              El carril certificado exige que cada métrica tenga definición acordada y
+              responsable. Pasar de uno al otro es una decisión del owner, no un permiso de
+              la herramienta.
             </p>
           </div>
         </div>
