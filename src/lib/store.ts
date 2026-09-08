@@ -5,6 +5,7 @@ import type { EspecGrafico } from "../components/Graficos";
 import { cargar, guardar as persistir, type Modo } from "./persistencia";
 
 export type Vista =
+  | "home"
   | "certificados"
   | "constructor"
   | "graficos"
@@ -42,6 +43,7 @@ export interface GraficoGuardado {
 
 interface Estado {
   vista: Vista;
+  autenticado: boolean;
   chatAbierto: boolean;
   usuario: Usuario;
   bandera: Bandera | "Todas";
@@ -53,6 +55,8 @@ interface Estado {
   modoGuardado: Modo;
   cargandoGraficos: boolean;
   setVista: (v: Vista) => void;
+  iniciarSesion: () => void;
+  cerrarSesion: () => void;
   alternarChat: () => void;
   cerrarChat: () => void;
   setUsuario: (id: string) => void;
@@ -68,7 +72,8 @@ interface Estado {
 }
 
 export const useStore = create<Estado>((set) => ({
-  vista: "certificados",
+  vista: "home",
+  autenticado: false,
   chatAbierto: false,
   usuario: USUARIOS[0],
   bandera: "Todas",
@@ -98,6 +103,8 @@ export const useStore = create<Estado>((set) => ({
   modoGuardado: "local",
   cargandoGraficos: true,
   setVista: (vista) => set({ vista }),
+  iniciarSesion: () => set({ autenticado: true, vista: "home" }),
+  cerrarSesion: () => set({ autenticado: false, chatAbierto: false, vista: "home" }),
   alternarChat: () => set((s) => ({ chatAbierto: !s.chatAbierto })),
   cerrarChat: () => set({ chatAbierto: false }),
   setUsuario: (id) => {

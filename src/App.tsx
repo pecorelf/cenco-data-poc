@@ -6,22 +6,46 @@ import Constructor from "./views/Constructor";
 import Interoperabilidad from "./views/Interoperabilidad";
 import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
+import Ingreso from "./views/Ingreso";
+import Home from "./views/Home";
 import MisGraficos from "./views/MisGraficos";
 
 const NAV: Array<{ id: Vista; label: string; desc: string }> = [
-  { id: "certificados", label: "Informes certificados", desc: "Venta, margen, share" },
-  { id: "constructor", label: "Informes personalizados", desc: "Construye el tuyo" },
+  { id: "home", label: "Inicio", desc: "Tu asistente y tus accesos" },
+  {
+    id: "certificados",
+    label: "KPIs y reportes certificados",
+    desc: "Venta, margen, participación",
+  },
+  {
+    id: "constructor",
+    label: "Reportería personalizada",
+    desc: "Cruza métricas y dimensiones",
+  },
   { id: "graficos", label: "Mis gráficos", desc: "Lo que has guardado" },
+  {
+    id: "cargas",
+    label: "Portal de ingesta certificada",
+    desc: "Con plantilla y traza",
+  },
   {
     id: "interoperabilidad",
     label: "Portal, Power BI y BIA",
     desc: "Una definición, tres motores",
   },
-  { id: "cargas", label: "Cargas manuales", desc: "Con plantilla y traza" },
 ];
 
 export default function App() {
-  const { vista, setVista, usuario, setUsuario, graficos, cargarGraficos } = useStore();
+  const {
+    vista,
+    setVista,
+    usuario,
+    setUsuario,
+    graficos,
+    cargarGraficos,
+    autenticado,
+    cerrarSesion,
+  } = useStore();
 
   // Carga inicial de los gráficos del usuario en sesión.
   useEffect(() => {
@@ -29,6 +53,8 @@ export default function App() {
     // Solo al montar: los cambios de sesión los maneja setUsuario.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  if (!autenticado) return <Ingreso />;
 
   return (
     <div className="min-h-screen flex flex-col">
@@ -68,6 +94,12 @@ export default function App() {
               alt="Deloitte Digital"
               className="h-8 w-auto bg-white rounded-control px-2.5 py-1.5"
             />
+            <button
+              onClick={cerrarSesion}
+              className="estado text-micro font-semibold text-white/70 hover:text-white border border-white/20 rounded-full px-3.5 py-2"
+            >
+              Salir
+            </button>
           </div>
         </div>
       </header>
@@ -126,6 +158,7 @@ export default function App() {
         </nav>
 
         <main className="flex-1 min-w-0 overflow-y-auto">
+          {vista === "home" && <Home />}
           {vista === "interoperabilidad" && <Interoperabilidad />}
           {vista === "cargas" && <Cargas />}
           {vista === "certificados" && <Certificados />}

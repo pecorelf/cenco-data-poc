@@ -9,7 +9,12 @@ La tesis de la demo no es que se puede hacer un dashboard bonito. Es que **una m
 tiene una sola definición, un solo responsable y un solo linaje**, y que tres motores de
 consumo distintos devuelven exactamente la misma cifra.
 
-El portal tiene cinco pantallas y un copiloto flotante:
+El recorrido parte en el **home de ingreso**: acceso vía Active Directory con los módulos
+habilitados a la vista, y perfiles heredados desde Unity Catalog. Después del login, el
+portal tiene seis pantallas y un copiloto flotante:
+
+0. **Inicio** — la oferta de valor de BIA como puerta de entrada, con el pulso del negocio
+   y los accesos a cada módulo.
 
 1. **Informes certificados** — venta contra plan, margen y participación, los tres
    reportes que el RFP nombra textualmente. Cada cifra resuelve contra la capa semántica.
@@ -42,6 +47,14 @@ reabrirlo; si responde con el panel cerrado, la burbuja lo avisa con un contador
 El selector de sesión de la cabecera cubre CR-01 y cambia el alcance heredado de Unity Catalog: con la
 jefa de categoría de Lácteos, las demás banderas y categorías desaparecen de los filtros
 y BIA se niega a responder por ellas.
+
+## La portada del ingreso
+
+El panel izquierdo del login trae un fondo gráfico generado en SVG (estanterías
+abstractas en azul corporativo). Si se quiere usar una foto real de sala, basta dejar el
+archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, con su
+degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
+fondo gráfico.
 
 ## Diseño
 
