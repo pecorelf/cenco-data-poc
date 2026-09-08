@@ -7,6 +7,7 @@ import Certificados from "./views/Certificados";
 import Constructor from "./views/Constructor";
 import Catalogo from "./views/Catalogo";
 import Interoperabilidad from "./views/Interoperabilidad";
+import Cargas from "./views/Cargas";
 import MisGraficos from "./views/MisGraficos";
 import Cuenco from "./views/Cuenco";
 
@@ -30,6 +31,7 @@ const NAV: Array<{
         label: "Portal, Power BI y agente",
         desc: "Una definición, tres motores",
       },
+      { id: "cargas", label: "Cargas manuales", desc: "Con plantilla y traza" },
     ],
   },
   {
@@ -166,6 +168,7 @@ export default function App() {
           {vista === "catalogo" && <Catalogo />}
           {vista === "semantica" && <CapaSemantica />}
           {vista === "interoperabilidad" && <Interoperabilidad />}
+          {vista === "cargas" && <Cargas />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
           {vista === "cuenco" && <Cuenco />}

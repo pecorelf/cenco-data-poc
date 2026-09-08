@@ -9,6 +9,7 @@ export type Vista =
   | "catalogo"
   | "semantica"
   | "interoperabilidad"
+  | "cargas"
   | "certificados"
   | "constructor"
   | "graficos"
@@ -22,6 +23,15 @@ export interface ReporteGuardado {
   indicadores: string[];
   estado: "certificado" | "exploratorio";
   descripcion: string;
+}
+
+export interface RegistroCarga {
+  id: string;
+  archivo: string;
+  usuario: string;
+  fecha: string;
+  aceptadas: number;
+  rechazadas: number;
 }
 
 export interface GraficoGuardado {
@@ -41,6 +51,7 @@ interface Estado {
   categoria: Categoria | "Todas";
   mes: Mes;
   reportes: ReporteGuardado[];
+  cargas: RegistroCarga[];
   graficos: GraficoGuardado[];
   modoGuardado: Modo;
   cargandoGraficos: boolean;
@@ -50,6 +61,7 @@ interface Estado {
   setCategoria: (c: Categoria | "Todas") => void;
   setMes: (m: Mes) => void;
   guardarReporte: (r: ReporteGuardado) => void;
+  registrarCarga: (c: RegistroCarga) => void;
   guardarGrafico: (g: GraficoGuardado) => void;
   borrarGrafico: (id: string) => void;
   renombrarGrafico: (id: string, nombre: string) => void;
@@ -63,6 +75,25 @@ export const useStore = create<Estado>((set) => ({
   categoria: "Todas",
   mes: "Ago",
   reportes: [],
+  // Dos cargas previas para que la bitácora no arranque vacía en la demo.
+  cargas: [
+    {
+      id: "C-000",
+      archivo: "plan_regional_ago_final.csv",
+      usuario: "Sebastián Ortiz",
+      fecha: "28-08-2026 17:42",
+      aceptadas: 84,
+      rechazadas: 6,
+    },
+    {
+      id: "C-00A",
+      archivo: "ajuste_maestro_categorias.csv",
+      usuario: "Rodrigo Meza",
+      fecha: "12-08-2026 09:15",
+      aceptadas: 21,
+      rechazadas: 0,
+    },
+  ],
   graficos: [],
   modoGuardado: "local",
   cargandoGraficos: true,
@@ -85,6 +116,7 @@ export const useStore = create<Estado>((set) => ({
   setCategoria: (categoria) => set({ categoria }),
   setMes: (mes) => set({ mes }),
   guardarReporte: (r) => set((s) => ({ reportes: [r, ...s.reportes] })),
+  registrarCarga: (c) => set((s) => ({ cargas: [c, ...s.cargas] })),
   guardarGrafico: (g) =>
     set((s) => {
       const graficos = [g, ...s.graficos];

@@ -9,7 +9,7 @@ La tesis de la demo no es que se puede hacer un dashboard bonito. Es que **una m
 tiene una sola definición, un solo responsable y un solo linaje**, y que tres motores de
 consumo distintos devuelven exactamente la misma cifra.
 
-El recorrido tiene ocho pantallas, agrupadas en entender, gobernar y consumir:
+El recorrido tiene nueve pantallas, agrupadas en entender, gobernar y consumir:
 
 1. **Diagnóstico** — tres áreas reportan el margen de marca propia de agosto con tres
    cifras distintas. Ninguna calculó mal; cada una respondió a una definición que nunca
@@ -26,18 +26,26 @@ El recorrido tiene ocho pantallas, agrupadas en entender, gobernar y consumir:
    en los tres motores, con la cadena Gold → Metric View → mirroring a OneLake → Direct
    Lake. Un botón publica la versión 2.2 de la definición y las tres cifras cambian a la
    vez, sin tocar el portal ni reescribir DAX.
-5. **Informes certificados** — venta contra plan, margen y participación, los tres
+5. **Cargas manuales gobernadas** (SH-13) — el plan regional por categoría, que hoy se
+   mantiene a mano en el Centralizador. Se arrastra un CSV, se parsea y se valida de
+   verdad en el navegador contra los maestros: columnas, valores permitidos, números,
+   duplicados y el alcance RLS del usuario, porque el control de acceso aplica también al
+   escribir. Las filas rechazadas se muestran con el motivo y no se cargan; el archivo
+   nunca entra a medias en silencio. Cada carga queda en una bitácora con autor y hora.
+   Trae dos archivos de ejemplo, uno limpio y otro con siete errores distintos, para que
+   la demo no dependa de tener un CSV a mano.
+6. **Informes certificados** — venta contra plan, margen y participación, los tres
    reportes que el RFP nombra textualmente. Todo resuelve contra la capa semántica.
-6. **Informes personalizados** (MH-06) — armador de dimensión por métricas que calcula de
+7. **Informes personalizados** (MH-06) — armador de dimensión por métricas que calcula de
    verdad sobre el dataset: se elige agrupar por mes, categoría o bandera, se marcan las
    métricas y la vista previa se rearma. Incluye el modelo de dos velocidades: se puede
    usar una métrica sin certificar, el sistema lo permite, lo marca y bloquea la
    publicación hasta que el owner la revise.
-7. **Cuenco** (NH-12) — el copiloto. Anclado a la capa semántica, cita de qué indicador y versión
+8. **Cuenco** (NH-12) — el copiloto. Anclado a la capa semántica, cita de qué indicador y versión
    salió cada cifra, advierte cuando algo no está certificado y respeta el alcance RLS
    del usuario. Además arma gráficos a demanda: se le pide un cruce en lenguaje natural
    y devuelve la especificación, que el portal dibuja y el usuario puede guardar.
-8. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
+9. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
    lo originó y los indicadores de los que salió, para poder auditarlo después.
 
 El selector de sesión de la cabecera cubre CR-01 y cambia el alcance heredado de Unity Catalog: con la
