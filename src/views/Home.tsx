@@ -60,8 +60,18 @@ const ACCESOS = [
   },
   {
     id: "sql" as const,
-    titulo: "Consultas SQL Gobernadas",
-    detalle: "Baja al dato con estimación de consumo antes de ejecutar.",
+    titulo: "Explorador de Datos",
+    detalle: "SQL, constructor visual y asistente sobre el mismo motor gobernado.",
+  },
+  {
+    id: "alertas" as const,
+    titulo: "Mis alertas",
+    detalle: "Métrica, condición, frecuencia y canal de aviso.",
+  },
+  {
+    id: "avisos" as const,
+    titulo: "Centro de notificaciones",
+    detalle: "Incidentes, cargas, frescura y cambios de definición.",
   },
   {
     id: "cargas" as const,

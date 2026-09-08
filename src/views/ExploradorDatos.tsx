@@ -12,7 +12,7 @@ import {
 import { INDICADORES, porId } from "../data/semantica";
 import { BANDERAS, CATEGORIAS, MESES, type Bandera, type Categoria } from "../data/comercial";
 import { PRESUPUESTO_TOTAL_USUARIO, PRESUPUESTO_TOTAL_AREA } from "../data/usuarios";
-import { Boton, Panel, Sello } from "../components/UI";
+import { Boton, NotaDiscovery, Panel, Sello } from "../components/UI";
 import { BarraProgreso, Contador } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
 import {
@@ -211,6 +211,17 @@ export default function ExploradorDatos() {
               )}
             </Boton>
           </div>
+        </div>
+
+        <div className="mt-5">
+          <NotaDiscovery
+            preguntas={[
+              "¿El público principal ya sabe SQL, o son gerentes que solo quieren filtrar sin código? Define si Constructor visual debería ser el modo por defecto.",
+              "¿La exploración se limita a esta vista certificada de marca propia, o incluye navegar otros dominios de la Gold directamente?",
+              "¿El control de consumo por créditos es un requisito real hoy, o una propuesta a evaluar más adelante?",
+              "¿Debería poder cruzarse con lo que ellos mismos suban en el Portal de ingesta, dentro de la misma exploración?",
+            ]}
+          />
         </div>
       </div>
 

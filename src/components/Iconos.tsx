@@ -277,6 +277,26 @@ export const IconoSalir = (p: Props) =>
     p
   );
 
+export const IconoPregunta = (p: Props) =>
+  base(
+    <>
+      <circle cx="12" cy="12" r="8.5" />
+      <path d="M9.6 9.3a2.4 2.4 0 1 1 3.6 2.1c-.8.5-1.2 1-1.2 1.9" />
+      <circle cx="12" cy="16.3" r="0.9" fill="currentColor" stroke="none" />
+    </>,
+    p
+  );
+
+export const IconoIndicador = (p: Props) =>
+  base(
+    <>
+      <path d="M4.5 15.5a7.5 7.5 0 0 1 15 0" />
+      <path d="M12 15.5 15.5 11" />
+      <path d="M4.5 15.5h15" />
+    </>,
+    p
+  );
+
 /** Ícono por identificador de sección, para reutilizar el mismo símbolo en
  * el nav, en las tarjetas del Inicio y en los módulos del login. Un solo
  * mapeo evita que cada pantalla invente su propio símbolo para lo mismo. */
@@ -285,6 +305,8 @@ export const ICONO_SECCION = {
   certificados: IconoReportes,
   constructor: IconoSliders,
   graficos: IconoMarcador,
-  sql: IconoTerminal,
+  sql: IconoLupa,
+  alertas: IconoIndicador,
+  avisos: IconoCampana,
   cargas: IconoIngesta,
 } as const;

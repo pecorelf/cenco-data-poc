@@ -4,7 +4,8 @@ import {
   IconoReportes,
   IconoIngesta,
   IconoDestellos,
-  IconoTerminal,
+  IconoLupa,
+  IconoIndicador,
   IconoCampana,
 } from "../components/Iconos";
 
@@ -15,7 +16,8 @@ const MODULOS = [
   { Icono: IconoReportes, titulo: "KPIs y Reportes Certificados", detalle: "Venta, margen y participación" },
   { Icono: IconoIngesta, titulo: "Portal de ingesta certificada", detalle: "Cargas con plantilla y traza" },
   { Icono: IconoDestellos, titulo: "Analítica conversacional", detalle: "Preguntas en lenguaje natural" },
-  { Icono: IconoTerminal, titulo: "Consultas SQL Gobernadas", detalle: "Sobre objetos autorizados" },
+  { Icono: IconoLupa, titulo: "Explorador de Datos", detalle: "SQL, constructor y asistente" },
+  { Icono: IconoIndicador, titulo: "Mis alertas", detalle: "Métrica, condición y canal" },
   { Icono: IconoCampana, titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y freshness" },
 ];
 

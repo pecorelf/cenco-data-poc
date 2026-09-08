@@ -77,6 +77,29 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Tres módulos marcados "a validar"
+
+Explorador de Datos, Mis alertas y Centro de notificaciones se agregaron pensando en la
+sesión de discovery con el equipo de BI de Cencosud, no como entregas cerradas. Cada uno
+lleva un ícono de interrogación junto al nombre en el menú, y un panel `NotaDiscovery` al
+abrir la pantalla con las preguntas de alcance que conviene hacer en esa sesión —por
+ejemplo, si Explorador de Datos es para analistas que ya saben SQL o para gerentes que
+solo quieren filtrar sin código, o si las alertas las configura cada usuario para sí
+mismo o también un gerente para su equipo. La idea es que la demo sirva de instrumento
+de la conversación, no que presente como decidido algo que todavía no se acordó.
+
+- **Mis alertas** — reglas por usuario (métrica, condición, umbral, frecuencia, canal),
+  con evaluación real contra el dataset vigente: si el umbral ya está cruzado, la regla
+  se marca "Activa ahora" en vez de solo quedar configurada en el papel. Solo el canal
+  Portal está conectado de verdad; Email, Slack y WhatsApp quedan seleccionables para la
+  conversación de mañana.
+- **Centro de notificaciones** — ahora también existe como página completa (además de la
+  campana de la cabecera), con filtro por tipo y una sección que explica cómo se genera
+  cada uno de los cinco tipos de aviso.
+- **Explorador de Datos** — renombrado desde "Consultas SQL Gobernadas": el nombre previo
+  describía solo uno de los tres modos (SQL); el nuevo cubre también Constructor visual
+  y Asistente.
+
 ## Iconografía y heurísticas de usabilidad
 
 `src/components/Iconos.tsx` define un set propio de íconos de línea (trazo 1.75,

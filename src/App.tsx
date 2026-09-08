@@ -9,10 +9,12 @@ import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
 import ExploradorDatos from "./views/ExploradorDatos";
 import Notificaciones from "./components/Notificaciones";
-import { ICONO_SECCION, IconoSalir } from "./components/Iconos";
+import { ICONO_SECCION, IconoSalir, IconoPregunta } from "./components/Iconos";
 import MisGraficos from "./views/MisGraficos";
+import Alertas from "./views/Alertas";
+import Avisos from "./views/Avisos";
 
-const NAV: Array<{ id: Vista; label: string; desc: string }> = [
+const NAV: Array<{ id: Vista; label: string; desc: string; aValidar?: boolean }> = [
   { id: "home", label: "Inicio", desc: "Tu asistente y tus accesos" },
   {
     id: "certificados",
@@ -27,8 +29,21 @@ const NAV: Array<{ id: Vista; label: string; desc: string }> = [
   { id: "graficos", label: "Mis gráficos", desc: "Lo que has guardado" },
   {
     id: "sql",
-    label: "Consultas SQL Gobernadas",
-    desc: "Para perfiles avanzados",
+    label: "Explorador de Datos",
+    desc: "SQL, constructor y asistente",
+    aValidar: true,
+  },
+  {
+    id: "alertas",
+    label: "Mis alertas",
+    desc: "Métrica, condición y canal",
+    aValidar: true,
+  },
+  {
+    id: "avisos",
+    label: "Centro de notificaciones",
+    desc: "Incidentes, cargas, frescura",
+    aValidar: true,
   },
   {
     id: "cargas",
@@ -136,6 +151,14 @@ export default function App() {
                         >
                           {n.label}
                         </span>
+                        {n.aValidar && (
+                          <span title="Alcance a validar con el cliente">
+                            <IconoPregunta
+                              size={13}
+                              className={activo ? "text-white/80" : "text-cenco/60"}
+                            />
+                          </span>
+                        )}
                         {n.id === "graficos" && graficos.length > 0 && (
                           <span
                             className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
@@ -171,6 +194,8 @@ export default function App() {
         <main className="flex-1 min-w-0 overflow-y-auto">
           {vista === "home" && <Home />}
           {vista === "sql" && <ExploradorDatos />}
+          {vista === "alertas" && <Alertas />}
+          {vista === "avisos" && <Avisos />}
           {vista === "cargas" && <Cargas />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}

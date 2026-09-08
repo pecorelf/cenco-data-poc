@@ -2,7 +2,7 @@ import type { ReactNode } from "react";
 import type { EstadoIndicador } from "../data/semantica";
 import { BANDERAS, CATEGORIAS, MESES } from "../data/comercial";
 import { useStore, alcance } from "../lib/store";
-import { IconoCheckEscudo, IconoReloj, IconoAlerta } from "./Iconos";
+import { IconoCheckEscudo, IconoReloj, IconoAlerta, IconoPregunta } from "./Iconos";
 
 export function Encabezado({
   titulo,
@@ -93,6 +93,36 @@ export function Boton({
     >
       {children}
     </button>
+  );
+}
+
+/**
+ * Callout para módulos cuyo alcance todavía se está validando con el cliente.
+ * No es un error ni una limitación técnica: es una señal honesta de que la
+ * pantalla es un punto de partida para la conversación, no una entrega cerrada.
+ */
+export function NotaDiscovery({
+  titulo = "Para validar en la sesión con el equipo de BI",
+  preguntas,
+}: {
+  titulo?: string;
+  preguntas: string[];
+}) {
+  return (
+    <div className="border border-cenco/25 bg-cenco-soft rounded-card px-5 py-4">
+      <div className="flex items-center gap-2 text-[13px] font-semibold text-cenco-deep">
+        <IconoPregunta size={15} />
+        {titulo}
+      </div>
+      <ul className="mt-2.5 space-y-1.5">
+        {preguntas.map((p) => (
+          <li key={p} className="text-[13px] text-tuna leading-relaxed pl-4 relative">
+            <span className="absolute left-0 top-2 w-1.5 h-1.5 rounded-full bg-cenco" />
+            {p}
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

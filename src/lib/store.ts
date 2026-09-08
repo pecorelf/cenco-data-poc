@@ -3,6 +3,7 @@ import type { Bandera, Categoria, Mes } from "../data/comercial";
 import { USUARIOS, PRESUPUESTO_TOTAL_USUARIO, type Usuario } from "../data/usuarios";
 import type { EspecGrafico } from "../components/Graficos";
 import type { Notificacion } from "../components/Notificaciones";
+import { ALERTAS_SEMILLA, type AlertaConfigurada } from "../data/alertas";
 import { cargar, guardar as persistir, type Modo } from "./persistencia";
 
 export type Vista =
@@ -11,6 +12,8 @@ export type Vista =
   | "constructor"
   | "graficos"
   | "sql"
+  | "alertas"
+  | "avisos"
   | "cargas";
 
 export interface ReporteGuardado {
@@ -71,6 +74,7 @@ interface Estado {
   cargas: RegistroCarga[];
   consultas: ConsultaGuardada[];
   historialSql: EjecucionSQL[];
+  alertas: AlertaConfigurada[];
   presupuestos: Record<string, number>;
   notificaciones: Notificacion[];
   notificacionesAbiertas: boolean;
@@ -91,6 +95,9 @@ interface Estado {
   guardarConsulta: (c: ConsultaGuardada) => void;
   borrarConsulta: (id: string) => void;
   consumirCreditos: (usuarioId: string, creditos: number, entrada: EjecucionSQL) => void;
+  agregarAlerta: (a: AlertaConfigurada) => void;
+  alternarAlerta: (id: string) => void;
+  borrarAlerta: (id: string) => void;
   alternarNotificaciones: () => void;
   cerrarNotificaciones: () => void;
   marcarTodasLeidas: () => void;
@@ -130,6 +137,7 @@ export const useStore = create<Estado>((set) => ({
   ],
   consultas: [],
   historialSql: [],
+  alertas: ALERTAS_SEMILLA,
   presupuestos: Object.fromEntries(USUARIOS.map((u) => [u.id, u.presupuestoConsumido])),
   notificacionesAbiertas: false,
   notificaciones: [
@@ -218,6 +226,13 @@ export const useStore = create<Estado>((set) => ({
       },
       historialSql: [entrada, ...s.historialSql].slice(0, 20),
     })),
+  agregarAlerta: (a) => set((s) => ({ alertas: [a, ...s.alertas] })),
+  alternarAlerta: (id) =>
+    set((s) => ({
+      alertas: s.alertas.map((a) => (a.id === id ? { ...a, activa: !a.activa } : a)),
+    })),
+  borrarAlerta: (id) =>
+    set((s) => ({ alertas: s.alertas.filter((a) => a.id !== id) })),
   alternarNotificaciones: () =>
     set((s) => ({ notificacionesAbiertas: !s.notificacionesAbiertas })),
   cerrarNotificaciones: () => set({ notificacionesAbiertas: false }),
