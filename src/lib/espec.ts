@@ -79,6 +79,27 @@ function validar(bruto: unknown): EspecGrafico {
   };
 }
 
+/**
+ * Separa la línea final "Fuente: <id>" del resto del mensaje.
+ *
+ * A propósito el modelo no escribe versión, estado ni responsable en esa
+ * línea — solo el id del indicador. Todo lo demás (versión vigente, si está
+ * certificado, quién responde) se completa del lado del cliente leyendo
+ * `semantica.ts` directamente. Así la cita nunca puede quedar desactualizada
+ * ni el modelo puede inventarla: si el id no existe en la capa semántica,
+ * simplemente no hay cita que mostrar.
+ */
+export interface Fuente {
+  cuerpo: string;
+  indicadorId: string | null;
+}
+
+export function separarFuente(texto: string): Fuente {
+  const m = texto.match(/\n?fuente:\s*`?([a-zA-Z0-9_]+)`?\.?\s*$/i);
+  if (!m) return { cuerpo: texto.trim(), indicadorId: null };
+  return { cuerpo: texto.slice(0, m.index).trim(), indicadorId: m[1] };
+}
+
 /** Separa la prosa del bloque de gráfico y valida este último. */
 export function extraer(respuesta: string): Extraccion {
   const inicio = respuesta.indexOf(APERTURA);

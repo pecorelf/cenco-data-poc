@@ -100,6 +100,20 @@ de la conversación, no que presente como decidido algo que todavía no se acord
   describía solo uno de los tres modos (SQL); el nuevo cubre también Constructor visual
   y Asistente.
 
+## Cómo cita BIA sus fuentes
+
+BIA cierra sus respuestas con una línea `Fuente: <id>` — pero solo con el id, sin versión,
+estado ni responsable. El resto de la cita (`src/lib/espec.ts:separarFuente`) se arma del
+lado del cliente leyendo `semantica.ts` directamente: si el id no corresponde a un indicador
+real, no se muestra ninguna cita. Así la versión y el owner que ves nunca pueden quedar
+desactualizados ni ser inventados por el modelo — es la capa semántica la que responde, no
+el texto libre que generó la respuesta.
+
+El cuerpo de la respuesta se renderiza con `components/TextoFormateado.tsx`, un parser propio
+de un subconjunto mínimo de markdown (negrita, código, listas cortas) — sin
+`dangerouslySetInnerHTML` ni una librería de markdown completa, porque lo único que BIA
+necesita marcar es una cifra por párrafo y algún nombre de columna o indicador.
+
 ## Iconografía y heurísticas de usabilidad
 
 `src/components/Iconos.tsx` define un set propio de íconos de línea (trazo 1.75,

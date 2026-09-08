@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from "react";
-import { INDICADORES } from "../data/semantica";
+import { INDICADORES, porId } from "../data/semantica";
 import { filtrar, porCategoria, serieMensual, MESES } from "../data/comercial";
 import { Boton, Sello } from "./UI";
 import { Grafico, type EspecGrafico } from "./Graficos";
-import { extraer } from "../lib/espec";
+import { TextoFormateado } from "./TextoFormateado";
+import { extraer, separarFuente } from "../lib/espec";
 import { useStore, alcance } from "../lib/store";
 import { IconoChat, IconoCerrar, IconoSpinner, IconoDestellos } from "./Iconos";
 
@@ -324,16 +325,35 @@ export default function BIA() {
               );
             }
             const { texto, espec, error: errEspec } = extraer(m.content);
+            const { cuerpo, indicadorId } = separarFuente(texto);
+            // La cita se arma acá, no en lo que escribió el modelo: si el id
+            // no corresponde a un indicador real de la capa semántica, no se
+            // muestra nada — mejor sin cita que con una inventada.
+            const indicador = indicadorId ? porId(indicadorId) : undefined;
             return (
               <div key={i}>
-                <div className="text-[13.5px] text-tuna leading-relaxed whitespace-pre-wrap">
-                  {texto ||
-                    (cargando ? (
-                      <span className="anim-pulso text-gris">
-                        Consultando la capa semántica…
-                      </span>
-                    ) : null)}
+                <div className="text-[13.5px] text-tuna leading-relaxed">
+                  {cuerpo ? (
+                    <TextoFormateado texto={cuerpo} />
+                  ) : cargando ? (
+                    <span className="anim-pulso text-gris">
+                      Consultando la capa semántica…
+                    </span>
+                  ) : null}
                 </div>
+                {indicador && (
+                  <div className="mt-3 pt-2.5 border-t border-cenco-line flex flex-wrap items-center gap-x-2 gap-y-1.5">
+                    <Sello estado={indicador.estado} />
+                    <code className="px-1.5 py-0.5 rounded bg-cenco-soft text-cenco-deep text-[11.5px] font-mono">
+                      {indicador.id}
+                    </code>
+                    <span className="num text-[12px] text-gris">v{indicador.version}</span>
+                    <span className="text-[12px] text-gris">·</span>
+                    <span className="text-[12px] text-gris">
+                      Responde {indicador.owner.nombre}, {indicador.owner.cargo}
+                    </span>
+                  </div>
+                )}
                 {errEspec && (
                   <p className="mt-2 text-[12.5px] text-naranjo-deep">
                     No se pudo dibujar el gráfico: {errEspec}
