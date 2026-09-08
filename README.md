@@ -25,12 +25,24 @@ portal tiene seis pantallas y un copiloto flotante:
    publicación hasta que el owner la revise.
 3. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
    lo originó y los indicadores de los que salió, para poder auditarlo después.
-4. **Consultas SQL Gobernadas** (SH-07, SH-08) — para perfiles avanzados. No es un editor
-   de mentira: `src/data/sql.ts` parsea un subconjunto de SELECT (WHERE, GROUP BY, ORDER
-   BY, LIMIT, y SUM/AVG/COUNT/MIN/MAX) y lo ejecuta sobre el dataset. Rechaza cualquier
-   escritura, rechaza objetos que Unity Catalog no autorizó al perfil, inyecta el filtro
-   de RLS aunque el usuario no lo escriba y aplica un tope de cómputo. Lo que no soporta
-   lo dice, en vez de devolver un resultado equivocado. Las consultas se pueden guardar.
+4. **Explorador de datos** (SH-07, SH-08) — tres formas de llegar al mismo motor gobernado:
+   Asistente (atajos a consultas predefinidas y acceso directo a BIA para preguntas
+   libres), Constructor visual (pills de métricas y dimensiones que arman SQL real) y
+   SQL (editor de solo lectura). `src/data/sql.ts` separa el parseo de la ejecución
+   para que la interpretación de la consulta y la estimación de consumo se calculen
+   sobre exactamente lo que se va a correr, venga de donde venga.
+
+   Antes de ejecutar, muestra complejidad, tiempo y filas estimadas, y el costo en
+   créditos — y lo descuenta de un presupuesto real por usuario. Si la consulta supera
+   la cuota disponible, bloquea la ejecución en vez de solo advertir. El alcance RLS
+   del usuario también abarata el costo estimado: un perfil acotado escanea menos.
+
+   *Nota de transparencia:* la base de "filas en producción" (340.000) usada para la
+   estimación es un supuesto documentado en el código, no una cifra real — el dataset
+   de la demo tiene 168 filas. Existe para que la experiencia de estimar-antes-de-
+   ejecutar se sienta como la de un lakehouse real; conviene decirlo en voz alta si se
+   muestra al cliente.
+
 5. **Portal de ingesta certificada** (SH-13) — el plan regional por categoría, que hoy se
    mantiene a mano en el Centralizador. Se arrastra un CSV, se parsea y se valida de
    verdad en el navegador contra los maestros: columnas, valores permitidos, números,

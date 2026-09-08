@@ -362,6 +362,29 @@ function Combo({ e }: { e: EspecGrafico }) {
   );
 }
 
+/** Barra horizontal que anima su ancho al montar y en cada cambio de valor. */
+export function BarraProgreso({
+  porcentaje,
+  tono = "azul",
+  alto = "h-2.5",
+}: {
+  porcentaje: number;
+  tono?: "azul" | "naranjo" | "verde";
+  alto?: string;
+}) {
+  const color =
+    tono === "naranjo" ? PALETA.naranjo : tono === "verde" ? PALETA.verde : PALETA.azul;
+  const p = Math.max(0, Math.min(100, porcentaje));
+  return (
+    <div className={`w-full ${alto} rounded-full bg-cenco-soft overflow-hidden`}>
+      <div
+        className="h-full rounded-full transition-all duration-700 ease-out"
+        style={{ width: `${p}%`, background: color }}
+      />
+    </div>
+  );
+}
+
 export function Grafico({ e }: { e: EspecGrafico }) {
   const cuerpo = useMemo(() => {
     switch (e.tipo) {

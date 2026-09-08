@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import type { Bandera, Categoria, Mes } from "../data/comercial";
-import { USUARIOS, type Usuario } from "../data/usuarios";
+import { USUARIOS, PRESUPUESTO_TOTAL_USUARIO, type Usuario } from "../data/usuarios";
 import type { EspecGrafico } from "../components/Graficos";
 import type { Notificacion } from "../components/Notificaciones";
 import { cargar, guardar as persistir, type Modo } from "./persistencia";
@@ -32,6 +32,15 @@ export interface RegistroCarga {
   rechazadas: number;
 }
 
+export interface EjecucionSQL {
+  id: string;
+  sql: string;
+  usuario: string;
+  creditos: number;
+  filas: number;
+  cuando: string;
+}
+
 export interface ConsultaGuardada {
   id: string;
   nombre: string;
@@ -61,6 +70,8 @@ interface Estado {
   reportes: ReporteGuardado[];
   cargas: RegistroCarga[];
   consultas: ConsultaGuardada[];
+  historialSql: EjecucionSQL[];
+  presupuestos: Record<string, number>;
   notificaciones: Notificacion[];
   notificacionesAbiertas: boolean;
   graficos: GraficoGuardado[];
@@ -79,6 +90,7 @@ interface Estado {
   registrarCarga: (c: RegistroCarga) => void;
   guardarConsulta: (c: ConsultaGuardada) => void;
   borrarConsulta: (id: string) => void;
+  consumirCreditos: (usuarioId: string, creditos: number, entrada: EjecucionSQL) => void;
   alternarNotificaciones: () => void;
   cerrarNotificaciones: () => void;
   marcarTodasLeidas: () => void;
@@ -117,6 +129,8 @@ export const useStore = create<Estado>((set) => ({
     },
   ],
   consultas: [],
+  historialSql: [],
+  presupuestos: Object.fromEntries(USUARIOS.map((u) => [u.id, u.presupuestoConsumido])),
   notificacionesAbiertas: false,
   notificaciones: [
     {
@@ -193,6 +207,17 @@ export const useStore = create<Estado>((set) => ({
   guardarConsulta: (c) => set((s) => ({ consultas: [c, ...s.consultas] })),
   borrarConsulta: (id) =>
     set((s) => ({ consultas: s.consultas.filter((c) => c.id !== id) })),
+  consumirCreditos: (usuarioId, creditos, entrada) =>
+    set((s) => ({
+      presupuestos: {
+        ...s.presupuestos,
+        [usuarioId]: Math.min(
+          PRESUPUESTO_TOTAL_USUARIO,
+          (s.presupuestos[usuarioId] ?? 0) + creditos
+        ),
+      },
+      historialSql: [entrada, ...s.historialSql].slice(0, 20),
+    })),
   alternarNotificaciones: () =>
     set((s) => ({ notificacionesAbiertas: !s.notificacionesAbiertas })),
   cerrarNotificaciones: () => set({ notificacionesAbiertas: false }),

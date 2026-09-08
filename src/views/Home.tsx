@@ -49,7 +49,7 @@ const ACCESOS = [
   {
     id: "sql" as const,
     titulo: "Consultas SQL Gobernadas",
-    detalle: "Baja al dato sobre los objetos que tu perfil tiene autorizados.",
+    detalle: "Baja al dato con estimación de consumo antes de ejecutar.",
   },
   {
     id: "cargas" as const,

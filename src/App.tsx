@@ -7,7 +7,7 @@ import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
 import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
-import ConsultasSQL from "./views/ConsultasSQL";
+import ExploradorDatos from "./views/ExploradorDatos";
 import Notificaciones from "./components/Notificaciones";
 import MisGraficos from "./views/MisGraficos";
 
@@ -161,7 +161,7 @@ export default function App() {
 
         <main className="flex-1 min-w-0 overflow-y-auto">
           {vista === "home" && <Home />}
-          {vista === "sql" && <ConsultasSQL />}
+          {vista === "sql" && <ExploradorDatos />}
           {vista === "cargas" && <Cargas />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
