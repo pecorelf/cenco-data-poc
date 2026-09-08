@@ -4,9 +4,31 @@ import { Grafico } from "../components/Graficos";
 import { useStore } from "../lib/store";
 
 export default function MisGraficos() {
-  const { graficos, borrarGrafico, renombrarGrafico, setVista, usuario } = useStore();
+  const {
+    graficos,
+    borrarGrafico,
+    renombrarGrafico,
+    setVista,
+    usuario,
+    modoGuardado,
+    cargandoGraficos,
+  } = useStore();
   const [editando, setEditando] = useState<string | null>(null);
   const [borrador, setBorrador] = useState("");
+
+  if (cargandoGraficos) {
+    return (
+      <div className="pb-14">
+        <Encabezado
+          titulo="Mis gráficos"
+          bajada="Acá se guardan los gráficos que armas con Cuenco o en Informes personalizados."
+        />
+        <div className="px-8 py-14">
+          <p className="anim-pulso text-[14px] text-gris">Cargando tus gráficos…</p>
+        </div>
+      </div>
+    );
+  }
 
   if (!graficos.length) {
     return (
@@ -118,10 +140,21 @@ export default function MisGraficos() {
           </article>
         ))}
 
-        <p className="text-micro text-gris max-w-[70ch] leading-relaxed">
-          Los gráficos de {usuario.nombre} se guardan en este navegador. En la
-          implementación real viven en el perfil del usuario dentro del portal, con el
-          mismo control de acceso que el resto de sus activos.
+        <p className="text-micro text-gris max-w-[76ch] leading-relaxed">
+          {modoGuardado === "compartido" ? (
+            <>
+              Los gráficos de {usuario.nombre} están en el almacenamiento compartido: se
+              ven desde cualquier equipo que abra el portal con esta sesión. En la
+              implementación real viven en su perfil dentro del portal, con el mismo
+              control de acceso que el resto de sus activos.
+            </>
+          ) : (
+            <>
+              Los gráficos de {usuario.nombre} se guardan solo en este navegador. Para que
+              se vean desde cualquier equipo, configura el almacenamiento compartido en las
+              variables de entorno del proyecto.
+            </>
+          )}
         </p>
       </div>
     </div>

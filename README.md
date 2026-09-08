@@ -87,6 +87,20 @@ React 18 · Vite · TypeScript · Tailwind · Zustand · Anthropic SDK. Sin libr
 gráficos. La API es una función serverless en `api/chat.ts` que corre igual en Vercel y
 en local (un plugin de Vite la monta sobre el dev server).
 
+## Persistencia de Mis gráficos
+
+Dos niveles, con degradación limpia:
+
+- **Compartido** — si el proyecto tiene `UPSTASH_REDIS_REST_URL` y
+  `UPSTASH_REDIS_REST_TOKEN`, los gráficos se guardan en Redis con clave por usuario
+  (`cenco:graficos:<id>`) y se ven desde cualquier equipo que abra el portal con esa
+  sesión. Es lo que se necesita cuando la demo la miran varios asistentes a la vez.
+- **Local** — sin esas variables, o si la red falla, todo sigue funcionando contra
+  `localStorage`. La vista Mis gráficos dice en qué modo está.
+
+Se escribe siempre en local primero (es instantáneo y garantiza que nada se pierda) y
+después se sincroniza con el compartido.
+
 ## Correr en local
 
 ```bash
@@ -95,10 +109,15 @@ cp .env.example .env      # pega tu ANTHROPIC_API_KEY
 npm run dev               # http://localhost:5173
 ```
 
+El `.env` se inyecta en `process.env` desde `vite.config.ts` con `loadEnv` sin prefijo:
+Vite por defecto solo expone variables `VITE_`, y las funciones de `/api` necesitan
+leerlas igual que lo harían en Vercel.
+
 ## Desplegar en Vercel
 
-Importa el repo, framework Vite. Agrega `ANTHROPIC_API_KEY` en Environment Variables.
-El resto es automático.
+Importa el repo, framework Vite. Agrega `ANTHROPIC_API_KEY` en Environment Variables y,
+si quieres persistencia compartida, las dos variables de Upstash. El resto es
+automático.
 
 ## Sobre los datos
 

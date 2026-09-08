@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { Bandera, Categoria, Mes } from "../data/comercial";
 import { USUARIOS, type Usuario } from "../data/usuarios";
 import type { EspecGrafico } from "../components/Graficos";
+import { cargar, guardar as persistir, type Modo } from "./persistencia";
 
 export type Vista =
   | "diagnostico"
@@ -33,25 +34,6 @@ export interface GraficoGuardado {
   certificado: boolean;
 }
 
-const CLAVE = "cenco.misGraficos.v1";
-
-function leerGraficos(): GraficoGuardado[] {
-  try {
-    const crudo = localStorage.getItem(CLAVE);
-    return crudo ? (JSON.parse(crudo) as GraficoGuardado[]) : [];
-  } catch {
-    return [];
-  }
-}
-
-function escribirGraficos(g: GraficoGuardado[]) {
-  try {
-    localStorage.setItem(CLAVE, JSON.stringify(g));
-  } catch {
-    /* cuota llena o almacenamiento bloqueado: la sesión sigue funcionando */
-  }
-}
-
 interface Estado {
   vista: Vista;
   usuario: Usuario;
@@ -60,6 +42,8 @@ interface Estado {
   mes: Mes;
   reportes: ReporteGuardado[];
   graficos: GraficoGuardado[];
+  modoGuardado: Modo;
+  cargandoGraficos: boolean;
   setVista: (v: Vista) => void;
   setUsuario: (id: string) => void;
   setBandera: (b: Bandera | "Todas") => void;
@@ -69,6 +53,7 @@ interface Estado {
   guardarGrafico: (g: GraficoGuardado) => void;
   borrarGrafico: (id: string) => void;
   renombrarGrafico: (id: string, nombre: string) => void;
+  cargarGraficos: () => Promise<void>;
 }
 
 export const useStore = create<Estado>((set) => ({
@@ -78,7 +63,9 @@ export const useStore = create<Estado>((set) => ({
   categoria: "Todas",
   mes: "Ago",
   reportes: [],
-  graficos: leerGraficos(),
+  graficos: [],
+  modoGuardado: "local",
+  cargandoGraficos: true,
   setVista: (vista) => set({ vista }),
   setUsuario: (id) => {
     const usuario = USUARIOS.find((u) => u.id === id) ?? USUARIOS[0];
@@ -89,7 +76,10 @@ export const useStore = create<Estado>((set) => ({
       usuario.categorias === "todas"
         ? "Todas"
         : (usuario.categorias[0] as Categoria);
-    set({ usuario, bandera, categoria });
+    set({ usuario, bandera, categoria, graficos: [], cargandoGraficos: true });
+    void cargar(usuario.id).then(({ graficos, modo }) =>
+      set({ graficos, modoGuardado: modo, cargandoGraficos: false })
+    );
   },
   setBandera: (bandera) => set({ bandera }),
   setCategoria: (categoria) => set({ categoria }),
@@ -98,21 +88,27 @@ export const useStore = create<Estado>((set) => ({
   guardarGrafico: (g) =>
     set((s) => {
       const graficos = [g, ...s.graficos];
-      escribirGraficos(graficos);
+      void persistir(s.usuario.id, graficos).then((modo) => set({ modoGuardado: modo }));
       return { graficos };
     }),
   borrarGrafico: (id) =>
     set((s) => {
       const graficos = s.graficos.filter((g) => g.id !== id);
-      escribirGraficos(graficos);
+      void persistir(s.usuario.id, graficos).then((modo) => set({ modoGuardado: modo }));
       return { graficos };
     }),
   renombrarGrafico: (id, nombre) =>
     set((s) => {
       const graficos = s.graficos.map((g) => (g.id === id ? { ...g, nombre } : g));
-      escribirGraficos(graficos);
+      void persistir(s.usuario.id, graficos).then((modo) => set({ modoGuardado: modo }));
       return { graficos };
     }),
+  cargarGraficos: async () => {
+    const { usuario } = useStore.getState();
+    set({ cargandoGraficos: true });
+    const { graficos, modo } = await cargar(usuario.id);
+    set({ graficos, modoGuardado: modo, cargandoGraficos: false });
+  },
 }));
 
 /** Banderas y categorías que el RLS del usuario le permite ver. */

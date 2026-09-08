@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { useStore, type Vista } from "./lib/store";
 import { USUARIOS } from "./data/usuarios";
 import Diagnostico from "./views/Diagnostico";
@@ -43,7 +44,14 @@ const NAV: Array<{
 ];
 
 export default function App() {
-  const { vista, setVista, usuario, setUsuario, graficos } = useStore();
+  const { vista, setVista, usuario, setUsuario, graficos, cargarGraficos } = useStore();
+
+  // Carga inicial de los gráficos del usuario en sesión.
+  useEffect(() => {
+    void cargarGraficos();
+    // Solo al montar: los cambios de sesión los maneja setUsuario.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="min-h-screen flex flex-col">

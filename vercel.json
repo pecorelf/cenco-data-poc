@@ -6,6 +6,9 @@
   "functions": {
     "api/chat.ts": {
       "maxDuration": 60
+    },
+    "api/graficos.ts": {
+      "maxDuration": 15
     }
   }
 }
