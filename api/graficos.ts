@@ -5,15 +5,26 @@
 
 // Se leen dentro de la petición, no al cargar el módulo: en desarrollo el .env
 // se inyecta después de que Vite construye el servidor.
-const credenciales = () => ({
-  url: process.env.UPSTASH_REDIS_REST_URL,
-  token: process.env.UPSTASH_REDIS_REST_TOKEN,
-});
+//
+// Los nombres varían según cómo se conecte el almacenamiento: la integración de
+// Upstash en Vercel usa UPSTASH_*, la de Vercel KV usa KV_REST_API_*. Se aceptan
+// ambos para no depender de cuál se haya usado.
+const PARES: Array<[string, string]> = [
+  ["UPSTASH_REDIS_REST_URL", "UPSTASH_REDIS_REST_TOKEN"],
+  ["KV_REST_API_URL", "KV_REST_API_TOKEN"],
+  ["REDIS_REST_URL", "REDIS_REST_TOKEN"],
+];
 
-const configurado = () => {
-  const { url, token } = credenciales();
-  return Boolean(url && token);
+const credenciales = () => {
+  for (const [nombreUrl, nombreToken] of PARES) {
+    const url = process.env[nombreUrl];
+    const token = process.env[nombreToken];
+    if (url && token) return { url, token, origen: nombreUrl };
+  }
+  return { url: undefined, token: undefined, origen: null as string | null };
 };
+
+const configurado = () => Boolean(credenciales().url);
 
 const clave = (usuario: string) => `cenco:graficos:${usuario}`;
 
@@ -64,7 +75,8 @@ export default async function handler(req: any, res: any) {
       compartido: false,
       graficos: [],
       motivo:
-        "Almacenamiento compartido no configurado. Define UPSTASH_REDIS_REST_URL y UPSTASH_REDIS_REST_TOKEN para que los gráficos se vean desde cualquier equipo.",
+        "Almacenamiento compartido no configurado. Se aceptan los pares UPSTASH_REDIS_REST_URL/TOKEN, KV_REST_API_URL/TOKEN o REDIS_REST_URL/TOKEN.",
+      variablesDetectadas: PARES.flat().filter((n) => Boolean(process.env[n])),
     });
     return;
   }
@@ -77,7 +89,11 @@ export default async function handler(req: any, res: any) {
       if (!usuario) return responder(400, { error: "Falta el parámetro usuario." });
       const crudo = (await redis(["GET", clave(usuario)])) as string | null;
       const graficos = crudo ? JSON.parse(crudo) : [];
-      return responder(200, { compartido: true, graficos });
+      return responder(200, {
+        compartido: true,
+        graficos,
+        origen: credenciales().origen,
+      });
     }
 
     if (req.method === "PUT") {

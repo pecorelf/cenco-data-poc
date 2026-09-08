@@ -99,8 +99,8 @@ en local (un plugin de Vite la monta sobre el dev server).
 
 Dos niveles, con degradación limpia:
 
-- **Compartido** — si el proyecto tiene `UPSTASH_REDIS_REST_URL` y
-  `UPSTASH_REDIS_REST_TOKEN`, los gráficos se guardan en Redis con clave por usuario
+- **Compartido** — si el proyecto tiene credenciales de Redis, los gráficos se guardan
+  con clave por usuario
   (`cenco:graficos:<id>`) y se ven desde cualquier equipo que abra el portal con esa
   sesión. Es lo que se necesita cuando la demo la miran varios asistentes a la vez.
 - **Local** — sin esas variables, o si la red falla, todo sigue funcionando contra
@@ -108,6 +108,16 @@ Dos niveles, con degradación limpia:
 
 Se escribe siempre en local primero (es instantáneo y garantiza que nada se pierda) y
 después se sincroniza con el compartido.
+
+Los nombres de variable varían según cómo se conecte el almacenamiento, así que se
+aceptan tres pares: `UPSTASH_REDIS_REST_URL`/`_TOKEN`, `KV_REST_API_URL`/`_TOKEN` o
+`REDIS_REST_URL`/`_TOKEN`. Si conectas el almacenamiento desde el panel de Vercel, las
+variables se crean solas y no hay que renombrar nada.
+
+Para verificar que quedó conectado, `GET /api/graficos?usuario=gg` devuelve
+`{"compartido": true, "origen": "<nombre de la variable detectada>"}`. Si devuelve
+`compartido: false`, el campo `variablesDetectadas` muestra cuáles encontró, sin exponer
+sus valores.
 
 ## Correr en local
 
