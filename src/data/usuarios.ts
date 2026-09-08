@@ -47,6 +47,6 @@ export const USUARIOS: Usuario[] = [
     banderas: "todas",
     categorias: "todas",
     puedePublicar: false,
-    nota: "Trabaja en el carril exploratorio. Puede crear cálculos propios, no publicarlos.",
+    nota: "Puede crear informes y cálculos propios, pero no publicarlos como oficiales.",
   },
 ];

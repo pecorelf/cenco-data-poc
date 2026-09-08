@@ -275,7 +275,7 @@ export default function BIA() {
           <div>
             <div className="text-[15px] font-semibold text-cenco-deep">BIA</div>
             <p className="text-micro text-gris mt-0.5 leading-relaxed">
-              Responde sobre la capa semántica, dentro del alcance de{" "}
+              Usa las definiciones de la capa semántica, dentro del alcance de{" "}
               {usuario.nombre.split(" ")[0]}.
             </p>
           </div>

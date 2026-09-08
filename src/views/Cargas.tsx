@@ -65,7 +65,7 @@ export default function Cargas() {
     <div className="pb-14">
       <Encabezado
         titulo="Cargas manuales gobernadas"
-        bajada="Hay información que no vive en ningún sistema, como el plan regional por categoría. Hoy se mantiene a mano en el Centralizador y nadie sabe quién cambió qué. Acá entra igual de fácil, pero validada contra los maestros y con traza."
+        bajada="El plan regional por categoría no vive en ningún sistema: hoy se mantiene a mano en el Centralizador. Acá se sube igual de rápido, pero validado contra los maestros y con registro de quién cargó qué."
       />
 
       <div className="p-8 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
@@ -278,7 +278,7 @@ export default function Cargas() {
                             Quedó en la bitácora con tu nombre, la hora y el detalle de lo
                             aceptado y rechazado. En la implementación real la escritura va
                             a una tabla de la capa Gold marcada como origen manual, para
-                            que nunca se confunda con un dato de sistema.
+                            distinguirla de un dato de sistema.
                           </p>
                         </div>
                       )}
@@ -342,12 +342,11 @@ export default function Cargas() {
 
           <div className="border border-cenco-line bg-white rounded-card shadow-suave p-5">
             <h3 className="text-[13.5px] font-semibold text-cenco-deep">
-              Por qué esto importa
+              Qué cambia respecto del Centralizador
             </h3>
             <p className="mt-2 text-[12.5px] text-gris leading-relaxed">
-              El Centralizador no es un problema porque sea manual. Es un problema porque
-              es manual y opaco: nadie sabe qué se cargó, quién lo hizo ni qué se coló sin
-              validar. La carga sigue siendo manual acá; lo que cambia es que deja rastro.
+              La carga sigue siendo manual. Lo que cambia es que se valida antes de entrar
+              y queda registrada: quién cargó, cuándo, qué se aceptó y qué se rechazó.
             </p>
           </div>
         </div>

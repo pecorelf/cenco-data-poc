@@ -9,7 +9,6 @@ export type Vista =
   | "certificados"
   | "constructor"
   | "graficos"
-  | "interoperabilidad"
   | "cargas";
 
 export interface ReporteGuardado {

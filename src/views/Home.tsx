@@ -9,24 +9,24 @@ import {
   sumaVenta,
 } from "../data/comercial";
 
-// Home posterior al ingreso. La pieza central es la oferta de valor de BIA:
-// el asistente no es un botón escondido, es la puerta de entrada al portal.
+// Home posterior al ingreso. Encabeza BIA porque es la vía más corta a una
+// respuesta; debajo van el estado del mes y los accesos a cada módulo.
 
 const VALOR = [
   {
-    titulo: "Respuestas al instante",
+    titulo: "Responde sin que nadie arme el reporte",
     detalle:
-      "Obtén cifras claras sobre venta, margen o participación sin esperar a que alguien arme el reporte.",
+      "Venta, margen, participación o quiebre, por mes, categoría o bandera. Si el cruce sirve, lo grafica.",
   },
   {
-    titulo: "Descubre y explora",
+    titulo: "Dice de dónde sale cada cifra",
     detalle:
-      "Encuentra reportes, métricas y definiciones, y pide el cruce que necesites en lenguaje natural.",
+      "Cita el indicador, su versión y quién responde por él. Si algo no está certificado, lo advierte antes.",
   },
   {
-    titulo: "Confiable y seguro",
+    titulo: "No inventa",
     detalle:
-      "Cada cifra cita su indicador, versión y responsable, y respeta el alcance que Unity Catalog te asignó.",
+      "Solo usa indicadores definidos en la capa semántica y dentro de tu alcance. Lo que no existe, lo dice.",
   },
 ];
 
@@ -34,12 +34,12 @@ const ACCESOS = [
   {
     id: "certificados" as const,
     titulo: "KPIs y reportes certificados",
-    detalle: "Venta contra plan, margen y participación, con sello oficial.",
+    detalle: "Venta contra plan, margen y participación, con su definición y su owner.",
   },
   {
     id: "constructor" as const,
     titulo: "Reportería personalizada",
-    detalle: "Cruza dimensiones y métricas certificadas sin depender del equipo BI.",
+    detalle: "Arma tu propio cruce de dimensiones y métricas, y guárdalo.",
   },
   {
     id: "graficos" as const,
@@ -49,12 +49,7 @@ const ACCESOS = [
   {
     id: "cargas" as const,
     titulo: "Portal de ingesta certificada",
-    detalle: "Carga archivos complementarios con plantilla, validación y traza.",
-  },
-  {
-    id: "interoperabilidad" as const,
-    titulo: "Portal, Power BI y BIA",
-    detalle: "La misma definición resuelta en los tres motores de consumo.",
+    detalle: "Sube archivos complementarios con plantilla, validación y registro.",
   },
 ];
 
@@ -72,13 +67,13 @@ export default function Home() {
               Agente BIA
             </span>
             <h1 className="mt-5 text-[36px] font-semibold leading-[1.1] tracking-[-0.015em]">
-              Tu asistente inteligente
-              <span className="block text-white/70">para datos y análisis</span>
+              Pregunta por tus indicadores
+              <span className="block text-white/70">en lenguaje natural</span>
             </h1>
             <p className="mt-4 text-[15.5px] text-white/75 leading-relaxed max-w-[58ch]">
-              Consulta información, encuentra reportes, comprende tus datos y obtén
-              respuestas con lenguaje natural, en segundos. BIA responde sobre la capa
-              semántica, así que su cifra es la misma que la del informe oficial.
+              BIA lee las mismas definiciones que los informes oficiales, así que su
+              respuesta trae la misma cifra. No es un buscador aparte ni un modelo con
+              copia de los datos.
             </p>
             <div className="mt-7 flex flex-wrap items-center gap-4">
               <button
@@ -89,7 +84,7 @@ export default function Home() {
                 <span aria-hidden>→</span>
               </button>
               <span className="text-[13px] text-white/60">
-                También está siempre abajo a la derecha.
+                Queda abierto abajo a la derecha en cualquier pantalla.
               </span>
             </div>
           </div>
@@ -145,8 +140,9 @@ export default function Home() {
             </div>
           </div>
           <p className="mt-5 text-[13px] text-gris leading-relaxed max-w-[76ch]">
-            Cifras certificadas dentro del alcance de {usuario.nombre}. Si quieres saber
-            por qué el margen viene cayendo desde mayo, pregúntaselo a BIA.
+            Cifras certificadas, dentro del alcance de {usuario.nombre}. El margen viene
+            cayendo desde mayo mientras la participación sube; el detalle está en KPIs y
+            reportes certificados.
           </p>
         </Panel>
 

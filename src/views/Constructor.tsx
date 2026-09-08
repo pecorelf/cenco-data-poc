@@ -141,7 +141,7 @@ export default function Constructor() {
     setAviso({
       tono: "ok",
       texto: hayExploratorio
-        ? "Guardado en tu espacio personal. Queda en el carril exploratorio porque incluye una métrica sin certificar."
+        ? "Guardado en tu espacio personal. No queda como oficial porque incluye una métrica sin certificar."
         : "Guardado en tu espacio personal. Todas sus métricas están certificadas.",
     });
   };
@@ -234,8 +234,9 @@ export default function Constructor() {
               })}
             </div>
             <p className="mt-4 text-[12.5px] text-gris leading-relaxed">
-              El punto verde marca las métricas certificadas; el naranjo, las que aún no lo
-              están. Puedes usar ambas, pero eso define en qué carril queda tu informe.
+              El punto verde marca las métricas certificadas; el naranjo, las que todavía no
+              tienen definición acordada ni responsable. Puedes usar ambas, pero un informe
+              que incluya una métrica sin certificar no se puede publicar como oficial.
             </p>
           </Panel>
 
@@ -301,17 +302,6 @@ export default function Constructor() {
             )}
           </Panel>
 
-          <div className="border border-cenco-line bg-white rounded-card shadow-suave p-5">
-            <h3 className="text-[13.5px] font-semibold text-cenco-deep">
-              Cómo funcionan las dos velocidades
-            </h3>
-            <p className="mt-2 text-[12.5px] text-gris leading-relaxed">
-              El carril exploratorio es libre: cualquiera arma lo que necesite y lo guarda.
-              El carril certificado exige que cada métrica tenga definición acordada y
-              responsable. Pasar de uno al otro es una decisión del owner, no un permiso de
-              la herramienta.
-            </p>
-          </div>
         </div>
       </div>
     </div>

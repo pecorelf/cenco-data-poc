@@ -11,7 +11,7 @@ consumo distintos devuelven exactamente la misma cifra.
 
 El recorrido parte en el **home de ingreso**: acceso vía Active Directory con los módulos
 habilitados a la vista, y perfiles heredados desde Unity Catalog. Después del login, el
-portal tiene seis pantallas y un copiloto flotante:
+portal tiene cinco pantallas y un copiloto flotante:
 
 0. **Inicio** — la oferta de valor de BIA como puerta de entrada, con el pulso del negocio
    y los accesos a cada módulo.
@@ -25,16 +25,15 @@ portal tiene seis pantallas y un copiloto flotante:
    publicación hasta que el owner la revise.
 3. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
    lo originó y los indicadores de los que salió, para poder auditarlo después.
-4. **Portal, Power BI y BIA** (SH-19, SH-21) — la misma métrica resuelta al mismo tiempo
-   en los tres motores, con la cadena Gold → Metric View → mirroring a OneLake → Direct
-   Lake. Un botón publica la versión 2.2 de la definición y las tres cifras cambian a la
-   vez, sin tocar el portal ni reescribir DAX.
-5. **Cargas manuales gobernadas** (SH-13) — el plan regional por categoría, que hoy se
+4. **Cargas manuales gobernadas** (SH-13) — el plan regional por categoría, que hoy se
    mantiene a mano en el Centralizador. Se arrastra un CSV, se parsea y se valida de
    verdad en el navegador contra los maestros: columnas, valores permitidos, números,
    duplicados y el alcance RLS del usuario, porque el control de acceso aplica también al
    escribir. Las filas rechazadas se muestran con el motivo y no se cargan. Cada carga
    queda en una bitácora con autor y hora.
+
+Un informe que incluya una métrica sin certificar se puede guardar en el espacio personal
+pero no publicar como oficial: la promoción la decide el owner del indicador.
 
 **BIA** (CR-06, NH-12) es el copiloto, disponible como ventana emergente abajo a la
 derecha desde cualquier pantalla. Está anclado a la capa semántica: cita de qué indicador
@@ -62,7 +61,7 @@ Los tokens salen del design system de Cencosud, no de un tema genérico:
 
 | Token | Valor | Origen |
 |---|---|---|
-| Azul corporativo | `#095AA5` | muestreado del logo oficial |
+| Azul corporativo | `#095AA5` | muestreado del logo oficial; es el mismo de la barra superior, para que el logo no se recorte contra ella |
 | Naranjo | `#FF690A` | muestreado del punto del logo |
 | Neutro de texto | `#3B3D40` | guía de marca (Tuna) |
 | Tipografía | Raleway | tipografía corporativa de Cencosud |

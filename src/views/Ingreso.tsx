@@ -7,7 +7,7 @@ import { Boton } from "../components/UI";
 const MODULOS = [
   { titulo: "KPIs y reportes certificados", detalle: "Venta, margen y participación" },
   { titulo: "Portal de ingesta certificada", detalle: "Cargas con plantilla y traza" },
-  { titulo: "Analítica conversacional", detalle: "BIA, en lenguaje natural" },
+  { titulo: "Analítica conversacional", detalle: "Preguntas en lenguaje natural" },
   { titulo: "Consultas SQL gobernadas", detalle: "Sobre objetos autorizados" },
   { titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y freshness" },
 ];
@@ -86,8 +86,8 @@ export default function Ingreso() {
             Portal BI &amp; Analytics Unificado 360°
           </h1>
           <p className="mt-4 text-[16px] text-white/75 leading-relaxed">
-            Un activo habilitante de decisiones de negocio para Marcas Propias y
-            Supermercados Chile.
+            Los indicadores certificados de Marcas Propias y Supermercados Chile en un
+            solo lugar, con una definición por indicador y un responsable por definición.
           </p>
           <div className="mt-8 inline-block border border-white/25 rounded-full px-4 py-2 text-micro font-semibold text-white/80">
             Data &amp; Analytics · Supermercados
@@ -111,8 +111,8 @@ export default function Ingreso() {
             Bienvenido
           </h2>
           <p className="mt-2.5 text-[14.5px] text-gris leading-relaxed">
-            Usa tu cuenta corporativa para acceder a los indicadores certificados, los
-            procesos de ingesta y el asistente de análisis.
+            Entra con tu cuenta corporativa. Lo que veas después depende de tu rol, país,
+            bandera y dominio.
           </p>
 
           <div className="mt-7">
@@ -122,8 +122,8 @@ export default function Ingreso() {
           </div>
 
           <p className="mt-3 text-micro text-gris leading-relaxed">
-            Acceso vía Active Directory. Tus perfiles y permisos se heredan desde Unity
-            Catalog: lo que ves después depende de tu rol, país, bandera y dominio.
+            Acceso vía Active Directory. Los perfiles y permisos se heredan desde Unity
+            Catalog; el portal no define accesos propios.
           </p>
 
           <div className="mt-10 flex items-center gap-4">

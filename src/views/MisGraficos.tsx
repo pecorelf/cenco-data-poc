@@ -35,7 +35,7 @@ export default function MisGraficos() {
       <div className="pb-14">
         <Encabezado
           titulo="Mis gráficos"
-          bajada="Acá se guardan los gráficos que armas con BIA. Cada uno conserva la pregunta que lo originó y los indicadores de los que salió."
+          bajada="Los gráficos que armas con BIA o en Reportería personalizada. Cada uno guarda la pregunta que lo originó y los indicadores de los que salió."
         />
         <div className="px-8 py-14">
           <div className="max-w-[54ch] bg-white border border-cenco-line rounded-card shadow-suave p-8">

@@ -26,7 +26,7 @@ export default function Certificados() {
     <div className="pb-14">
       <Encabezado
         titulo="Informes certificados"
-        bajada="Los tres reportes oficiales de marca propia. Cada cifra resuelve contra la capa semántica, así que la que ves acá es la misma que verías en Power BI."
+        bajada="Los tres reportes oficiales de marca propia. Cada cifra se calcula con la definición de la capa semántica, la misma que usa Power BI."
       >
         <Filtros />
       </Encabezado>
@@ -99,7 +99,7 @@ export default function Certificados() {
                     color: "verde",
                   },
                 ],
-                nota: "La participación sube mientras el margen cae desde mayo. Es el patrón de crecer vía precio: conviene mirarlo por categoría antes de celebrar el share.",
+                nota: "Desde mayo la participación sube y el margen baja. Conviene revisarlo por categoría antes de leer el alza de participación como una buena noticia.",
               }}
             />
           </Panel>

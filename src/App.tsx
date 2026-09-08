@@ -3,7 +3,6 @@ import { useStore, type Vista } from "./lib/store";
 import { USUARIOS } from "./data/usuarios";
 import Certificados from "./views/Certificados";
 import Constructor from "./views/Constructor";
-import Interoperabilidad from "./views/Interoperabilidad";
 import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
 import Ingreso from "./views/Ingreso";
@@ -27,11 +26,6 @@ const NAV: Array<{ id: Vista; label: string; desc: string }> = [
     id: "cargas",
     label: "Portal de ingesta certificada",
     desc: "Con plantilla y traza",
-  },
-  {
-    id: "interoperabilidad",
-    label: "Portal, Power BI y BIA",
-    desc: "Una definición, tres motores",
   },
 ];
 
@@ -58,12 +52,12 @@ export default function App() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <header className="bg-cenco-deep text-white">
+      <header className="bg-cenco text-white">
         <div className="px-6 h-[68px] flex items-center gap-6">
           <img
             src="/cencosud.webp"
             alt="Cencosud"
-            className="h-10 w-auto rounded-control"
+            className="h-10 w-auto"
           />
           <div className="border-l border-white/20 pl-6">
             <div className="text-[15.5px] font-semibold leading-tight">
@@ -159,7 +153,6 @@ export default function App() {
 
         <main className="flex-1 min-w-0 overflow-y-auto">
           {vista === "home" && <Home />}
-          {vista === "interoperabilidad" && <Interoperabilidad />}
           {vista === "cargas" && <Cargas />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
