@@ -5,15 +5,11 @@ import type { EspecGrafico } from "../components/Graficos";
 import { cargar, guardar as persistir, type Modo } from "./persistencia";
 
 export type Vista =
-  | "diagnostico"
-  | "catalogo"
-  | "semantica"
-  | "interoperabilidad"
-  | "cargas"
   | "certificados"
   | "constructor"
   | "graficos"
-  | "cuenco";
+  | "interoperabilidad"
+  | "cargas";
 
 export interface ReporteGuardado {
   id: string;
@@ -46,6 +42,7 @@ export interface GraficoGuardado {
 
 interface Estado {
   vista: Vista;
+  chatAbierto: boolean;
   usuario: Usuario;
   bandera: Bandera | "Todas";
   categoria: Categoria | "Todas";
@@ -56,6 +53,8 @@ interface Estado {
   modoGuardado: Modo;
   cargandoGraficos: boolean;
   setVista: (v: Vista) => void;
+  alternarChat: () => void;
+  cerrarChat: () => void;
   setUsuario: (id: string) => void;
   setBandera: (b: Bandera | "Todas") => void;
   setCategoria: (c: Categoria | "Todas") => void;
@@ -69,7 +68,8 @@ interface Estado {
 }
 
 export const useStore = create<Estado>((set) => ({
-  vista: "diagnostico",
+  vista: "certificados",
+  chatAbierto: false,
   usuario: USUARIOS[0],
   bandera: "Todas",
   categoria: "Todas",
@@ -98,6 +98,8 @@ export const useStore = create<Estado>((set) => ({
   modoGuardado: "local",
   cargandoGraficos: true,
   setVista: (vista) => set({ vista }),
+  alternarChat: () => set((s) => ({ chatAbierto: !s.chatAbierto })),
+  cerrarChat: () => set({ chatAbierto: false }),
   setUsuario: (id) => {
     const usuario = USUARIOS.find((u) => u.id === id) ?? USUARIOS[0];
     // El alcance se re-hereda desde Unity Catalog al cambiar de sesión.

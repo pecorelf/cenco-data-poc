@@ -8,8 +8,8 @@ export default function MisGraficos() {
     graficos,
     borrarGrafico,
     renombrarGrafico,
-    setVista,
     usuario,
+    alternarChat,
     modoGuardado,
     cargandoGraficos,
   } = useStore();
@@ -21,7 +21,7 @@ export default function MisGraficos() {
       <div className="pb-14">
         <Encabezado
           titulo="Mis gráficos"
-          bajada="Acá se guardan los gráficos que armas con Cuenco o en Informes personalizados."
+          bajada="Acá se guardan los gráficos que armas con BIA o en Informes personalizados."
         />
         <div className="px-8 py-14">
           <p className="anim-pulso text-[14px] text-gris">Cargando tus gráficos…</p>
@@ -35,7 +35,7 @@ export default function MisGraficos() {
       <div className="pb-14">
         <Encabezado
           titulo="Mis gráficos"
-          bajada="Acá se guardan los gráficos que armas con Cuenco. Cada uno conserva la pregunta que lo originó y los indicadores de los que salió."
+          bajada="Acá se guardan los gráficos que armas con BIA. Cada uno conserva la pregunta que lo originó y los indicadores de los que salió."
         />
         <div className="px-8 py-14">
           <div className="max-w-[54ch] bg-white border border-cenco-line rounded-card shadow-suave p-8">
@@ -43,12 +43,12 @@ export default function MisGraficos() {
               Todavía no guardas ninguno
             </h2>
             <p className="mt-2.5 text-[14px] text-gris leading-relaxed">
-              Pídele un cruce a Cuenco —margen contra participación, venta contra plan— y
-              cuando aparezca el gráfico, ponle nombre y guárdalo. Vuelve acá cuando
-              quieras y estará tal como lo dejaste.
+              Pídele un cruce a BIA —margen contra participación, venta contra plan— o
+              ármalo en Informes personalizados. Cuando aparezca el gráfico, ponle nombre
+              y guárdalo. Vuelve acá cuando quieras y estará tal como lo dejaste.
             </p>
             <div className="mt-6">
-              <Boton onClick={() => setVista("cuenco")}>Ir a Cuenco</Boton>
+              <Boton onClick={alternarChat}>Preguntar a BIA</Boton>
             </div>
           </div>
         </div>

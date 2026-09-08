@@ -2,7 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 
 const MODELO = "claude-sonnet-4-6";
 
-const REGLAS = `Eres Cuenco, el agente del Portal BI Unificado 360° de Cencosud, para Marcas Propias y Supermercados Chile.
+const REGLAS = `Eres BIA, el agente del Portal BI Unificado 360° de Cencosud, para Marcas Propias y Supermercados Chile.
 
 Tu única fuente de verdad es la capa semántica que viene en el contexto. Reglas que no puedes romper:
 

@@ -18,7 +18,7 @@ export interface Indicador {
   version: string;
   certificadoDesde: string | null;
   ultimoCambio: string;
-  consumidores: Array<"Portal" | "Power BI" | "Agente Cuenco">;
+  consumidores: Array<"Portal" | "Power BI" | "BIA">;
   incluye: string[];
   excluye: string[];
   frescura: string;
@@ -52,7 +52,7 @@ export const INDICADORES: Indicador[] = [
     version: "2.1",
     certificadoDesde: "2026-06-30",
     ultimoCambio: "2026-06-30 · se incorporó merma valorizada al denominador de costo",
-    consumidores: ["Portal", "Power BI", "Agente Cuenco"],
+    consumidores: ["Portal", "Power BI", "BIA"],
     incluye: [
       "Rebates devengados en el período, no los cobrados",
       "Merma reconocida en sala y en centro de distribución",
@@ -89,7 +89,7 @@ export const INDICADORES: Indicador[] = [
     version: "3.0",
     certificadoDesde: "2026-04-15",
     ultimoCambio: "2026-04-15 · se unificó el tratamiento de descuentos de lealtad",
-    consumidores: ["Portal", "Power BI", "Agente Cuenco"],
+    consumidores: ["Portal", "Power BI", "BIA"],
     incluye: ["Venta en sala y en canal digital", "Descuentos de lealtad como menor venta"],
     excluye: ["Venta a terceros mayoristas", "Ajustes contables posteriores al cierre"],
     frescura: "Near real time · latencia < 15 min",
@@ -113,7 +113,7 @@ export const INDICADORES: Indicador[] = [
     version: "1.4",
     certificadoDesde: "2026-05-20",
     ultimoCambio: "2026-05-20 · se fijó el plan vigente al cierre, no el reforecast",
-    consumidores: ["Portal", "Power BI", "Agente Cuenco"],
+    consumidores: ["Portal", "Power BI", "BIA"],
     incluye: ["Plan aprobado en el ciclo de presupuesto"],
     excluye: ["Reforecast intramensual", "Ajustes de plan posteriores al cierre"],
     frescura: "Diaria · 06:00 CLT",
@@ -142,7 +142,7 @@ export const INDICADORES: Indicador[] = [
     version: "2.0",
     certificadoDesde: "2026-06-01",
     ultimoCambio: "2026-06-01 · se pasó de share en valor a share en unidades equivalentes",
-    consumidores: ["Portal", "Power BI", "Agente Cuenco"],
+    consumidores: ["Portal", "Power BI", "BIA"],
     incluye: ["Unidades equivalentes normalizadas por formato de envase"],
     excluye: ["Categorías sin surtido de marca propia"],
     frescura: "Diaria · 06:00 CLT",
@@ -167,7 +167,7 @@ export const INDICADORES: Indicador[] = [
     version: "1.2",
     certificadoDesde: "2026-03-10",
     ultimoCambio: "2026-03-10 · se excluyeron SKU en proceso de descontinuación",
-    consumidores: ["Portal", "Power BI", "Agente Cuenco"],
+    consumidores: ["Portal", "Power BI", "BIA"],
     incluye: ["SKU activos con surtido asignado a la tienda"],
     excluye: ["SKU descontinuados", "Tiendas en remodelación"],
     frescura: "Cada 4 horas",
@@ -196,7 +196,7 @@ export const INDICADORES: Indicador[] = [
     version: "0.9",
     certificadoDesde: null,
     ultimoCambio: "2026-08-22 · en revisión por el owner, pendiente criterio de cliente activo",
-    consumidores: ["Portal", "Agente Cuenco"],
+    consumidores: ["Portal", "BIA"],
     incluye: ["Transacciones con cliente identificado"],
     excluye: ["Compras sin identificación", "Clientes con menos de 2 visitas en el período"],
     frescura: "Semanal · lunes 07:00 CLT",

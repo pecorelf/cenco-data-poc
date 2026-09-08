@@ -43,7 +43,7 @@ const MOTORES = [
   },
   {
     id: "agente",
-    nombre: "Cuenco",
+    nombre: "BIA",
     quien: "Cualquier usuario, en lenguaje natural",
     como: "Consulta la misma Metric View y cita versión y owner",
     detalle: "No calcula: pregunta a la capa semántica y devuelve lo que ella responde.",

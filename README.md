@@ -9,20 +9,18 @@ La tesis de la demo no es que se puede hacer un dashboard bonito. Es que **una m
 tiene una sola definición, un solo responsable y un solo linaje**, y que tres motores de
 consumo distintos devuelven exactamente la misma cifra.
 
-El recorrido tiene nueve pantallas, agrupadas en entender, gobernar y consumir:
+El portal tiene cinco pantallas y un copiloto flotante:
 
-1. **Diagnóstico** — tres áreas reportan el margen de marca propia de agosto con tres
-   cifras distintas. Ninguna calculó mal; cada una respondió a una definición que nunca
-   se acordó. Al revelar la cifra certificada se explica por qué cada una difiere.
-2. **Catálogo unificado** (CR-06) — los 14 activos que hoy viven repartidos entre Power BI,
-   MicroStrategy, Looker Studio y el Centralizador, buscables desde un solo lugar y
-   clasificados en mantener, converger, reemplazar o descontinuar. Es la racionalización
-   del Frente 4 hecha pantalla: migrar los catorce cuesta lo mismo que migrar nueve y
-   apagar cinco, con la diferencia de que la deuda no viaja.
-3. **Capa semántica** — el catálogo de indicadores. Cada uno con su fórmula, su owner
-   nombrado, su linaje hasta las tablas Gold, qué considera y qué deja fuera, y qué
-   motores lo consumen. Es el equivalente a Unity Catalog Metric Views.
-4. **Portal, Power BI y agente** (SH-19, SH-21) — la misma métrica resuelta al mismo tiempo
+1. **Informes certificados** — venta contra plan, margen y participación, los tres
+   reportes que el RFP nombra textualmente. Cada cifra resuelve contra la capa semántica.
+2. **Informes personalizados** (MH-06) — armador de dimensión por métricas que calcula de
+   verdad sobre el dataset: se elige agrupar por mes, categoría o bandera, se marcan las
+   métricas y la vista previa se rearma. Incluye el modelo de dos velocidades: se puede
+   usar una métrica sin certificar, el sistema lo permite, lo marca y bloquea la
+   publicación hasta que el owner la revise.
+3. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
+   lo originó y los indicadores de los que salió, para poder auditarlo después.
+4. **Portal, Power BI y BIA** (SH-19, SH-21) — la misma métrica resuelta al mismo tiempo
    en los tres motores, con la cadena Gold → Metric View → mirroring a OneLake → Direct
    Lake. Un botón publica la versión 2.2 de la definición y las tres cifras cambian a la
    vez, sin tocar el portal ni reescribir DAX.
@@ -30,27 +28,20 @@ El recorrido tiene nueve pantallas, agrupadas en entender, gobernar y consumir:
    mantiene a mano en el Centralizador. Se arrastra un CSV, se parsea y se valida de
    verdad en el navegador contra los maestros: columnas, valores permitidos, números,
    duplicados y el alcance RLS del usuario, porque el control de acceso aplica también al
-   escribir. Las filas rechazadas se muestran con el motivo y no se cargan; el archivo
-   nunca entra a medias en silencio. Cada carga queda en una bitácora con autor y hora.
-   Trae dos archivos de ejemplo, uno limpio y otro con siete errores distintos, para que
-   la demo no dependa de tener un CSV a mano.
-6. **Informes certificados** — venta contra plan, margen y participación, los tres
-   reportes que el RFP nombra textualmente. Todo resuelve contra la capa semántica.
-7. **Informes personalizados** (MH-06) — armador de dimensión por métricas que calcula de
-   verdad sobre el dataset: se elige agrupar por mes, categoría o bandera, se marcan las
-   métricas y la vista previa se rearma. Incluye el modelo de dos velocidades: se puede
-   usar una métrica sin certificar, el sistema lo permite, lo marca y bloquea la
-   publicación hasta que el owner la revise.
-8. **Cuenco** (NH-12) — el copiloto. Anclado a la capa semántica, cita de qué indicador y versión
-   salió cada cifra, advierte cuando algo no está certificado y respeta el alcance RLS
-   del usuario. Además arma gráficos a demanda: se le pide un cruce en lenguaje natural
-   y devuelve la especificación, que el portal dibuja y el usuario puede guardar.
-9. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
-   lo originó y los indicadores de los que salió, para poder auditarlo después.
+   escribir. Las filas rechazadas se muestran con el motivo y no se cargan. Cada carga
+   queda en una bitácora con autor y hora.
+
+**BIA** (CR-06, NH-12) es el copiloto, disponible como ventana emergente abajo a la
+derecha desde cualquier pantalla. Está anclado a la capa semántica: cita de qué indicador
+y versión salió cada cifra, advierte cuando algo no está certificado y respeta el alcance
+RLS del usuario. Arma gráficos a demanda y permite guardarlos con nombre. El panel no se
+desmonta al cerrarse, así que la conversación y los gráficos generados siguen ahí al
+reabrirlo; si responde con el panel cerrado, la burbuja lo avisa con un contador.
+
 
 El selector de sesión de la cabecera cubre CR-01 y cambia el alcance heredado de Unity Catalog: con la
 jefa de categoría de Lácteos, las demás banderas y categorías desaparecen de los filtros
-y Cuenco se niega a responder por ellas.
+y BIA se niega a responder por ellas.
 
 ## Diseño
 
@@ -74,7 +65,7 @@ No se usa librería de charting. Los gráficos son SVG propio con animación CSS
 Todo respeta `prefers-reduced-motion`. Tipos disponibles: `barras`, `lineas`,
 `barras_horizontal`, `dona` y `combo`.
 
-## Cómo Cuenco genera gráficos
+## Cómo BIA genera gráficos
 
 El copiloto puede devolver, junto a su respuesta en prosa, un bloque delimitado con la
 especificación del gráfico:
