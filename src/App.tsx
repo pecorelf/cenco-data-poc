@@ -7,21 +7,28 @@ import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
 import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
+import ConsultasSQL from "./views/ConsultasSQL";
+import Notificaciones from "./components/Notificaciones";
 import MisGraficos from "./views/MisGraficos";
 
 const NAV: Array<{ id: Vista; label: string; desc: string }> = [
   { id: "home", label: "Inicio", desc: "Tu asistente y tus accesos" },
   {
     id: "certificados",
-    label: "KPIs y reportes certificados",
+    label: "KPIs y Reportes Certificados",
     desc: "Venta, margen, participación",
   },
   {
     id: "constructor",
-    label: "Reportería personalizada",
+    label: "Reportería Personalizados",
     desc: "Cruza métricas y dimensiones",
   },
   { id: "graficos", label: "Mis gráficos", desc: "Lo que has guardado" },
+  {
+    id: "sql",
+    label: "Consultas SQL Gobernadas",
+    desc: "Para perfiles avanzados",
+  },
   {
     id: "cargas",
     label: "Portal de ingesta certificada",
@@ -83,6 +90,7 @@ export default function App() {
                 ))}
               </select>
             </label>
+            <Notificaciones />
             <img
               src="/deloitte-digital.png"
               alt="Deloitte Digital"
@@ -153,6 +161,7 @@ export default function App() {
 
         <main className="flex-1 min-w-0 overflow-y-auto">
           {vista === "home" && <Home />}
+          {vista === "sql" && <ConsultasSQL />}
           {vista === "cargas" && <Cargas />}
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}

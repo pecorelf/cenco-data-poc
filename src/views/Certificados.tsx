@@ -25,7 +25,7 @@ export default function Certificados() {
   return (
     <div className="pb-14">
       <Encabezado
-        titulo="Informes certificados"
+        titulo="KPIs y Reportes Certificados"
         bajada="Los tres reportes oficiales de marca propia. Cada cifra se calcula con la definición de la capa semántica, la misma que usa Power BI."
       >
         <Filtros />

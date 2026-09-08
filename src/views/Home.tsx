@@ -33,18 +33,23 @@ const VALOR = [
 const ACCESOS = [
   {
     id: "certificados" as const,
-    titulo: "KPIs y reportes certificados",
+    titulo: "KPIs y Reportes Certificados",
     detalle: "Venta contra plan, margen y participación, con su definición y su owner.",
   },
   {
     id: "constructor" as const,
-    titulo: "Reportería personalizada",
+    titulo: "Reportería Personalizados",
     detalle: "Arma tu propio cruce de dimensiones y métricas, y guárdalo.",
   },
   {
     id: "graficos" as const,
     titulo: "Mis gráficos",
     detalle: "Lo que guardaste, con la pregunta que lo originó.",
+  },
+  {
+    id: "sql" as const,
+    titulo: "Consultas SQL Gobernadas",
+    detalle: "Baja al dato sobre los objetos que tu perfil tiene autorizados.",
   },
   {
     id: "cargas" as const,
@@ -142,7 +147,7 @@ export default function Home() {
           <p className="mt-5 text-[13px] text-gris leading-relaxed max-w-[76ch]">
             Cifras certificadas, dentro del alcance de {usuario.nombre}. El margen viene
             cayendo desde mayo mientras la participación sube; el detalle está en KPIs y
-            reportes certificados.
+            Reportes Certificados.
           </p>
         </Panel>
 

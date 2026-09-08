@@ -11,7 +11,7 @@ consumo distintos devuelven exactamente la misma cifra.
 
 El recorrido parte en el **home de ingreso**: acceso vía Active Directory con los módulos
 habilitados a la vista, y perfiles heredados desde Unity Catalog. Después del login, el
-portal tiene cinco pantallas y un copiloto flotante:
+portal tiene seis pantallas y un copiloto flotante:
 
 0. **Inicio** — la oferta de valor de BIA como puerta de entrada, con el pulso del negocio
    y los accesos a cada módulo.
@@ -25,12 +25,22 @@ portal tiene cinco pantallas y un copiloto flotante:
    publicación hasta que el owner la revise.
 3. **Mis gráficos** — la galería personal. Cada gráfico guardado conserva la pregunta que
    lo originó y los indicadores de los que salió, para poder auditarlo después.
-4. **Cargas manuales gobernadas** (SH-13) — el plan regional por categoría, que hoy se
+4. **Consultas SQL Gobernadas** (SH-07, SH-08) — para perfiles avanzados. No es un editor
+   de mentira: `src/data/sql.ts` parsea un subconjunto de SELECT (WHERE, GROUP BY, ORDER
+   BY, LIMIT, y SUM/AVG/COUNT/MIN/MAX) y lo ejecuta sobre el dataset. Rechaza cualquier
+   escritura, rechaza objetos que Unity Catalog no autorizó al perfil, inyecta el filtro
+   de RLS aunque el usuario no lo escriba y aplica un tope de cómputo. Lo que no soporta
+   lo dice, en vez de devolver un resultado equivocado. Las consultas se pueden guardar.
+5. **Portal de ingesta certificada** (SH-13) — el plan regional por categoría, que hoy se
    mantiene a mano en el Centralizador. Se arrastra un CSV, se parsea y se valida de
    verdad en el navegador contra los maestros: columnas, valores permitidos, números,
    duplicados y el alcance RLS del usuario, porque el control de acceso aplica también al
    escribir. Las filas rechazadas se muestran con el motivo y no se cargan. Cada carga
    queda en una bitácora con autor y hora.
+
+El **centro de notificaciones y alertas** vive como campana en la cabecera, no como
+pestaña: incidentes, cargas, frescura, cambios de definición y las alertas por umbral del
+propio usuario.
 
 Un informe que incluya una métrica sin certificar se puede guardar en el espacio personal
 pero no publicar como oficial: la promoción la decide el owner del indicador.

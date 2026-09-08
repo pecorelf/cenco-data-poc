@@ -5,10 +5,10 @@ import { Boton } from "../components/UI";
 // public/portada.jpg y se usa encima del fondo gráfico, sin tocar código.
 
 const MODULOS = [
-  { titulo: "KPIs y reportes certificados", detalle: "Venta, margen y participación" },
+  { titulo: "KPIs y Reportes Certificados", detalle: "Venta, margen y participación" },
   { titulo: "Portal de ingesta certificada", detalle: "Cargas con plantilla y traza" },
   { titulo: "Analítica conversacional", detalle: "Preguntas en lenguaje natural" },
-  { titulo: "Consultas SQL gobernadas", detalle: "Sobre objetos autorizados" },
+  { titulo: "Consultas SQL Gobernadas", detalle: "Sobre objetos autorizados" },
   { titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y freshness" },
 ];
 

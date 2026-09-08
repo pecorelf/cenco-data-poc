@@ -64,7 +64,7 @@ export default function Cargas() {
   return (
     <div className="pb-14">
       <Encabezado
-        titulo="Cargas manuales gobernadas"
+        titulo="Portal de ingesta certificada"
         bajada="El plan regional por categoría no vive en ningún sistema: hoy se mantiene a mano en el Centralizador. Acá se sube igual de rápido, pero validado contra los maestros y con registro de quién cargó qué."
       />
 

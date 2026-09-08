@@ -179,7 +179,7 @@ export default function Constructor() {
   return (
     <div className="pb-14">
       <Encabezado
-        titulo="Informes personalizados"
+        titulo="Reportería Personalizados"
         bajada="Elige una dimensión y las métricas que quieras cruzar. Todo lo que aparece acá viene de la capa semántica, así que tu análisis usa las mismas definiciones que los informes oficiales."
       />
 

@@ -2,6 +2,7 @@ import { create } from "zustand";
 import type { Bandera, Categoria, Mes } from "../data/comercial";
 import { USUARIOS, type Usuario } from "../data/usuarios";
 import type { EspecGrafico } from "../components/Graficos";
+import type { Notificacion } from "../components/Notificaciones";
 import { cargar, guardar as persistir, type Modo } from "./persistencia";
 
 export type Vista =
@@ -9,6 +10,7 @@ export type Vista =
   | "certificados"
   | "constructor"
   | "graficos"
+  | "sql"
   | "cargas";
 
 export interface ReporteGuardado {
@@ -28,6 +30,14 @@ export interface RegistroCarga {
   fecha: string;
   aceptadas: number;
   rechazadas: number;
+}
+
+export interface ConsultaGuardada {
+  id: string;
+  nombre: string;
+  sql: string;
+  creadaPor: string;
+  creadaEn: string;
 }
 
 export interface GraficoGuardado {
@@ -50,6 +60,9 @@ interface Estado {
   mes: Mes;
   reportes: ReporteGuardado[];
   cargas: RegistroCarga[];
+  consultas: ConsultaGuardada[];
+  notificaciones: Notificacion[];
+  notificacionesAbiertas: boolean;
   graficos: GraficoGuardado[];
   modoGuardado: Modo;
   cargandoGraficos: boolean;
@@ -64,6 +77,11 @@ interface Estado {
   setMes: (m: Mes) => void;
   guardarReporte: (r: ReporteGuardado) => void;
   registrarCarga: (c: RegistroCarga) => void;
+  guardarConsulta: (c: ConsultaGuardada) => void;
+  borrarConsulta: (id: string) => void;
+  alternarNotificaciones: () => void;
+  cerrarNotificaciones: () => void;
+  marcarTodasLeidas: () => void;
   guardarGrafico: (g: GraficoGuardado) => void;
   borrarGrafico: (id: string) => void;
   renombrarGrafico: (id: string, nombre: string) => void;
@@ -98,6 +116,53 @@ export const useStore = create<Estado>((set) => ({
       rechazadas: 0,
     },
   ],
+  consultas: [],
+  notificacionesAbiertas: false,
+  notificaciones: [
+    {
+      id: "N-1",
+      tipo: "definicion",
+      titulo: "margen_bruto_mp pasó a la versión 2.1",
+      detalle:
+        "Paulina Grez incorporó la merma valorizada al costo. Los informes que la usan ya muestran la cifra nueva.",
+      cuando: "hace 2 h",
+      leida: false,
+    },
+    {
+      id: "N-2",
+      tipo: "incidente",
+      titulo: "Retraso en la carga de inventario",
+      detalle:
+        "gold.operaciones.fact_inventario_tienda quedó con 6 horas de atraso. El quiebre en sala puede estar subestimado.",
+      cuando: "hace 5 h",
+      leida: false,
+    },
+    {
+      id: "N-3",
+      tipo: "alerta",
+      titulo: "Margen de Lácteos bajo el umbral que definiste",
+      detalle: "Cayó a 21,4% en agosto, bajo el 22% que configuraste como aviso.",
+      cuando: "ayer",
+      leida: false,
+    },
+    {
+      id: "N-4",
+      tipo: "carga",
+      titulo: "Carga C-000 procesada con rechazos",
+      detalle:
+        "plan_regional_ago_final.csv: 84 filas aceptadas y 6 rechazadas por maestro desactualizado.",
+      cuando: "hace 3 días",
+      leida: true,
+    },
+    {
+      id: "N-5",
+      tipo: "freshness",
+      titulo: "Venta neta al día",
+      detalle: "Última actualización hace 12 minutos, dentro del acuerdo de Near Real Time.",
+      cuando: "hoy",
+      leida: true,
+    },
+  ],
   graficos: [],
   modoGuardado: "local",
   cargandoGraficos: true,
@@ -125,6 +190,14 @@ export const useStore = create<Estado>((set) => ({
   setMes: (mes) => set({ mes }),
   guardarReporte: (r) => set((s) => ({ reportes: [r, ...s.reportes] })),
   registrarCarga: (c) => set((s) => ({ cargas: [c, ...s.cargas] })),
+  guardarConsulta: (c) => set((s) => ({ consultas: [c, ...s.consultas] })),
+  borrarConsulta: (id) =>
+    set((s) => ({ consultas: s.consultas.filter((c) => c.id !== id) })),
+  alternarNotificaciones: () =>
+    set((s) => ({ notificacionesAbiertas: !s.notificacionesAbiertas })),
+  cerrarNotificaciones: () => set({ notificacionesAbiertas: false }),
+  marcarTodasLeidas: () =>
+    set((s) => ({ notificaciones: s.notificaciones.map((n) => ({ ...n, leida: true })) })),
   guardarGrafico: (g) =>
     set((s) => {
       const graficos = [g, ...s.graficos];
