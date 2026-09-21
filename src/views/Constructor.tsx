@@ -34,6 +34,7 @@ import {
   IconoAlerta,
   IconoDescargar,
   IconoSpinner,
+  IconoSliders,
 } from "../components/Iconos";
 import { Grafico, type EspecGrafico } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
@@ -60,6 +61,17 @@ const METRICAS = [
 ] as const;
 
 type MetricaId = (typeof METRICAS)[number]["id"];
+
+// Cumplimiento de plan es un porcentaje que se lee mejor como tendencia que
+// como barra — por eso arranca en línea. Todo lo demás arranca en barra.
+// Sigue siendo editable: esto es solo el punto de partida.
+const TIPO_SERIE_DEFECTO: Record<MetricaId, "barra" | "area" | "linea"> = {
+  venta_neta_mp: "barra",
+  cumplimiento_plan: "linea",
+  margen_bruto_mp: "barra",
+  share_mp: "barra",
+  margen_contribucion_regional: "barra",
+};
 
 const ETIQUETA_TIPO: Record<EspecGrafico["tipo"], string> = {
   barras: "Barras",
@@ -216,6 +228,10 @@ export default function Constructor() {
   const [dimension, setDimension] = useState<Dimension | null>("mes");
   const [metricas, setMetricas] = useState<MetricaId[]>(["margen_bruto_mp", "share_mp"]);
   const [tipoElegido, setTipoElegido] = useState<EspecGrafico["tipo"] | null>(null);
+  const [combinarModo, setCombinarModo] = useState(false);
+  const [tiposPorMetrica, setTiposPorMetrica] = useState<
+    Partial<Record<MetricaId, "barra" | "area" | "linea">>
+  >({});
   const [nombre, setNombre] = useState("");
   const [arrastrando, setArrastrando] = useState<string | null>(null);
   const [aviso, setAviso] = useState<{ tono: "ok" | "bloqueo"; texto: string } | null>(null);
@@ -249,6 +265,20 @@ export default function Constructor() {
 
   const tipoFinal: EspecGrafico["tipo"] =
     tipoElegido && tiposPermitidos.includes(tipoElegido) ? tipoElegido : tipoAuto;
+
+  const puedeCombinar = metricas.length >= 2;
+  const modoCombo = puedeCombinar && combinarModo;
+  const tipoDeMetrica = (id: MetricaId) => tiposPorMetrica[id] ?? TIPO_SERIE_DEFECTO[id];
+  const metricasEnLinea = elegidas.filter((m) => tipoDeMetrica(m.id) === "linea");
+  const unidadEjeDerecho =
+    modoCombo && metricasEnLinea.length ? metricasEnLinea[0].unidad : undefined;
+  const mezclaUnidadesIzq =
+    modoCombo &&
+    new Set(
+      elegidas.filter((m) => tipoDeMetrica(m.id) !== "linea").map((m) => m.unidad)
+    ).size > 1;
+  const mezclaUnidadesDer =
+    modoCombo && new Set(metricasEnLinea.map((m) => m.unidad)).size > 1;
 
   const metricasDisponibles = METRICAS.filter((m) => !metricas.includes(m.id));
   const dimensionesDisponibles = DIMENSIONES.filter((d) => d.id !== dimension);
@@ -327,26 +357,52 @@ export default function Constructor() {
         return calcular(m.id, filtrar(f));
       }),
       color: (["azul", "verde", "naranjo", "azulMedio", "gris"] as const)[i % 5],
-      tipo: (dimension === "mes" ? "linea" : "barra") as "linea" | "barra",
+      tipo: modoCombo
+        ? tipoDeMetrica(m.id)
+        : ((dimension === "mes" ? "linea" : "barra") as "linea" | "barra"),
     }));
 
+    const notasCombo = [
+      mezclaUnidadesIzq && "Las métricas en barra o área tienen unidades distintas entre sí.",
+      mezclaUnidadesDer && "Las métricas en línea tienen unidades distintas entre sí.",
+    ].filter(Boolean);
+
     return {
-      tipo: tipoFinal,
+      tipo: modoCombo ? "combo" : tipoFinal,
       titulo: `${elegidas.map((m) => m.etiqueta).join(" y ")} por ${
         DIMENSIONES.find((d) => d.id === dimension)!.nombre.toLowerCase()
       }`,
       subtitulo: `Marca propia · ${
         banderas ? banderas.join(", ") : "todas las banderas"
       } · 2026`,
-      unidad: mezclaUnidades ? "" : elegidas[0].unidad,
+      unidad: modoCombo
+        ? mezclaUnidadesIzq
+          ? ""
+          : elegidas.find((m) => tipoDeMetrica(m.id) !== "linea")?.unidad ?? ""
+        : mezclaUnidades
+        ? ""
+        : elegidas[0].unidad,
+      unidadDerecha: modoCombo ? unidadEjeDerecho : undefined,
       categorias: [...valoresDim],
       series,
       indicadores: metricas,
-      nota: mezclaUnidades
+      nota: modoCombo
+        ? notasCombo.join(" ") || undefined
+        : mezclaUnidades
         ? "Las métricas elegidas tienen unidades distintas, así que la escala del eje es referencial."
         : undefined,
     };
-  }, [dimension, metricas, elegidas, banderas, categorias, mezclaUnidades, tipoFinal]);
+  }, [
+    dimension,
+    metricas,
+    elegidas,
+    banderas,
+    categorias,
+    mezclaUnidades,
+    tipoFinal,
+    modoCombo,
+    tiposPorMetrica,
+  ]);
 
   const exportarPNG = async () => {
     if (!vistaPreviaRef.current || !espec) return;
@@ -544,25 +600,79 @@ export default function Constructor() {
             >
               {espec ? (
                 <>
-                  {tiposPermitidos.length > 1 && (
-                    <div className="flex flex-wrap gap-2 mb-4">
-                      {tiposPermitidos.map((t) => (
-                        <button
-                          key={t}
-                          onClick={() => setTipoElegido(t)}
-                          className={`estado px-3.5 py-1.5 rounded-full text-[12.5px] font-medium border ${
-                            t === tipoFinal
-                              ? "bg-cenco text-white border-cenco"
-                              : "border-cenco-line text-tuna hover:border-cenco/50"
-                          }`}
-                        >
-                          {ETIQUETA_TIPO[t]}
-                        </button>
-                      ))}
-                    </div>
+                  {puedeCombinar && (
+                    <button
+                      onClick={() => setCombinarModo((v) => !v)}
+                      className={`estado mb-3 inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-[12.5px] font-medium border ${
+                        combinarModo
+                          ? "bg-cenco text-white border-cenco"
+                          : "border-cenco-line text-tuna hover:border-cenco/50"
+                      }`}
+                    >
+                      <IconoSliders size={13} />
+                      Gráfico mixto — cada métrica con su tipo y su eje
+                    </button>
                   )}
+
+                  {modoCombo ? (
+                    <div className="mb-4 space-y-2.5">
+                      {elegidas.map((m) => {
+                        const t = tipoDeMetrica(m.id);
+                        return (
+                          <div key={m.id} className="flex items-center gap-2 flex-wrap">
+                            <span className="text-[12.5px] text-tuna w-[172px] shrink-0 truncate">
+                              {m.etiqueta}
+                            </span>
+                            {(["barra", "area", "linea"] as const).map((opcion) => (
+                              <button
+                                key={opcion}
+                                onClick={() =>
+                                  setTiposPorMetrica((s) => ({ ...s, [m.id]: opcion }))
+                                }
+                                className={`estado px-3 py-1 rounded-full text-[12px] font-medium border ${
+                                  t === opcion
+                                    ? "bg-cenco text-white border-cenco"
+                                    : "border-cenco-line text-tuna hover:border-cenco/50"
+                                }`}
+                              >
+                                {opcion === "barra" ? "Barra" : opcion === "area" ? "Área" : "Línea"}
+                              </button>
+                            ))}
+                          </div>
+                        );
+                      })}
+                      <p className="text-micro text-gris leading-relaxed pt-1">
+                        Las métricas en línea usan el eje derecho, con su propia escala — así no
+                        se aplastan contra las que están en barra o área.
+                      </p>
+                    </div>
+                  ) : (
+                    tiposPermitidos.length > 1 && (
+                      <div className="flex flex-wrap gap-2 mb-4">
+                        {tiposPermitidos.map((t) => (
+                          <button
+                            key={t}
+                            onClick={() => setTipoElegido(t)}
+                            className={`estado px-3.5 py-1.5 rounded-full text-[12.5px] font-medium border ${
+                              t === tipoFinal
+                                ? "bg-cenco text-white border-cenco"
+                                : "border-cenco-line text-tuna hover:border-cenco/50"
+                            }`}
+                          >
+                            {ETIQUETA_TIPO[t]}
+                          </button>
+                        ))}
+                      </div>
+                    )
+                  )}
+
                   <div ref={vistaPreviaRef} className="bg-white p-3">
-                    <Grafico e={espec} key={`${dimension}-${metricas.join(",")}-${tipoFinal}`} />
+                    <Grafico
+                      e={espec}
+                      key={`${dimension}-${metricas.join(",")}-${
+                        modoCombo ? `combo:${metricas.map((id) => tipoDeMetrica(id)).join(",")}` : tipoFinal
+                      }`}
+                    />
                   </div>
                 </>
               ) : !metricas.length ? (

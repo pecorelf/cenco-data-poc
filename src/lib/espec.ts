@@ -6,7 +6,7 @@ import type { EspecGrafico, NombreColor, Serie } from "../components/Graficos";
 const APERTURA = "```grafico";
 const CIERRE = "```";
 
-const TIPOS = ["barras", "lineas", "barras_horizontal", "dona", "combo"] as const;
+const TIPOS = ["barras", "lineas", "area", "barras_horizontal", "dona", "combo"] as const;
 const COLORES: NombreColor[] = ["azul", "azulMedio", "naranjo", "verde", "gris", "tuna"];
 
 export interface Extraccion {
@@ -58,7 +58,14 @@ function validar(bruto: unknown): EspecGrafico {
         colorPedido && COLORES.includes(colorPedido as NombreColor)
           ? (colorPedido as NombreColor)
           : undefined,
-      tipo: so.tipo === "linea" ? "linea" : so.tipo === "barra" ? "barra" : undefined,
+      tipo:
+        so.tipo === "linea"
+          ? "linea"
+          : so.tipo === "area"
+          ? "area"
+          : so.tipo === "barra"
+          ? "barra"
+          : undefined,
     };
   });
 
@@ -72,6 +79,7 @@ function validar(bruto: unknown): EspecGrafico {
     titulo,
     subtitulo: o.subtitulo ? String(o.subtitulo) : undefined,
     unidad: o.unidad ? String(o.unidad) : "",
+    unidadDerecha: o.unidadDerecha ? String(o.unidadDerecha) : undefined,
     categorias,
     series,
     nota: o.nota ? String(o.nota) : undefined,

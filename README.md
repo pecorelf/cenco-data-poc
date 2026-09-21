@@ -77,6 +77,28 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Gráficos combinados con eje doble, y tooltip al pasar el mouse
+
+Dos mejoras al motor de gráficos, ambas también disponibles para BIA porque comparten el
+mismo `components/Graficos.tsx`:
+
+**Eje doble de verdad.** El "combo" anterior apilaba dos gráficos independientes, cada uno
+con su propia escala — visualmente parecido a un combo, pero no lo era. Ahora `Combo` es
+un solo sistema de coordenadas: las métricas en barra o área comparten el eje izquierdo
+(arranca en cero), las marcadas en línea tienen su propio eje derecho con su propia escala,
+y las posiciones en X son las mismas para ambos. En Reportería Personalizados, con 2 o más
+métricas aparece "Gráfico mixto — cada métrica con su tipo y su eje": Barra, Área o Línea
+por métrica, con Cumplimiento de Plan arrancando en Línea por defecto (sigue siendo
+editable). Sin esto, cruzar venta en millones con cumplimiento en porcentaje aplastaría el
+cumplimiento contra el piso del gráfico — lo probé con datos reales antes de confiar en el
+render.
+
+**Tooltip con línea guía.** Barras, Líneas, Área y Combo ahora capturan el movimiento del
+mouse en toda el área de trazado (un rectángulo invisible, no hay que acertarle a una línea
+delgada ni a un punto), y muestran una guía vertical más una cajita con el valor de cada
+serie en esa categoría. Barras horizontales y Dona no lo necesitaban — ya muestran el valor
+siempre visible, dentro de la barra o en la leyenda.
+
 ## Tipo de gráfico y exportar a PNG en Reportería Personalizados
 
 El tipo de gráfico ahora se elige, no se impone — pero solo entre los tipos que tienen

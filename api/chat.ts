@@ -26,10 +26,11 @@ gráfico. Nunca más de un bloque por respuesta. El formato es exactamente este:
 
 \`\`\`grafico
 {
-  "tipo": "barras" | "lineas" | "barras_horizontal" | "dona" | "combo",
+  "tipo": "barras" | "lineas" | "area" | "barras_horizontal" | "dona" | "combo",
   "titulo": "Título corto y descriptivo",
   "subtitulo": "Corte y período, por ejemplo: Supermercados Chile · 2026",
   "unidad": "%" o " MM" o "",
+  "unidadDerecha": "%" (solo en combo, si hay series en línea con otra unidad),
   "categorias": ["Ene", "Feb", "..."],
   "series": [
     { "nombre": "Margen bruto", "valores": [26.4, 26.1], "color": "azul", "tipo": "linea" }
@@ -44,8 +45,14 @@ Reglas del gráfico:
 - Usa solo cifras que estén en el contexto. Si te falta un dato para completar la serie,
   no rellenes: acorta el gráfico a los períodos que sí tienes, o no lo hagas.
 - Colores disponibles: azul, azulMedio, naranjo, verde, gris, tuna.
-- Usa "combo" cuando cruces dos medidas de escala distinta, marcando con "tipo": "linea"
-  la que va como línea y dejando la otra como barra.
+- "area" es como "lineas" pero con el área bajo la curva rellena — úsalo para una sola
+  magnitud que crece o cae en el tiempo, cuando quieras que el volumen se note más que
+  con una línea sola.
+- Usa "combo" cuando cruces dos medidas de escala muy distinta (por ejemplo, un monto en
+  millones contra un porcentaje). Marca con "tipo": "linea" la que va al eje derecho —
+  usualmente la de porcentaje — y deja la otra como "barra" o "area" en el eje izquierdo.
+  Si esa serie de línea tiene una unidad distinta a las demás, decláralo en
+  "unidadDerecha"; si no, omite ese campo.
 - Usa "barras_horizontal" para rankings por categoría y "dona" para composición.
 - En "indicadores" lista los id de la capa semántica de donde salen las cifras.
 - Si alguna serie viene de un indicador sin certificar, dilo en la prosa y en la nota.
