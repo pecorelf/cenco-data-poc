@@ -77,6 +77,22 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Tipo de gráfico y exportar a PNG en Reportería Personalizados
+
+El tipo de gráfico ahora se elige, no se impone — pero solo entre los tipos que tienen
+sentido para la forma actual de los datos. Una serie temporal (dimensión = Mes) ofrece
+Líneas, Área o Barras. Una comparación entre categorías o banderas ofrece Barras y Barras
+horizontales, y además Dona cuando hay exactamente una métrica (porque ahí sí es una
+composición, no antes). El tipo Área es nuevo (`Areas` en `components/Graficos.tsx`),
+construido igual que Líneas pero con el relleno bajo la curva.
+
+**Exportar PNG** usa `html-to-image` en vez de serializar el SVG a mano: uno de los tipos
+de gráfico (Barras horizontales) está hecho con divs de HTML/CSS, no con SVG, así que
+"convertir el SVG a imagen" no habría alcanzado a cubrir todos los casos — se necesitaba
+capturar el nodo del DOM tal cual se ve, sin importar de qué está hecho por dentro. La
+exportación se genera a 2x de resolución sobre fondo blanco, y descarga directo sin pasar
+por el servidor.
+
 ## Drag & drop real en Reportería Personalizados
 
 Antes se elegía dimensión y métricas con clics sobre chips. Ahora se arrastran de verdad:

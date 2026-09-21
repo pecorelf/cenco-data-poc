@@ -1,4 +1,5 @@
-import { useMemo, useState, type ReactNode, type CSSProperties } from "react";
+import { useMemo, useRef, useState, type ReactNode, type CSSProperties } from "react";
+import { toPng } from "html-to-image";
 import {
   DndContext,
   DragOverlay,
@@ -26,7 +27,14 @@ import {
   type Mes,
 } from "../data/comercial";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
-import { IconoMarcador, IconoCheckEscudo, IconoCheck, IconoAlerta } from "../components/Iconos";
+import {
+  IconoMarcador,
+  IconoCheckEscudo,
+  IconoCheck,
+  IconoAlerta,
+  IconoDescargar,
+  IconoSpinner,
+} from "../components/Iconos";
 import { Grafico, type EspecGrafico } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
 
@@ -52,6 +60,15 @@ const METRICAS = [
 ] as const;
 
 type MetricaId = (typeof METRICAS)[number]["id"];
+
+const ETIQUETA_TIPO: Record<EspecGrafico["tipo"], string> = {
+  barras: "Barras",
+  lineas: "Líneas",
+  area: "Área",
+  barras_horizontal: "Barras horizontales",
+  dona: "Dona",
+  combo: "Combo",
+};
 
 function calcular(metrica: MetricaId, filas: ReturnType<typeof filtrar>): number {
   switch (metrica) {
@@ -198,14 +215,40 @@ export default function Constructor() {
 
   const [dimension, setDimension] = useState<Dimension | null>("mes");
   const [metricas, setMetricas] = useState<MetricaId[]>(["margen_bruto_mp", "share_mp"]);
+  const [tipoElegido, setTipoElegido] = useState<EspecGrafico["tipo"] | null>(null);
   const [nombre, setNombre] = useState("");
   const [arrastrando, setArrastrando] = useState<string | null>(null);
   const [aviso, setAviso] = useState<{ tono: "ok" | "bloqueo"; texto: string } | null>(null);
+  const [exportando, setExportando] = useState(false);
+  const vistaPreviaRef = useRef<HTMLDivElement>(null);
 
   const elegidas = metricas.map((id) => METRICAS.find((m) => m.id === id)!);
   const indicadores = metricas.map((id) => porId(id)!).filter(Boolean);
   const hayExploratorio = indicadores.some((i) => i.estado !== "certificado");
   const mezclaUnidades = new Set(elegidas.map((m) => m.unidad)).size > 1;
+
+  // Qué tipos de gráfico tienen sentido para la forma actual de los datos.
+  // Una serie temporal admite líneas, área o barras; una comparación entre
+  // categorías admite barras (y una dona si es una sola métrica, porque ahí
+  // sí es una composición). No se ofrece lo que no corresponde.
+  const tipoAuto: EspecGrafico["tipo"] = !dimension
+    ? "barras"
+    : dimension === "mes"
+    ? "lineas"
+    : metricas.length === 1
+    ? "barras_horizontal"
+    : "barras";
+
+  const tiposPermitidos: EspecGrafico["tipo"][] = !dimension
+    ? []
+    : dimension === "mes"
+    ? ["lineas", "area", "barras"]
+    : metricas.length === 1
+    ? ["barras_horizontal", "barras", "dona"]
+    : ["barras", "barras_horizontal"];
+
+  const tipoFinal: EspecGrafico["tipo"] =
+    tipoElegido && tiposPermitidos.includes(tipoElegido) ? tipoElegido : tipoAuto;
 
   const metricasDisponibles = METRICAS.filter((m) => !metricas.includes(m.id));
   const dimensionesDisponibles = DIMENSIONES.filter((d) => d.id !== dimension);
@@ -288,12 +331,7 @@ export default function Constructor() {
     }));
 
     return {
-      tipo:
-        dimension === "mes"
-          ? "lineas"
-          : series.length === 1
-          ? "barras_horizontal"
-          : "barras",
+      tipo: tipoFinal,
       titulo: `${elegidas.map((m) => m.etiqueta).join(" y ")} por ${
         DIMENSIONES.find((d) => d.id === dimension)!.nombre.toLowerCase()
       }`,
@@ -308,7 +346,37 @@ export default function Constructor() {
         ? "Las métricas elegidas tienen unidades distintas, así que la escala del eje es referencial."
         : undefined,
     };
-  }, [dimension, metricas, elegidas, banderas, categorias, mezclaUnidades]);
+  }, [dimension, metricas, elegidas, banderas, categorias, mezclaUnidades, tipoFinal]);
+
+  const exportarPNG = async () => {
+    if (!vistaPreviaRef.current || !espec) return;
+    setExportando(true);
+    try {
+      const dataUrl = await toPng(vistaPreviaRef.current, {
+        pixelRatio: 2,
+        backgroundColor: "#ffffff",
+        cacheBust: true,
+      });
+      const slug =
+        (nombre.trim() || espec.titulo)
+          .toLowerCase()
+          .normalize("NFD")
+          .replace(/[\u0300-\u036f]/g, "")
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/(^-|-$)/g, "") || "reporte";
+      const a = document.createElement("a");
+      a.href = dataUrl;
+      a.download = `${slug}.png`;
+      a.click();
+    } catch {
+      setAviso({
+        tono: "bloqueo",
+        texto: "No se pudo generar el PNG. Vuelve a intentarlo.",
+      });
+    } finally {
+      setExportando(false);
+    }
+  };
 
   const guardar = () => {
     if (!espec) return;
@@ -463,9 +531,40 @@ export default function Constructor() {
               </ZonaSoltar>
             </div>
 
-            <Panel titulo="Vista previa">
+            <Panel
+              titulo="Vista previa"
+              accion={
+                espec && (
+                  <Boton variante="contorno" onClick={exportarPNG} disabled={exportando}>
+                    {exportando ? <IconoSpinner size={14} /> : <IconoDescargar size={14} />}
+                    {exportando ? "Generando…" : "Exportar PNG"}
+                  </Boton>
+                )
+              }
+            >
               {espec ? (
-                <Grafico e={espec} key={`${dimension}-${metricas.join(",")}`} />
+                <>
+                  {tiposPermitidos.length > 1 && (
+                    <div className="flex flex-wrap gap-2 mb-4">
+                      {tiposPermitidos.map((t) => (
+                        <button
+                          key={t}
+                          onClick={() => setTipoElegido(t)}
+                          className={`estado px-3.5 py-1.5 rounded-full text-[12.5px] font-medium border ${
+                            t === tipoFinal
+                              ? "bg-cenco text-white border-cenco"
+                              : "border-cenco-line text-tuna hover:border-cenco/50"
+                          }`}
+                        >
+                          {ETIQUETA_TIPO[t]}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                  <div ref={vistaPreviaRef} className="bg-white p-3">
+                    <Grafico e={espec} key={`${dimension}-${metricas.join(",")}-${tipoFinal}`} />
+                  </div>
+                </>
               ) : !metricas.length ? (
                 <p className="text-[14px] text-gris">
                   Arrastra al menos una métrica para ver el resultado.

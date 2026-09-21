@@ -23,7 +23,7 @@ export interface Serie {
 }
 
 export interface EspecGrafico {
-  tipo: "barras" | "lineas" | "barras_horizontal" | "dona" | "combo";
+  tipo: "barras" | "lineas" | "area" | "barras_horizontal" | "dona" | "combo";
   titulo: string;
   subtitulo?: string;
   unidad?: string;
@@ -264,6 +264,87 @@ function Lineas({ e }: { e: EspecGrafico }) {
   );
 }
 
+/** Igual que Líneas, pero con el área bajo la curva rellena. */
+function Areas({ e }: { e: EspecGrafico }) {
+  const W = 720;
+  const H = 260;
+  const padL = 46;
+  const padB = 30;
+  const todos = e.series.flatMap((s) => s.valores);
+  const min = Math.min(...todos);
+  const max = Math.max(...todos);
+  const rango = max - min || 1;
+  const lo = min - rango * 0.18;
+  const hi = max + rango * 0.18;
+  const px = (i: number) =>
+    padL + (i * (W - padL - 12)) / Math.max(1, e.categorias.length - 1);
+  const py = (v: number) => H - padB - ((v - lo) / (hi - lo)) * (H - padB - 10);
+  const base = H - padB;
+  const ticks = [0, 0.5, 1].map((t) => lo + t * (hi - lo));
+
+  return (
+    <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img">
+      {ticks.map((t, i) => (
+        <g key={i}>
+          <line x1={padL} x2={W} y1={py(t)} y2={py(t)} stroke="#E6EFF8" strokeWidth={1} />
+          <text x={padL - 8} y={py(t) + 4} textAnchor="end" fontSize={11} fill="#6B7480">
+            {fmt(t)}
+          </text>
+        </g>
+      ))}
+      {e.categorias.map((c, i) => (
+        <text key={c} x={px(i)} y={H - 10} textAnchor="middle" fontSize={11.5} fill="#6B7480">
+          {c}
+        </text>
+      ))}
+      {e.series.map((s, si) => {
+        const linea = s.valores.map((v, i) => `${i ? "L" : "M"}${px(i)},${py(v)}`).join(" ");
+        const area = `${linea} L${px(s.valores.length - 1)},${base} L${px(0)},${base} Z`;
+        return (
+          <g key={s.nombre}>
+            <path
+              d={area}
+              fill={color(s, si)}
+              fillOpacity={0.16}
+              stroke="none"
+              className="anim-aparecer"
+              style={{ animationDelay: `${si * 150}ms` }}
+            />
+            <path
+              d={linea}
+              fill="none"
+              stroke={color(s, si)}
+              strokeWidth={2.5}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              pathLength={1}
+              strokeDasharray={1}
+              strokeDashoffset={1}
+              className="anim-trazar"
+              style={{ animationDelay: `${si * 220}ms` }}
+            />
+            {s.valores.map((v, i) => (
+              <circle
+                key={i}
+                cx={px(i)}
+                cy={py(v)}
+                r={3.5}
+                fill="#fff"
+                stroke={color(s, si)}
+                strokeWidth={2}
+                className="anim-aparecer"
+                style={{ animationDelay: `${900 + si * 220 + i * 40}ms` }}
+              >
+                <title>{`${e.categorias[i]} · ${s.nombre}: ${fmt(v, e.unidad)}`}</title>
+              </circle>
+            ))}
+          </g>
+        );
+      })}
+    </svg>
+  );
+}
+
 /** Barras horizontales — para rankings por categoría. */
 function BarrasH({ e }: { e: EspecGrafico }) {
   const s = e.series[0];
@@ -390,6 +471,8 @@ export function Grafico({ e }: { e: EspecGrafico }) {
     switch (e.tipo) {
       case "lineas":
         return <Lineas e={e} />;
+      case "area":
+        return <Areas e={e} />;
       case "barras_horizontal":
         return <BarrasH e={e} />;
       case "dona":
