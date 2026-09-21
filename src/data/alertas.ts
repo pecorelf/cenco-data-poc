@@ -8,6 +8,7 @@ import {
   sharePonderado,
   sumaVenta,
   sumaPlan,
+  MESES,
   type Bandera,
   type Categoria,
 } from "./comercial";
@@ -55,12 +56,15 @@ export interface AlertaConfigurada {
   creadaEn: string;
 }
 
-/** Valor vigente de la métrica para el alcance de la alerta, agosto 2026. */
-export function valorVigente(a: Pick<AlertaConfigurada, "metrica" | "bandera" | "categoria">): number {
+/** Valor de la métrica para el alcance de la alerta en el mes dado (por defecto, agosto 2026, el último mes con datos). */
+export function valorVigente(
+  a: Pick<AlertaConfigurada, "metrica" | "bandera" | "categoria">,
+  mes: (typeof MESES)[number] = "Ago"
+): number {
   const filas = filtrar({
     bandera: a.bandera === "Todas" ? undefined : a.bandera,
     categoria: a.categoria === "Todas" ? undefined : a.categoria,
-    mes: "Ago",
+    mes,
   });
   switch (a.metrica) {
     case "venta_neta":
@@ -87,6 +91,26 @@ export function cumpleCondicion(valor: number, operador: Operador, umbral: numbe
     case ">=":
       return valor >= umbral;
   }
+}
+
+export interface PuntoHistorico {
+  mes: string;
+  valor: number;
+  cumple: boolean;
+}
+
+/**
+ * Cómo se habría comportado esta regla en lo que va del año, mes a mes.
+ * Sirve para que quien configura la alerta vea, antes de guardarla, si el
+ * umbral que eligió es razonable o si dispararía todos los meses (o ninguno).
+ */
+export function serieHistorica(
+  a: Pick<AlertaConfigurada, "metrica" | "bandera" | "categoria" | "operador" | "umbral">
+): PuntoHistorico[] {
+  return MESES.map((mes) => {
+    const valor = valorVigente(a, mes);
+    return { mes, valor, cumple: cumpleCondicion(valor, a.operador, a.umbral) };
+  });
 }
 
 export const ALERTAS_SEMILLA: AlertaConfigurada[] = [

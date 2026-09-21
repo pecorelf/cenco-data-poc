@@ -96,8 +96,10 @@ interface Estado {
   borrarConsulta: (id: string) => void;
   consumirCreditos: (usuarioId: string, creditos: number, entrada: EjecucionSQL) => void;
   agregarAlerta: (a: AlertaConfigurada) => void;
+  editarAlerta: (id: string, cambios: Partial<AlertaConfigurada>) => void;
   alternarAlerta: (id: string) => void;
   borrarAlerta: (id: string) => void;
+  registrarNotificacion: (n: Notificacion) => void;
   alternarNotificaciones: () => void;
   cerrarNotificaciones: () => void;
   marcarTodasLeidas: () => void;
@@ -227,6 +229,11 @@ export const useStore = create<Estado>((set) => ({
       historialSql: [entrada, ...s.historialSql].slice(0, 20),
     })),
   agregarAlerta: (a) => set((s) => ({ alertas: [a, ...s.alertas] })),
+  editarAlerta: (id, cambios) =>
+    set((s) => ({
+      alertas: s.alertas.map((a) => (a.id === id ? { ...a, ...cambios } : a)),
+    })),
+  registrarNotificacion: (n) => set((s) => ({ notificaciones: [n, ...s.notificaciones] })),
   alternarAlerta: (id) =>
     set((s) => ({
       alertas: s.alertas.map((a) => (a.id === id ? { ...a, activa: !a.activa } : a)),

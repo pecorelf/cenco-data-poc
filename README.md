@@ -77,6 +77,31 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Drag & drop real en Reportería Personalizados
+
+Antes se elegía dimensión y métricas con clics sobre chips. Ahora se arrastran de verdad:
+`@dnd-kit/core` maneja el gesto (mouse y touch, con umbral de 4px para que un clic simple
+no se confunda con un arrastre), y cada chip sigue siendo clicable — el arrastre es un
+gesto adicional, no un reemplazo, así nadie pierde funcionalidad si prefiere no arrastrar.
+El panel "Disponibles" es en sí mismo el blanco de suelta para quitar algo ya elegido.
+No se implementó reordenamiento por arrastre dentro de una zona (el orden queda por orden
+de llegada); el RFP pide armar el informe arrastrando, no reordenarlo, así que se priorizó
+esa parte con menos riesgo de que algo se sienta frágil en una demo en vivo.
+
+## Mis alertas: editar, back-test y cierre del ciclo con notificaciones
+
+Tres cosas nuevas sobre lo que ya existía:
+
+- **Editar** una alerta ya configurada, no solo pausarla o borrarla.
+- **Back-test antes de guardar** — un mini-histórico (`serieHistorica` en
+  `data/alertas.ts`) muestra cómo se habría comportado la regla en los ocho meses de
+  datos disponibles, con la línea de umbral marcada, para detectar un umbral mal
+  calibrado (que dispara siempre, o que nunca dispara) antes de guardarlo.
+- **Notificación real al guardar** — si la regla ya está incumplida en el momento de
+  crearla o editarla, se registra al tiro un aviso en el Centro de notificaciones
+  (`registrarNotificacion` en el store). Cierra el círculo entre Mis alertas y Centro de
+  notificaciones, que antes eran dos pantallas con datos de ejemplo desconectados entre sí.
+
 ## Tres módulos marcados "a validar"
 
 Explorador de Datos, Mis alertas y Centro de notificaciones se agregaron pensando en la
