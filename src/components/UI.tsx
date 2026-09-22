@@ -102,7 +102,7 @@ export function Boton({
  * pantalla es un punto de partida para la conversación, no una entrega cerrada.
  */
 export function NotaDiscovery({
-  titulo = "Para validar en la sesión con el equipo de BI",
+  titulo = "Durante las primeras semanas del proyecto (Discovery) debemos definir en conjunto con Cencosud aspectos como:",
   preguntas,
 }: {
   titulo?: string;

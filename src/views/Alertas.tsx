@@ -247,7 +247,7 @@ export default function Alertas() {
     <div className="pb-14">
       <Encabezado
         titulo="Mis alertas"
-        bajada="Define una métrica, una condición y con qué frecuencia revisarla. Cuando el umbral se cruza, el aviso llega solo — sin que nadie tenga que abrir el portal a mirar."
+        bajada="Define una métrica, una condición y con qué frecuencia revisarla. Cuando el umbral se cruza, se genera una notificación."
       >
         <div className="mt-6">
           <NotaDiscovery preguntas={PREGUNTAS} />
@@ -410,9 +410,7 @@ export default function Alertas() {
                     </Boton>
                   </div>
                   <p className="mt-3 text-micro text-gris leading-relaxed">
-                    En este piloto solo el canal Portal está conectado de verdad. Email, Slack y
-                    WhatsApp quedan seleccionables para la conversación de mañana, no porque ya
-                    envíen algo.
+                    En este piloto solo el canal Portal está habilitado.
                   </p>
                 </div>
 
