@@ -1,5 +1,6 @@
 import { useStore } from "../lib/store";
 import { Boton, Panel } from "../components/UI";
+import { BadgeOrigen } from "../components/BadgeOrigen";
 import { Contador } from "../components/Graficos";
 import {
   ICONO_SECCION,
@@ -102,7 +103,13 @@ export default function Home() {
               respuesta trae la misma cifra. No es un buscador aparte ni un modelo con
               copia de los datos.
             </p>
-            <div className="mt-7 flex flex-wrap items-center gap-4">
+            <div className="mt-4">
+              <BadgeOrigen
+                tipo="hibrido"
+                detalle="Genie responde en la plataforma; la orquestación y el formato de BIA son nuestros"
+              />
+            </div>
+            <div className="mt-6 flex flex-wrap items-center gap-4">
               <button
                 onClick={alternarChat}
                 className="estado inline-flex items-center gap-2.5 bg-naranjo text-white rounded-full px-6 py-3 text-[14.5px] font-semibold shadow-alto hover:bg-naranjo-deep"

@@ -14,6 +14,7 @@ import {
 } from "../data/alertas";
 import { BANDERAS, CATEGORIAS, type Bandera, type Categoria } from "../data/comercial";
 import { Boton, Encabezado, NotaDiscovery, Panel } from "../components/UI";
+import { BadgeOrigen } from "../components/BadgeOrigen";
 import { InfoIndicador } from "../components/InfoIndicador";
 import { INDICADOR_DE_COLUMNA } from "../data/sql";
 import {
@@ -251,7 +252,13 @@ export default function Alertas() {
         titulo="Mis alertas"
         bajada="Define una métrica, una condición y con qué frecuencia revisarla. Cuando el umbral se cruza, se genera una notificación."
       >
-        <div className="mt-6">
+        <div className="mt-4">
+          <BadgeOrigen
+            tipo="hibrido"
+            detalle="Databricks SQL Alerts existe; el back-test y el alcance por bandera/categoría son nuestros"
+          />
+        </div>
+        <div className="mt-4">
           <NotaDiscovery preguntas={PREGUNTAS} />
         </div>
       </Encabezado>

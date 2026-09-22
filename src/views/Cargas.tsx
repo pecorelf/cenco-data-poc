@@ -8,6 +8,7 @@ import {
   type Resultado,
 } from "../data/plantilla";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
+import { BadgeOrigen } from "../components/BadgeOrigen";
 import {
   IconoSubir,
   IconoDescargar,
@@ -74,7 +75,14 @@ export default function Cargas() {
       <Encabezado
         titulo="Portal de ingesta certificada"
         bajada="El plan regional por categoría no vive en ningún sistema: hoy se mantiene a mano en el Centralizador. Acá se sube igual de rápido, pero validado contra los maestros y con registro de quién cargó qué."
-      />
+      >
+        <div className="mt-4">
+          <BadgeOrigen
+            tipo="hibrido"
+            detalle="Lakeflow con expectativas de calidad existe; esta pantalla de carga es nuestra"
+          />
+        </div>
+      </Encabezado>
 
       <div className="p-8 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">
         <div className="space-y-6">

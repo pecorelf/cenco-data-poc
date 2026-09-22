@@ -14,6 +14,7 @@ import { BANDERAS, CATEGORIAS, MESES, type Bandera, type Categoria } from "../da
 import { PRESUPUESTO_TOTAL_USUARIO, PRESUPUESTO_TOTAL_AREA } from "../data/usuarios";
 import { Boton, NotaDiscovery, Panel, Sello } from "../components/UI";
 import { InfoIndicador } from "../components/InfoIndicador";
+import { BadgeOrigen, type Origen } from "../components/BadgeOrigen";
 import { BarraProgreso, Contador } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
 import {
@@ -40,6 +41,15 @@ import {
 } from "../components/Iconos";
 
 type Modo = "asistente" | "constructor" | "sql";
+
+const ORIGEN_POR_MODO: Record<Modo, { tipo: Origen; detalle: string }> = {
+  sql: { tipo: "nativo", detalle: "Editor SQL y warehouse de Databricks" },
+  asistente: { tipo: "nativo", detalle: "Esto es Genie" },
+  constructor: {
+    tipo: "custom",
+    detalle: "No existe un constructor visual así dentro de una Databricks App",
+  },
+};
 
 const COLOR_COMPLEJIDAD: Record<Complejidad, string> = {
   Bajo: "bg-certif-soft text-certif",
@@ -463,6 +473,11 @@ export default function ExploradorDatos() {
               </span>
             </div>
 
+            <BadgeOrigen
+              tipo={ORIGEN_POR_MODO[modo].tipo}
+              detalle={ORIGEN_POR_MODO[modo].detalle}
+            />
+
             {/* SQL */}
             {modo === "sql" && (
               <Panel>
@@ -786,7 +801,12 @@ export default function ExploradorDatos() {
 
           {/* Presupuesto y consumo */}
           <div className="space-y-5 xl:sticky xl:top-6">
-            <Panel titulo="Mi presupuesto">
+            <Panel
+              titulo="Mi presupuesto"
+              accion={
+                <BadgeOrigen tipo="hibrido" detalle="System tables + estimación previa propia" />
+              }
+            >
               <div className="num text-[34px] font-semibold text-cenco-deep leading-none">
                 <Contador valor={(disponible / PRESUPUESTO_TOTAL_USUARIO) * 100} decimales={0} />
                 <span className="text-[18px] font-normal text-gris ml-0.5">%</span>

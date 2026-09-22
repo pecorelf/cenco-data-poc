@@ -28,6 +28,7 @@ import {
 } from "../data/comercial";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
 import { InfoIndicador } from "../components/InfoIndicador";
+import { BadgeOrigen } from "../components/BadgeOrigen";
 import {
   IconoMarcador,
   IconoCheckEscudo,
@@ -487,7 +488,14 @@ export default function Constructor() {
       <Encabezado
         titulo="Reportería Personalizados"
         bajada="Arrastra una dimensión y las métricas que quieras cruzar desde la capa semántica — o simplemente haz clic, si prefieres no arrastrar. Los dos gestos hacen lo mismo."
-      />
+      >
+        <div className="mt-3">
+          <BadgeOrigen
+            tipo="custom"
+            detalle="Drag & drop, gráfico mixto de eje doble y exportar PNG — no existe dentro de una Databricks App"
+          />
+        </div>
+      </Encabezado>
 
       <DndContext sensors={sensors} onDragStart={alIniciarArrastre} onDragEnd={alTerminarArrastre}>
         <div className="p-8 grid grid-cols-1 xl:grid-cols-[minmax(0,1fr)_340px] gap-6 items-start">

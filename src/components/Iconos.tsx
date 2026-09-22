@@ -328,6 +328,16 @@ export const IconoChevronAbajo = (p: Props) => base(<path d="m6 9 6 6 6-6" />, p
 
 export const IconoChevronArriba = (p: Props) => base(<path d="m6 15 6-6 6 6" />, p);
 
+export const IconoDatabricks = (p: Props) =>
+  base(
+    <>
+      <path d="M4 8.5 12 4l8 4.5-8 4.5-8-4.5Z" />
+      <path d="m4 13 8 4.5 8-4.5" />
+      <path d="M4 8.5v4.5M20 8.5v4.5" />
+    </>,
+    p
+  );
+
 /** Ícono por identificador de sección, para reutilizar el mismo símbolo en
  * el nav, en las tarjetas del Inicio y en los módulos del login. Un solo
  * mapeo evita que cada pantalla invente su propio símbolo para lo mismo. */

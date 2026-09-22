@@ -10,7 +10,7 @@ import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
 import ExploradorDatos from "./views/ExploradorDatos";
 import Notificaciones from "./components/Notificaciones";
-import { ICONO_SECCION, IconoSalir, IconoPregunta } from "./components/Iconos";
+import { ICONO_SECCION, IconoSalir, IconoPregunta, IconoDatabricks } from "./components/Iconos";
 import MisGraficos from "./views/MisGraficos";
 import Alertas from "./views/Alertas";
 import Avisos from "./views/Avisos";
@@ -63,6 +63,8 @@ export default function App() {
     cargarGraficos,
     autenticado,
     cerrarSesion,
+    mostrarOrigen,
+    alternarOrigen,
   } = useStore();
 
   // Carga inicial de los gráficos del usuario en sesión.
@@ -107,6 +109,19 @@ export default function App() {
                 ))}
               </select>
             </label>
+            <button
+              onClick={alternarOrigen}
+              aria-pressed={mostrarOrigen}
+              title="Mostrar qué es nativo de Databricks y qué construimos a medida"
+              className={`estado flex items-center gap-1.5 rounded-full px-3.5 py-2 text-micro font-semibold border ${
+                mostrarOrigen
+                  ? "bg-naranjo border-naranjo text-white"
+                  : "border-white/20 text-white/70 hover:bg-white/10"
+              }`}
+            >
+              <IconoDatabricks size={13} />
+              Origen
+            </button>
             <Notificaciones />
             <img
               src="/deloitte-digital.png"
@@ -123,6 +138,26 @@ export default function App() {
           </div>
         </div>
       </header>
+
+      {mostrarOrigen && (
+        <div className="bg-papel border-b border-cenco-line px-6 py-2.5 flex flex-wrap items-center gap-x-6 gap-y-1.5 text-micro text-gris">
+          <span className="font-semibold text-tuna">
+            Marcando qué viene con la plataforma y qué construimos:
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-cenco" /> Nativo Databricks — ya viene con la
+            plataforma
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-naranjo" /> Construido a medida — ingeniería
+            nuestra encima
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <span className="w-2 h-2 rounded-full bg-certif" /> Híbrido — el dato es nativo, la
+            experiencia es nuestra
+          </span>
+        </div>
+      )}
 
       <div className="flex flex-1 min-h-0">
         <nav className="w-64 shrink-0 overflow-y-auto bg-white border-r border-cenco-line">

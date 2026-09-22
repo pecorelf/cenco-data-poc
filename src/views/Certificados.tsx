@@ -9,6 +9,7 @@ import {
   MESES,
 } from "../data/comercial";
 import { Cifra, Encabezado, Filtros, Panel, Sello, clp } from "../components/UI";
+import { BadgeOrigen } from "../components/BadgeOrigen";
 import { IconoMoneda, IconoCheckEscudo, IconoReportes, IconoInsignia } from "../components/Iconos";
 import { Contador, Grafico } from "../components/Graficos";
 import { useStore } from "../lib/store";
@@ -33,7 +34,15 @@ export default function Certificados() {
       </Encabezado>
 
       <div className="p-8 space-y-6">
-        <Panel titulo={`Resumen · ${mes} 2026`} accion={<Sello estado="certificado" />}>
+        <Panel
+          titulo={`Resumen · ${mes} 2026`}
+          accion={
+            <div className="flex items-center gap-2">
+              <BadgeOrigen tipo="nativo" detalle="Unity Catalog Metric Views" />
+              <Sello estado="certificado" />
+            </div>
+          }
+        >
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <Cifra
               icono={IconoMoneda}
@@ -68,7 +77,15 @@ export default function Certificados() {
           </div>
         </Panel>
 
-        <Panel accion={<Sello estado="certificado" />} titulo="Venta contra plan">
+        <Panel
+          titulo="Venta contra plan"
+          accion={
+            <div className="flex items-center gap-2">
+              <BadgeOrigen tipo="custom" detalle="Gráfico, tooltip y selector de tipo propios" />
+              <Sello estado="certificado" />
+            </div>
+          }
+        >
           <Grafico
             e={{
               tipo: "barras",
@@ -88,7 +105,15 @@ export default function Certificados() {
         </Panel>
 
         <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-          <Panel titulo="Margen y participación" accion={<Sello estado="certificado" />}>
+          <Panel
+            titulo="Margen y participación"
+            accion={
+              <div className="flex items-center gap-2">
+                <BadgeOrigen tipo="custom" detalle="Eje doble y componentes de gráfico propios" />
+                <Sello estado="certificado" />
+              </div>
+            }
+          >
             <Grafico
               e={{
                 tipo: "lineas",

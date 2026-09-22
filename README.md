@@ -77,6 +77,26 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Interruptor "Origen": qué es nativo de Databricks y qué es a medida
+
+Un botón "Origen" en la cabecera revela, panel por panel, si esa pieza de la demo vendría
+gratis con la plataforma, si es ingeniería nuestra encima, o una mezcla de las dos — sin
+ensuciar la demo por defecto, porque `components/BadgeOrigen.tsx` no renderiza nada hasta
+que se activa el interruptor (`mostrarOrigen` en el store).
+
+Tres categorías, cada una con su color, ícono y una frase de qué feature de Databricks
+resuelve (o por qué no hay una):
+
+| | Qué significa | Ejemplos en esta demo |
+|---|---|---|
+| **Nativo Databricks** | Ya viene con la plataforma | El resumen de KPIs (Unity Catalog Metric Views), el modo SQL y el modo Asistente de Explorador de Datos (SQL warehouse y Genie, respectivamente) |
+| **Construido a medida** | No existe en Databricks, es ingeniería nuestra | Reportería Personalizados completo (drag & drop, eje doble, exportar PNG), el Constructor visual de Explorador de Datos, el tour guiado |
+| **Híbrido** | El dato o mecanismo es nativo, la experiencia es nuestra | Mi presupuesto (system tables existen, la estimación previa y el bloqueo no), Mis alertas (SQL Alerts existe, el back-test no), BIA (Genie resuelve, la orquestación y el formato son nuestros) |
+
+La clasificación completa, con el razonamiento detrás de cada caso, quedó en la conversación
+que preparó este cambio — vale la pena revisarla antes de usar el interruptor en una reunión,
+por si surge una pregunta sobre un caso específico que no está en esta tabla.
+
 ## Ícono "(i)" por indicador
 
 `components/InfoIndicador.tsx` — un botón "(i)" chico que, al pasar el mouse, enfocar con

@@ -67,6 +67,7 @@ interface Estado {
   autenticado: boolean;
   chatAbierto: boolean;
   tourActivo: boolean;
+  mostrarOrigen: boolean;
   usuario: Usuario;
   bandera: Bandera | "Todas";
   categoria: Categoria | "Todas";
@@ -88,6 +89,7 @@ interface Estado {
   alternarChat: () => void;
   cerrarChat: () => void;
   setTourActivo: (v: boolean) => void;
+  alternarOrigen: () => void;
   setUsuario: (id: string) => void;
   setBandera: (b: Bandera | "Todas") => void;
   setCategoria: (c: Categoria | "Todas") => void;
@@ -116,6 +118,7 @@ export const useStore = create<Estado>((set) => ({
   autenticado: false,
   chatAbierto: false,
   tourActivo: false,
+  mostrarOrigen: false,
   usuario: USUARIOS[0],
   bandera: "Todas",
   categoria: "Todas",
@@ -199,6 +202,7 @@ export const useStore = create<Estado>((set) => ({
   alternarChat: () => set((s) => ({ chatAbierto: !s.chatAbierto })),
   cerrarChat: () => set({ chatAbierto: false }),
   setTourActivo: (v) => set({ tourActivo: v }),
+  alternarOrigen: () => set((s) => ({ mostrarOrigen: !s.mostrarOrigen })),
   setUsuario: (id) => {
     const usuario = USUARIOS.find((u) => u.id === id) ?? USUARIOS[0];
     // El alcance se re-hereda desde Unity Catalog al cambiar de sesión.

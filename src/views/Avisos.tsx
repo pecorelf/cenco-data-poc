@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { Notificacion } from "../components/Notificaciones";
 import { Boton, Encabezado, NotaDiscovery, Panel } from "../components/UI";
+import { BadgeOrigen } from "../components/BadgeOrigen";
 import {
   IconoAlerta,
   IconoIngesta,
@@ -69,7 +70,13 @@ export default function Avisos() {
         titulo="Centro de notificaciones"
         bajada="Avisos de incidentes, cargas de datos, frescura y cambios relevantes en modelos o reportes — todo lo que hoy alguien se entera preguntando, acá llega solo."
       >
-        <div className="mt-6">
+        <div className="mt-4">
+          <BadgeOrigen
+            tipo="hibrido"
+            detalle="Los canales de aviso nativos existen; este feed unificado es nuestro"
+          />
+        </div>
+        <div className="mt-4">
           <NotaDiscovery preguntas={PREGUNTAS} />
         </div>
       </Encabezado>
