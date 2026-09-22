@@ -324,6 +324,10 @@ export const IconoAnterior = (p: Props) =>
     p
   );
 
+export const IconoChevronAbajo = (p: Props) => base(<path d="m6 9 6 6 6-6" />, p);
+
+export const IconoChevronArriba = (p: Props) => base(<path d="m6 15 6-6 6 6" />, p);
+
 /** Ícono por identificador de sección, para reutilizar el mismo símbolo en
  * el nav, en las tarjetas del Inicio y en los módulos del login. Un solo
  * mapeo evita que cada pantalla invente su propio símbolo para lo mismo. */

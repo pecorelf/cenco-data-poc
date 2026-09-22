@@ -88,10 +88,16 @@ Personalizados, el tour se autopausa (`pausarAlLlegar`) y espera un clic humano,
 es mejor mostrar el drag & drop en vivo que fingirlo.
 
 Controles: anterior/siguiente, pausa, velocidad 1×/2×/3× (divide la duración de cada paso),
-puntos de navegación directa, y salir en cualquier momento — nunca bloquea la interfaz, el
-menú y todo lo demás siguen funcionando si se quiere desviar del guion. BIA se corre hacia
-arriba mientras el tour está activo (una bandera `tourActivo` en el store) para que la barra
-inferior no la tape.
+puntos de navegación directa, minimizar, y salir en cualquier momento — nunca bloquea la
+interfaz, el menú y todo lo demás siguen funcionando si se quiere desviar del guion.
+
+**Minimizar** colapsa la barra completa a una pastilla chica ("Tour · paso 4 de 10") para
+liberar toda la pantalla, y a la vez pausa el avance automático — así nunca cambia de
+pantalla mientras no se está mirando el contador. Volver a mostrarla no reanuda sola; hay
+que darle play otra vez, a propósito. BIA se corre hacia arriba solo mientras la barra
+completa está realmente ocupando espacio abajo (una bandera `tourActivo` en el store,
+sincronizada por efecto con `activo && !minimizado`, no con el tour en sí) — minimizada, BIA
+vuelve a su posición normal.
 
 ## Gráficos combinados con eje doble, y tooltip al pasar el mouse
 

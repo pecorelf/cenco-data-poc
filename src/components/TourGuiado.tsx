@@ -7,6 +7,8 @@ import {
   IconoAnterior,
   IconoCerrar,
   IconoDestellos,
+  IconoChevronAbajo,
+  IconoChevronArriba,
 } from "./Iconos";
 
 // Tour autoguiado para la presentación. A propósito solo hace dos cosas:
@@ -103,11 +105,18 @@ const PARADAS: Parada[] = [
 
 export default function TourGuiado() {
   const [activo, setActivo] = useState(false);
+  const [minimizado, setMinimizado] = useState(false);
   const [paso, setPaso] = useState(0);
   const [reproduciendo, setReproduciendo] = useState(true);
   const [velocidad, setVelocidad] = useState<1 | 2 | 3>(1);
   const setTourActivo = useStore((s) => s.setTourActivo);
   const timer = useRef<ReturnType<typeof setTimeout>>();
+
+  // BIA solo necesita correrse hacia arriba cuando la barra completa ocupa
+  // espacio abajo — no cuando el tour está solo minimizado a la pastilla.
+  useEffect(() => {
+    setTourActivo(activo && !minimizado);
+  }, [activo, minimizado, setTourActivo]);
 
   const ir = (i: number) => {
     const idx = Math.max(0, Math.min(PARADAS.length - 1, i));
@@ -123,8 +132,8 @@ export default function TourGuiado() {
     // abierto antes: sesión completa y BIA cerrado.
     useStore.getState().setUsuario("gg");
     useStore.getState().cerrarChat();
-    setTourActivo(true);
     setActivo(true);
+    setMinimizado(false);
     setReproduciendo(true);
     setPaso(0);
     useStore.getState().setVista(PARADAS[0].vista);
@@ -132,8 +141,16 @@ export default function TourGuiado() {
 
   const salir = () => {
     setActivo(false);
-    setTourActivo(false);
+    setMinimizado(false);
     if (timer.current) clearTimeout(timer.current);
+  };
+
+  // Ocultar la barra pausa a la vez: así nunca cambia de pantalla mientras
+  // no se está mirando el contador. Volver a mostrarla no la reanuda sola
+  // — hay que darle play, a propósito.
+  const minimizar = () => {
+    setMinimizado(true);
+    setReproduciendo(false);
   };
 
   useEffect(() => {
@@ -157,6 +174,21 @@ export default function TourGuiado() {
       >
         <IconoDestellos size={14} className="text-naranjo" />
         <span className="text-[13px] font-semibold">Tour guiado</span>
+      </button>
+    );
+  }
+
+  if (minimizado) {
+    return (
+      <button
+        onClick={() => setMinimizado(false)}
+        className="estado fixed bottom-6 left-1/2 -translate-x-1/2 z-40 flex items-center gap-2.5 bg-cenco-deep text-white rounded-full pl-4 pr-4 py-2.5 shadow-alto hover:bg-cenco border border-white/10"
+      >
+        <IconoChevronArriba size={13} />
+        <span className="text-[12.5px] font-semibold">
+          Tour · paso {paso + 1} de {PARADAS.length}
+        </span>
+        <span className="text-[12.5px] text-white/60">— mostrar</span>
       </button>
     );
   }
@@ -246,8 +278,16 @@ export default function TourGuiado() {
           </div>
 
           <button
-            onClick={salir}
+            onClick={minimizar}
             className="estado ml-1 w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10"
+            aria-label="Minimizar la barra del tour"
+            title="Ocultar la barra y ver la pantalla completa"
+          >
+            <IconoChevronAbajo size={14} />
+          </button>
+          <button
+            onClick={salir}
+            className="estado w-8 h-8 rounded-full border border-white/20 flex items-center justify-center hover:bg-white/10"
             aria-label="Salir del tour"
           >
             <IconoCerrar size={14} />
