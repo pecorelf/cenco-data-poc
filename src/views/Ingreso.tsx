@@ -18,7 +18,7 @@ const MODULOS = [
   { Icono: IconoDestellos, titulo: "Analítica conversacional", detalle: "Preguntas en lenguaje natural" },
   { Icono: IconoLupa, titulo: "Explorador de Datos", detalle: "SQL, constructor y asistente" },
   { Icono: IconoIndicador, titulo: "Mis alertas", detalle: "Métrica, condición y canal" },
-  { Icono: IconoCampana, titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y freshness" },
+  { Icono: IconoCampana, titulo: "Centro de notificaciones", detalle: "Incidentes, cargas y frescura" },
 ];
 
 export default function Ingreso() {

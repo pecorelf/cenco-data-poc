@@ -23,7 +23,7 @@ export default function MisGraficos() {
       <div className="pb-14">
         <Encabezado
           titulo="Mis gráficos"
-          bajada="Acá se guardan los gráficos que armas con BIA o en Informes personalizados."
+          bajada="Acá se guardan los gráficos que armas con BIA o en Reportería Personalizados."
         />
         <div className="px-8 py-14">
           <p className="anim-pulso text-[14px] text-gris flex items-center gap-2">
@@ -52,7 +52,7 @@ export default function MisGraficos() {
             </h2>
             <p className="mt-2.5 text-[14px] text-gris leading-relaxed">
               Pídele un cruce a BIA —margen contra participación, venta contra plan— o
-              ármalo en Informes personalizados. Cuando aparezca el gráfico, ponle nombre
+              ármalo en Reportería Personalizados. Cuando aparezca el gráfico, ponle nombre
               y guárdalo. Vuelve acá cuando quieras y estará tal como lo dejaste.
             </p>
             <div className="mt-6">
