@@ -14,6 +14,8 @@ import {
 } from "../data/alertas";
 import { BANDERAS, CATEGORIAS, type Bandera, type Categoria } from "../data/comercial";
 import { Boton, Encabezado, NotaDiscovery, Panel } from "../components/UI";
+import { InfoIndicador } from "../components/InfoIndicador";
+import { INDICADOR_DE_COLUMNA } from "../data/sql";
 import {
   IconoPapelera,
   IconoMas,
@@ -295,9 +297,13 @@ export default function Alertas() {
               <div className="grid grid-cols-1 lg:grid-cols-[minmax(0,1fr)_240px] gap-5">
                 <div>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                    <label className="block">
-                      <span className="text-micro text-gris font-medium">Métrica</span>
+                    <div className="block">
+                      <span className="text-micro text-gris font-medium inline-flex items-center gap-1.5">
+                        <label htmlFor="alerta-metrica">Métrica</label>
+                        <InfoIndicador id={INDICADOR_DE_COLUMNA[metrica]} />
+                      </span>
                       <select
+                        id="alerta-metrica"
                         value={metrica}
                         onChange={(e) => setMetrica(e.target.value as MetricaAlerta)}
                         className="estado mt-1 w-full border border-cenco-line px-2.5 py-2 text-[13px]"
@@ -308,7 +314,7 @@ export default function Alertas() {
                           </option>
                         ))}
                       </select>
-                    </label>
+                    </div>
                     <label className="block">
                       <span className="text-micro text-gris font-medium">Bandera</span>
                       <select

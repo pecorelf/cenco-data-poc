@@ -13,6 +13,7 @@ import { INDICADORES, porId } from "../data/semantica";
 import { BANDERAS, CATEGORIAS, MESES, type Bandera, type Categoria } from "../data/comercial";
 import { PRESUPUESTO_TOTAL_USUARIO, PRESUPUESTO_TOTAL_AREA } from "../data/usuarios";
 import { Boton, NotaDiscovery, Panel, Sello } from "../components/UI";
+import { InfoIndicador } from "../components/InfoIndicador";
 import { BarraProgreso, Contador } from "../components/Graficos";
 import { useStore, alcance } from "../lib/store";
 import {
@@ -403,8 +404,8 @@ export default function ExploradorDatos() {
                       const ind = porId(INDICADOR_DE_COLUMNA[c.nombre]);
                       const activa = metricasSel.includes(c.nombre);
                       return (
-                        <li key={c.nombre}>
-                          <label className="flex items-center gap-2.5 px-1 py-1.5 cursor-pointer">
+                        <li key={c.nombre} className="flex items-center gap-2">
+                          <label className="flex items-center gap-2.5 px-1 py-1.5 cursor-pointer flex-1 min-w-0">
                             <input
                               type="checkbox"
                               checked={activa}
@@ -415,11 +416,16 @@ export default function ExploradorDatos() {
                               }
                               className="w-4 h-4 accent-[#095AA5]"
                             />
-                            <span className="text-[13px] text-tuna flex-1">
+                            <span className="text-[13px] text-tuna flex-1 truncate">
                               {ETIQUETA_METRICA[c.nombre]}
                             </span>
-                            {ind && <Sello estado={ind.estado} />}
                           </label>
+                          {ind && (
+                            <span className="flex items-center gap-1.5 shrink-0">
+                              <InfoIndicador id={ind.id} />
+                              <Sello estado={ind.estado} />
+                            </span>
+                          )}
                         </li>
                       );
                     })}

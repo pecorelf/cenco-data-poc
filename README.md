@@ -77,6 +77,30 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Ícono "(i)" por indicador
+
+`components/InfoIndicador.tsx` — un botón "(i)" chico que, al pasar el mouse, enfocar con
+teclado o tocar, muestra un popover con la definición del indicador en lenguaje simple y qué
+implica su estado de certificación (`EXPLICACION_ESTADO` en `data/semantica.ts`). Aplicado en
+KPIs y Reportes Certificados (las 4 cifras del resumen), el checklist de Métricas certificadas
+en Explorador de Datos, la fila de tipo por métrica del gráfico mixto en Reportería
+Personalizados, y el selector de métrica en Mis alertas.
+
+Dos decisiones técnicas por seguridad, no por gusto:
+- Se renderiza en un **portal a `document.body`**, con posición calculada en píxeles reales
+  de pantalla (no en el flujo normal del layout) — así nunca queda cortado por el `overflow`
+  de una celda de tabla o un chip angosto, y se voltea hacia arriba solo si no hay espacio
+  abajo. Probé la matemática de recorte con casos límite (ícono pegado a cada borde) antes de
+  confiar en el render.
+- El botón llama `preventDefault()` en su clic: varios de estos íconos terminan cerca de un
+  `<label>` que envuelve un checkbox o un `<select>` (el patrón normal para asociar una
+  etiqueta a su control), y sin ese `preventDefault()` un clic en "(i)" activaría también el
+  control de al lado. Donde encontré ese riesgo, además separé el ícono del `<label>` — en
+  Explorador de Datos como hermano fuera de él, en Mis alertas con `htmlFor`/`id` explícito en
+  vez de anidamiento, así la asociación accesible se mantiene sin que el ícono quede adentro.
+  El sello de certificación (`Sello`) también ganó un `title` nativo con la misma explicación,
+  como respaldo en cualquier lugar donde no se agregó el ícono completo.
+
 ## Tour guiado (auto-play con 1x/2x/3x)
 
 Un botón en la esquina inferior izquierda ("Tour guiado") arranca un recorrido de 10 pasos

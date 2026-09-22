@@ -40,12 +40,14 @@ export default function Certificados() {
               valor={<Contador valor={sumaVenta(filasMes)} decimales={0} />}
               unidad=" MM"
               etiqueta="Venta neta marca propia"
+              indicadorId="venta_neta_mp"
             />
             <Cifra
               icono={IconoCheckEscudo}
               valor={<Contador valor={cumpl} />}
               unidad="%"
               etiqueta="Cumplimiento de plan"
+              indicadorId="cumplimiento_plan"
               tono={cumpl >= 100 ? "positivo" : "alerta"}
             />
             <Cifra
@@ -53,12 +55,14 @@ export default function Certificados() {
               valor={<Contador valor={margenPonderado(filasMes)} />}
               unidad="%"
               etiqueta="Margen bruto"
+              indicadorId="margen_bruto_mp"
             />
             <Cifra
               icono={IconoInsignia}
               valor={<Contador valor={sharePonderado(filasMes)} />}
               unidad="%"
               etiqueta="Participación en categoría"
+              indicadorId="share_mp"
               tono="positivo"
             />
           </div>

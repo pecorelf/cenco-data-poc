@@ -1,8 +1,10 @@
 import type { ReactNode } from "react";
 import type { EstadoIndicador } from "../data/semantica";
+import { EXPLICACION_ESTADO } from "../data/semantica";
 import { BANDERAS, CATEGORIAS, MESES } from "../data/comercial";
 import { useStore, alcance } from "../lib/store";
 import { IconoCheckEscudo, IconoReloj, IconoAlerta, IconoPregunta } from "./Iconos";
+import { InfoIndicador } from "./InfoIndicador";
 
 export function Encabezado({
   titulo,
@@ -51,6 +53,7 @@ export function Sello({ estado }: { estado: EstadoIndicador }) {
   const s = SELLO[estado];
   return (
     <span
+      title={EXPLICACION_ESTADO[estado]}
       className={`inline-flex items-center gap-1.5 border rounded-full pl-2 pr-2.5 py-1 text-micro font-semibold ${s.clase}`}
     >
       <s.Icono size={12} />
@@ -132,12 +135,14 @@ export function Cifra({
   etiqueta,
   tono = "neutro",
   icono: Icono,
+  indicadorId,
 }: {
   valor: ReactNode;
   unidad?: string;
   etiqueta: string;
   tono?: "neutro" | "positivo" | "alerta";
   icono?: (p: { size?: number; className?: string }) => ReactNode;
+  indicadorId?: string;
 }) {
   const color =
     tono === "positivo"
@@ -154,7 +159,10 @@ export function Cifra({
           <span className="text-[16px] font-normal ml-0.5 text-gris">{unidad}</span>
         )}
       </div>
-      <div className="mt-2 text-[12.5px] text-gris">{etiqueta}</div>
+      <div className="mt-2 flex items-center gap-1.5 text-[12.5px] text-gris">
+        {etiqueta}
+        {indicadorId && <InfoIndicador id={indicadorId} />}
+      </div>
     </div>
   );
 }

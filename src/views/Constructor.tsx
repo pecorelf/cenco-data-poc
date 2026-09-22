@@ -27,6 +27,7 @@ import {
   type Mes,
 } from "../data/comercial";
 import { Boton, Encabezado, Panel, Sello } from "../components/UI";
+import { InfoIndicador } from "../components/InfoIndicador";
 import {
   IconoMarcador,
   IconoCheckEscudo,
@@ -619,9 +620,10 @@ export default function Constructor() {
                       {elegidas.map((m) => {
                         const t = tipoDeMetrica(m.id);
                         return (
-                          <div key={m.id} className="flex items-center gap-2 flex-wrap">
-                            <span className="text-[12.5px] text-tuna w-[172px] shrink-0 truncate">
-                              {m.etiqueta}
+                          <div key={m.id} className="flex items-center gap-1.5 flex-wrap">
+                            <span className="w-[172px] shrink-0 flex items-center gap-1.5 min-w-0">
+                              <span className="text-[12.5px] text-tuna truncate">{m.etiqueta}</span>
+                              <InfoIndicador id={m.id} />
                             </span>
                             {(["barra", "area", "linea"] as const).map((opcion) => (
                               <button

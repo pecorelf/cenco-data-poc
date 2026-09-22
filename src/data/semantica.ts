@@ -4,6 +4,18 @@
 
 export type EstadoIndicador = "certificado" | "en_certificacion" | "exploratorio";
 
+/** Qué implica cada estado, en una frase, para alguien que no conoce el
+ * proyecto. Se usa tanto en el tooltip nativo del sello como en el popover
+ * de información de cada indicador. */
+export const EXPLICACION_ESTADO: Record<EstadoIndicador, string> = {
+  certificado:
+    "Definición acordada, con responsable asignado. Es la cifra oficial: la misma en el portal, en Power BI y en BIA.",
+  en_certificacion:
+    "Todavía en revisión por su responsable. Se puede usar, pero su definición final aún no está cerrada.",
+  exploratorio:
+    "Sin una definición acordada ni un responsable formal. Sirve para explorar, pero no es la cifra oficial.",
+};
+
 export interface Indicador {
   id: string;
   nombre: string;
