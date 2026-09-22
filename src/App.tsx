@@ -5,6 +5,7 @@ import Certificados from "./views/Certificados";
 import Constructor from "./views/Constructor";
 import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
+import TourGuiado from "./components/TourGuiado";
 import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
 import ExploradorDatos from "./views/ExploradorDatos";
@@ -204,6 +205,7 @@ export default function App() {
       </div>
 
       <BIA />
+      <TourGuiado />
     </div>
   );
 }

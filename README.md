@@ -77,6 +77,22 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Tour guiado (auto-play con 1x/2x/3x)
+
+Un botón en la esquina inferior izquierda ("Tour guiado") arranca un recorrido de 10 pasos
+por el portal, con velocidad ajustable. Diseñado a propósito para no arriesgar nada de lo
+que ya funciona: `components/TourGuiado.tsx` solo orquesta dos acciones que ya existían y
+ya estaban probadas — `setVista` (cambiar de pantalla) y `setUsuario` (cambiar de sesión).
+No simula arrastrar un chip, no escribe SQL, no abre gráficos: en el paso de Reportería
+Personalizados, el tour se autopausa (`pausarAlLlegar`) y espera un clic humano, porque ahí
+es mejor mostrar el drag & drop en vivo que fingirlo.
+
+Controles: anterior/siguiente, pausa, velocidad 1×/2×/3× (divide la duración de cada paso),
+puntos de navegación directa, y salir en cualquier momento — nunca bloquea la interfaz, el
+menú y todo lo demás siguen funcionando si se quiere desviar del guion. BIA se corre hacia
+arriba mientras el tour está activo (una bandera `tourActivo` en el store) para que la barra
+inferior no la tape.
+
 ## Gráficos combinados con eje doble, y tooltip al pasar el mouse
 
 Dos mejoras al motor de gráficos, ambas también disponibles para BIA porque comparten el

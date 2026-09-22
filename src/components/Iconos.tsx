@@ -297,6 +297,33 @@ export const IconoIndicador = (p: Props) =>
     p
   );
 
+export const IconoPausa = (p: Props) =>
+  base(
+    <>
+      <rect x="6.5" y="5" width="3.6" height="14" rx="1" fill="currentColor" stroke="none" />
+      <rect x="13.9" y="5" width="3.6" height="14" rx="1" fill="currentColor" stroke="none" />
+    </>,
+    p
+  );
+
+export const IconoSiguiente = (p: Props) =>
+  base(
+    <>
+      <path d="m7 5.5 9 6.5-9 6.5V5.5Z" />
+      <path d="M17.5 5.5v13" />
+    </>,
+    p
+  );
+
+export const IconoAnterior = (p: Props) =>
+  base(
+    <>
+      <path d="m17 5.5-9 6.5 9 6.5V5.5Z" />
+      <path d="M6.5 5.5v13" />
+    </>,
+    p
+  );
+
 /** Ícono por identificador de sección, para reutilizar el mismo símbolo en
  * el nav, en las tarjetas del Inicio y en los módulos del login. Un solo
  * mapeo evita que cada pantalla invente su propio símbolo para lo mismo. */

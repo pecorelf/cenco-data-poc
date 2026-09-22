@@ -146,7 +146,7 @@ function GraficoConGuardado({
 }
 
 export default function BIA() {
-  const { usuario, chatAbierto, alternarChat, cerrarChat } = useStore();
+  const { usuario, chatAbierto, alternarChat, cerrarChat, tourActivo } = useStore();
   const [mensajes, setMensajes] = useState<Mensaje[]>([]);
   const [entrada, setEntrada] = useState("");
   const [cargando, setCargando] = useState(false);
@@ -245,7 +245,9 @@ export default function BIA() {
         onClick={alternarChat}
         aria-expanded={chatAbierto}
         aria-label={chatAbierto ? "Cerrar BIA" : "Abrir BIA"}
-        className="estado fixed bottom-6 right-6 z-50 flex items-center gap-2.5 bg-cenco text-white rounded-full pl-5 pr-6 py-3.5 shadow-alto hover:bg-cenco-deep"
+        className={`estado fixed right-6 z-50 flex items-center gap-2.5 bg-cenco text-white rounded-full pl-5 pr-6 py-3.5 shadow-alto hover:bg-cenco-deep ${
+          tourActivo ? "bottom-24" : "bottom-6"
+        }`}
       >
         <IconoChat size={19} />
         <span className="text-[14px] font-semibold">
@@ -270,7 +272,9 @@ export default function BIA() {
       */}
       <section
         aria-hidden={!chatAbierto}
-        className={`fixed bottom-24 right-6 z-50 w-[min(440px,calc(100vw-3rem))] max-h-[min(640px,calc(100vh-9rem))] flex flex-col bg-white border border-cenco-line rounded-card shadow-alto transition-all duration-300 ease-cenco ${
+        className={`fixed right-6 z-50 w-[min(440px,calc(100vw-3rem))] max-h-[min(640px,calc(100vh-9rem))] flex flex-col bg-white border border-cenco-line rounded-card shadow-alto transition-all duration-300 ease-cenco ${
+          tourActivo ? "bottom-44" : "bottom-24"
+        } ${
           chatAbierto
             ? "opacity-100 translate-y-0"
             : "opacity-0 translate-y-4 pointer-events-none"
