@@ -79,7 +79,7 @@ export default function App() {
   return (
     <div className="min-h-screen flex flex-col">
       <header className="bg-cenco text-white">
-        <div className="px-6 h-[68px] flex items-center gap-6">
+        <div className="px-6 min-h-[68px] py-2 flex items-center gap-6 flex-wrap">
           <img
             src="/cencosud.webp"
             alt="Cencosud"
@@ -94,13 +94,14 @@ export default function App() {
             </div>
           </div>
 
-          <div className="ml-auto flex items-center gap-5">
+          <div className="ml-auto flex items-center gap-4 flex-wrap justify-end">
             <label className="flex items-center gap-2.5">
-              <span className="text-micro text-white/60 font-medium">Sesión</span>
+              <span className="text-micro text-white/60 font-medium shrink-0">Sesión</span>
               <select
                 value={usuario.id}
                 onChange={(e) => setUsuario(e.target.value)}
-                className="estado bg-white/10 border border-white/20 px-3.5 py-2 text-[13px] text-white hover:bg-white/15 cursor-pointer"
+                title={`${usuario.nombre} · ${usuario.cargo}`}
+                className="estado bg-white/10 border border-white/20 px-3.5 py-2 text-[13px] text-white hover:bg-white/15 cursor-pointer max-w-[190px] truncate"
               >
                 {USUARIOS.map((u) => (
                   <option key={u.id} value={u.id} className="text-tuna">

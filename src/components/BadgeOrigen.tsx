@@ -48,9 +48,6 @@ export function BadgeOrigen({
     >
       <o.Icono size={11} />
       {o.texto}
-      <span className="hidden sm:inline text-micro font-normal opacity-70">
-        · {detalle}
-      </span>
     </span>
   );
 }

@@ -77,6 +77,42 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Verificación visual — y sus límites reales en este entorno
+
+Antes de dar por buenos los badges de Origen, intenté conseguir una captura de pantalla
+real en vez de solo razonar sobre las clases CSS. Tres intentos, en orden:
+
+1. **Playwright** — instala su propio Chromium, pero lo descarga desde `cdn.playwright.dev`,
+   que no está en la lista de dominios permitidos de este entorno. Falla con un 403 explícito.
+2. **`apt install chromium`** — en Ubuntu 24.04 ese paquete es un stub que reenvía a un snap
+   (`snap install chromium`), y `snapd` no funciona dentro de este contenedor. Se instala
+   pero el binario real nunca llega.
+3. **`wkhtmltoimage`** — este sí estaba preinstalado y sí genera un PNG real, sin depender de
+   internet. Pero corre sobre un motor QtWebKit de 2012 que no ejecuta el JavaScript moderno
+   de una SPA en React: la página carga en blanco tanto contra el dev server como contra el
+   build de producción.
+
+Ningún camino dio una captura real utilizable. Lo que sí hice en su reemplazo: recalculé a
+mano, con números reales (ancho de columnas, padding, caracteres por pixel), el layout en
+cada lugar donde toqué CSS esta sesión — y ese ejercicio encontró dos bugs genuinos, no
+hipotéticos, que quedaron corregidos:
+
+- **`BadgeOrigen` dependía de `hidden sm:inline`**, una clase que reacciona al ancho del
+  *viewport*, no del contenedor. Tailwind v3 (la versión de este proyecto) no tiene container
+  queries por defecto, así que en el panel angosto de 320px "Mi presupuesto" el texto largo
+  del detalle igual intentaba mostrarse y se cortaba, invisible, contra el borde redondeado
+  del panel. Se resolvió sacando ese texto por completo — el detalle vive solo en el `title`
+  nativo ahora, igual que en `Sello`.
+- **El selector de "Sesión" en la cabecera no tenía ancho máximo** y crecía con el nombre más
+  largo ("Rodrigo Meza · Subgerente de Planificación Comercial", ~350px). Sumado al nuevo
+  botón "Origen", el cálculo total de la fila derecha superaba lo que cabe en una pantalla de
+  laptop común. Se acotó el selector a 190px con truncado y `title` para el nombre completo,
+  y el header pasó de altura fija a altura mínima, para que crecer en vez de recortar sea el
+  peor caso posible si algún día no cabe.
+
+Vale la pena decir esto sin rodeos: no hay reemplazo real para que alguien lo abra en un
+navegador de verdad antes de una reunión. Esto reduce el riesgo, no lo elimina.
+
 ## Interruptor "Origen": qué es nativo de Databricks y qué es a medida
 
 Un botón "Origen" en la cabecera revela, panel por panel, si esa pieza de la demo vendría
