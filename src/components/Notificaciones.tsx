@@ -7,6 +7,7 @@ import {
   IconoReloj,
   IconoCheckEscudo,
 } from "./Iconos";
+import { useAlSubir } from "../lib/motion";
 
 // Centro de notificaciones y alertas. Vive en la cabecera y no como pestaña:
 // es algo que se consulta al pasar, no un lugar donde uno trabaja.
@@ -42,6 +43,8 @@ export default function Notificaciones() {
 
   const ref = useRef<HTMLDivElement>(null);
   const sinLeer = notificaciones.filter((n) => !n.leida).length;
+  // Cuando llega algo nuevo, la campana suena una vez y el contador hace pop.
+  const pulsos = useAlSubir(sinLeer);
 
   // Clic fuera y Escape cierran el panel.
   useEffect(() => {
@@ -66,16 +69,18 @@ export default function Notificaciones() {
         aria-label={`Notificaciones${sinLeer ? `, ${sinLeer} sin leer` : ""}`}
         className="estado relative flex items-center justify-center w-10 h-10 rounded-full border border-white/20 hover:bg-white/10"
       >
-        <IconoCampana size={18} />
+        <span key={`c${pulsos}`} className={pulsos ? "anim-sonar inline-flex" : "inline-flex"}>
+          <IconoCampana size={18} />
+        </span>
         {sinLeer > 0 && (
-          <span className="num absolute -top-1 -right-1 bg-naranjo text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
+          <span key={`b${pulsos}`} className="num anim-pop absolute -top-1 -right-1 bg-naranjo text-white text-[10px] font-bold rounded-full min-w-[18px] h-[18px] flex items-center justify-center px-1">
             {sinLeer}
           </span>
         )}
       </button>
 
       {notificacionesAbiertas && (
-        <div className="absolute right-0 top-12 z-50 w-[min(400px,calc(100vw-2rem))] bg-white text-tuna border border-cenco-line rounded-card shadow-alto anim-aparecer">
+        <div className="absolute right-0 top-12 z-50 w-[min(400px,calc(100vw-2rem))] bg-white text-tuna border border-cenco-line rounded-card shadow-alto anim-brotar">
           <header className="flex items-center justify-between gap-3 px-5 py-3.5 border-b border-cenco-line">
             <div>
               <div className="text-[14.5px] font-semibold text-cenco-deep">

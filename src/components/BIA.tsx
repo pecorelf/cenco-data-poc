@@ -272,12 +272,12 @@ export default function BIA() {
       */}
       <section
         aria-hidden={!chatAbierto}
-        className={`fixed right-6 z-50 w-[min(440px,calc(100vw-3rem))] max-h-[min(640px,calc(100vh-9rem))] flex flex-col bg-white border border-cenco-line rounded-card shadow-alto transition-all duration-300 ease-cenco ${
+        className={`fixed right-6 z-50 w-[min(440px,calc(100vw-3rem))] max-h-[min(640px,calc(100vh-9rem))] flex flex-col bg-white border border-cenco-line rounded-card shadow-alto origin-bottom-right transition-[opacity,transform] duration-[260ms] ease-cenco ${
           tourActivo ? "bottom-44" : "bottom-24"
         } ${
           chatAbierto
-            ? "opacity-100 translate-y-0"
-            : "opacity-0 translate-y-4 pointer-events-none"
+            ? "opacity-100 scale-100 translate-y-0"
+            : "opacity-0 scale-[0.9] translate-y-3 pointer-events-none"
         }`}
       >
         <header className="flex items-start justify-between gap-3 px-5 py-4 border-b border-cenco-line">

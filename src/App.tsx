@@ -1,4 +1,5 @@
-import { useEffect } from "react";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { useAlSubir } from "./lib/motion";
 import { useStore, type Vista } from "./lib/store";
 import { USUARIOS } from "./data/usuarios";
 import Certificados from "./views/Certificados";
@@ -66,6 +67,23 @@ export default function App() {
     mostrarOrigen,
     alternarOrigen,
   } = useStore();
+
+  // Al cambiar de pantalla se vuelve arriba: si no, se llega a la mitad de
+  // la vista nueva con el scroll que traía la anterior.
+  const mainRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    mainRef.current?.scrollTo({ top: 0 });
+  }, [vista]);
+
+  // Indicador de sección activa: mide el ítem y se desliza hasta él.
+  const listaRef = useRef<HTMLUListElement>(null);
+  const [indicador, setIndicador] = useState<{ top: number; alto: number } | null>(null);
+  useLayoutEffect(() => {
+    const el = listaRef.current?.querySelector<HTMLElement>(`[data-nav="${vista}"]`);
+    if (el) setIndicador({ top: el.offsetTop, alto: el.offsetHeight });
+  }, [vista, autenticado]);
+
+  const pulsosGraficos = useAlSubir(graficos.length);
 
   // Carga inicial de los gráficos del usuario en sesión.
   useEffect(() => {
@@ -162,24 +180,31 @@ export default function App() {
 
       <div className="flex flex-1 min-h-0">
         <nav className="w-64 shrink-0 overflow-y-auto bg-white border-r border-cenco-line">
-          <ul className="py-4 px-3 space-y-1">
+          <ul ref={listaRef} className="relative py-4 px-3 space-y-1">
+            {indicador && (
+              <span
+                aria-hidden
+                className="indicador-nav absolute left-3 right-3 top-0 rounded-control bg-cenco-soft"
+                style={{ transform: `translateY(${indicador.top}px)`, height: indicador.alto }}
+              >
+                <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full bg-cenco" />
+              </span>
+            )}
             {NAV.map((n) => {
               const activo = vista === n.id;
               const Icono = ICONO_SECCION[n.id];
               return (
-                <li key={n.id}>
+                <li key={n.id} data-nav={n.id} className="relative">
                   <button
                     onClick={() => setVista(n.id)}
                     aria-current={activo ? "page" : undefined}
                     className={`estado w-full text-left px-4 py-3 rounded-control flex items-start gap-3 ${
-                      activo
-                        ? "bg-cenco text-white shadow-suave"
-                        : "text-tuna hover:bg-cenco-soft"
+                      activo ? "text-cenco-deep" : "text-tuna hover:bg-cenco-soft/45"
                     }`}
                   >
                     <Icono
                       size={19}
-                      className={`shrink-0 mt-0.5 ${activo ? "text-white" : "text-cenco"}`}
+                      className={`shrink-0 mt-0.5 transition-colors duration-200 ${activo ? "text-cenco" : "text-gris"}`}
                     />
                     <div className="min-w-0">
                       <div className="flex items-center gap-2">
@@ -192,14 +217,15 @@ export default function App() {
                           <span title="Alcance a validar con el cliente">
                             <IconoPregunta
                               size={13}
-                              className={activo ? "text-white/80" : "text-cenco/60"}
+                              className="text-cenco/60"
                             />
                           </span>
                         )}
                         {n.id === "graficos" && graficos.length > 0 && (
                           <span
-                            className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full ${
-                              activo ? "bg-white/20" : "bg-naranjo text-white"
+                            key={pulsosGraficos}
+                            className={`num text-micro font-semibold px-1.5 py-0.5 rounded-full bg-naranjo text-white ${
+                              pulsosGraficos ? "anim-pop" : ""
                             }`}
                           >
                             {graficos.length}
@@ -207,7 +233,7 @@ export default function App() {
                         )}
                       </div>
                       <div
-                        className={`text-micro mt-0.5 ${activo ? "text-white/70" : "text-gris"}`}
+                        className="text-micro mt-0.5 text-gris"
                       >
                         {n.desc}
                       </div>
@@ -228,7 +254,8 @@ export default function App() {
           </div>
         </nav>
 
-        <main className="flex-1 min-w-0 overflow-y-auto">
+        <main ref={mainRef} className="flex-1 min-w-0 overflow-y-auto">
+          <div key={vista} className="anim-pantalla">
           {vista === "home" && <Home />}
           {vista === "sql" && <ExploradorDatos />}
           {vista === "alertas" && <Alertas />}
@@ -237,6 +264,7 @@ export default function App() {
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
           {vista === "graficos" && <MisGraficos />}
+          </div>
         </main>
       </div>
 

@@ -27,88 +27,192 @@
 
 @layer components {
   /* Estados de control: elevación sutil al pasar, hundido al presionar. */
+  /* Solo propiedades baratas de animar: nunca transition-all. */
   .estado {
-    @apply transition-all duration-200 ease-cenco;
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-duration: 180ms;
+    transition-timing-function: var(--curva-salida);
   }
   .estado:active {
     transform: translateY(1px);
   }
 }
 
-/* --- Animaciones de los gráficos ------------------------------------ */
+/* ==========================================================================
+   SISTEMA DE MOTION
+   Duraciones: 150 hover · 220 paneles · 320 pantalla · 700 datos
+   Curvas: salida (entra y frena) · entrada (acelera al irse) · resorte (confirma)
+   ========================================================================== */
 
-@keyframes crecer {
-  from {
-    transform: scaleY(0);
-  }
-  to {
-    transform: scaleY(1);
-  }
+:root {
+  --curva-salida: cubic-bezier(0.22, 0.7, 0.28, 1);
+  --curva-entrada: cubic-bezier(0.55, 0, 0.75, 0.3);
+  --curva-resorte: cubic-bezier(0.34, 1.45, 0.64, 1);
 }
 
-@keyframes crecer-x {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+/* --- Cambio de pantalla: el único momento orquestado de cada vista ------- */
+@keyframes pantalla {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: none; }
 }
+@keyframes fundir { from { opacity: 0; } to { opacity: 1; } }
+/* El contenedor solo funde; los paneles son los que se desplazan. Así no
+   hay doble movimiento. */
+.anim-pantalla { animation: fundir 200ms var(--curva-salida) both; }
+/* Dentro de la pantalla, los paneles llegan en cascada corta (máx. ~180ms). */
+.anim-pantalla section {
+  animation: pantalla 380ms var(--curva-salida) both;
+}
+.anim-pantalla section:nth-of-type(2) { animation-delay: 60ms; }
+.anim-pantalla section:nth-of-type(3) { animation-delay: 120ms; }
+.anim-pantalla section:nth-of-type(n + 4) { animation-delay: 180ms; }
 
+/* --- Gráficos -------------------------------------------------------------- */
 @keyframes trazar {
-  to {
-    stroke-dashoffset: 0;
-  }
+  from { stroke-dashoffset: 1; }
+  to   { stroke-dashoffset: 0; }
+}
+/* El estado estático es la línea completa: la animación solo la "dibuja".
+   Si la animación se desactiva (reduced motion, exportar PNG), se ve entera. */
+.anim-trazar {
+  stroke-dasharray: 1;
+  animation: trazar 1.1s cubic-bezier(0.5, 0, 0.2, 1) both;
+}
+
+@keyframes punto {
+  0%   { opacity: 0; transform: scale(0); }
+  70%  { opacity: 1; transform: scale(1.25); }
+  100% { opacity: 1; transform: scale(1); }
+}
+.anim-punto {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: punto 420ms var(--curva-resorte) both;
 }
 
 @keyframes aparecer {
-  from {
-    opacity: 0;
-    transform: translateY(6px);
-  }
-  to {
-    opacity: 1;
-    transform: none;
-  }
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: none; }
+}
+.anim-aparecer { animation: aparecer 0.5s var(--curva-salida) both; }
+
+/* Cambiar de tipo de gráfico: fundido cruzado corto con leve escala. */
+@keyframes cambio-tipo {
+  from { opacity: 0; transform: scale(0.985); }
+  to   { opacity: 1; transform: none; }
+}
+.anim-cambio-tipo { animation: cambio-tipo 260ms var(--curva-salida) both; }
+
+/* Una nota que cambia de contenido se re-escribe en su lugar. */
+@keyframes texto {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.anim-texto { animation: texto 360ms var(--curva-salida) both; }
+
+/* Guía del tooltip: se desliza entre categorías en vez de saltar. */
+.guia-grafico { transition: opacity 150ms var(--curva-salida); }
+.guia-deslizar { transition: transform 180ms var(--curva-salida); }
+
+/* --- Popovers y paneles flotantes: nacen desde su punto de origen -------- */
+@keyframes brotar-arriba-der {
+  from { opacity: 0; transform: translateY(-4px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+.anim-brotar {
+  transform-origin: top right;
+  animation: brotar-arriba-der 220ms var(--curva-salida) both;
+}
+.anim-brotar-centro {
+  transform-origin: top center;
+  animation: brotar-arriba-der 200ms var(--curva-salida) both;
+}
+
+/* Barra del tour: sube desde el borde inferior, que es de donde "vive". */
+@keyframes subir {
+  from { opacity: 0; transform: translateY(100%); }
+  to   { opacity: 1; transform: none; }
+}
+.anim-subir { animation: subir 280ms var(--curva-salida) both; }
+
+/* --- Respuesta a acciones -------------------------------------------------- */
+/* Campana: suena una vez cuando llega una notificación nueva. */
+@keyframes sonar {
+  0%, 100% { transform: rotate(0); }
+  15% { transform: rotate(16deg); }
+  30% { transform: rotate(-13deg); }
+  45% { transform: rotate(9deg); }
+  60% { transform: rotate(-6deg); }
+  75% { transform: rotate(3deg); }
+}
+.anim-sonar { transform-origin: 50% 10%; animation: sonar 800ms ease-in-out; }
+
+/* Contadores y badges: un "pop" cuando su número sube. */
+@keyframes pop {
+  0%   { transform: scale(1); }
+  40%  { transform: scale(1.35); }
+  100% { transform: scale(1); }
+}
+.anim-pop { animation: pop 420ms var(--curva-resorte); }
+
+/* Filas accionables: la palabra "Abrir" se asoma al pasar. */
+.fila-accion { transition: background-color 150ms var(--curva-salida); border-radius: 8px; }
+.fila-accion:hover { background-color: #F5F8FC; }
+.fila-accion .fila-accion-ir {
+  opacity: 0;
+  transform: translateX(-6px);
+  transition: opacity 150ms var(--curva-salida), transform 180ms var(--curva-salida);
+}
+.fila-accion:hover .fila-accion-ir,
+.fila-accion:focus-visible .fila-accion-ir { opacity: 1; transform: none; }
+
+/* Drag & drop: la pieza se "levanta" al tomarla y la zona respira al pasar. */
+@keyframes levantar {
+  from { transform: scale(1) rotate(0); box-shadow: 0 0 0 rgba(6, 65, 116, 0); }
+  to   { transform: scale(1.05) rotate(-1.5deg); box-shadow: 0 14px 30px rgba(6, 65, 116, 0.28); }
+}
+.anim-levantar { animation: levantar 180ms var(--curva-salida) both; }
+
+@keyframes soltar {
+  0%   { transform: scale(1.06); }
+  60%  { transform: scale(0.98); }
+  100% { transform: scale(1); }
+}
+.anim-soltar { animation: soltar 320ms var(--curva-resorte); }
+
+/* Indicador de sección activa: se desliza al elemento elegido. */
+.indicador-nav {
+  transition: transform 320ms var(--curva-salida), height 320ms var(--curva-salida);
 }
 
 @keyframes pulso-suave {
-  0%,
-  100% {
-    opacity: 0.35;
-  }
-  50% {
-    opacity: 0.9;
-  }
+  0%, 100% { opacity: 0.35; }
+  50% { opacity: 0.9; }
+}
+.anim-pulso { animation: pulso-suave 1.4s ease-in-out infinite; }
+
+/* Compatibilidad: clases anteriores que siguen usándose en otras vistas. */
+@keyframes crecer { from { transform: scaleY(0); } to { transform: scaleY(1); } }
+@keyframes crecer-x { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.anim-crecer { transform-origin: bottom; animation: crecer 0.75s var(--curva-salida) both; }
+.anim-crecer-x { transform-origin: left; animation: crecer-x 0.75s var(--curva-salida) both; }
+
+/* --- Congelado: para exportar a PNG en el estado final, sin animaciones ---- */
+.congelado *,
+.congelado *::before,
+.congelado *::after {
+  animation: none !important;
+  transition: none !important;
 }
 
-.anim-crecer {
-  transform-origin: bottom;
-  animation: crecer 0.75s cubic-bezier(0.22, 0.7, 0.28, 1) both;
-}
-.anim-crecer-x {
-  transform-origin: left;
-  animation: crecer-x 0.75s cubic-bezier(0.22, 0.7, 0.28, 1) both;
-}
-.anim-trazar {
-  animation: trazar 1.1s cubic-bezier(0.5, 0, 0.2, 1) both;
-}
-.anim-aparecer {
-  animation: aparecer 0.5s cubic-bezier(0.22, 0.7, 0.28, 1) both;
-}
-.anim-pulso {
-  animation: pulso-suave 1.4s ease-in-out infinite;
-}
-
+/* --- Accesibilidad: sin movimiento si el sistema lo pide ------------------ */
 @media (prefers-reduced-motion: reduce) {
   *,
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
-  }
-  .anim-trazar {
-    stroke-dashoffset: 0 !important;
   }
 }

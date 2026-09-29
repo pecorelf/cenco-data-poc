@@ -82,7 +82,7 @@ export function InfoIndicador({
             onMouseEnter={cancelarCierre}
             onMouseLeave={cerrarConDemora}
             style={{ ...estilo, zIndex: 70 }}
-            className="bg-white border border-cenco-line rounded-card shadow-alto p-4 anim-aparecer"
+            className="bg-white border border-cenco-line rounded-card shadow-alto p-4 anim-brotar-centro"
           >
             <div className="text-[13px] font-semibold text-cenco-deep leading-snug">
               {ind.nombre}

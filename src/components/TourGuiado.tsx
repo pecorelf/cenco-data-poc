@@ -196,16 +196,16 @@ export default function TourGuiado() {
   const p = PARADAS[paso];
 
   return (
-    <div className="fixed bottom-0 left-0 right-0 z-40 bg-cenco-deep text-white border-t border-white/10 shadow-alto">
+    <div className="anim-subir fixed bottom-0 left-0 right-0 z-40 bg-cenco-deep text-white border-t border-white/10 shadow-alto">
       <div className="px-6 py-3.5 max-w-[1200px] mx-auto flex flex-wrap items-center gap-4">
         <div className="flex-1 min-w-[280px]">
-          <div className="flex items-center gap-2 text-micro text-white/55 font-semibold uppercase tracking-wider">
+          <div className="flex items-center gap-2 text-micro text-white/55 font-semibold">
             <span>
               Paso {paso + 1} de {PARADAS.length}
             </span>
             {!reproduciendo && <span className="text-naranjo">· en pausa</span>}
           </div>
-          <div className="text-[14px] font-semibold leading-snug mt-0.5">{p.titulo}</div>
+          <div key={paso} className="anim-texto text-[14px] font-semibold leading-snug mt-0.5">{p.titulo}</div>
           <p className="text-[12.5px] text-white/75 leading-relaxed mt-0.5 max-w-[64ch]">
             {p.narracion}
           </p>

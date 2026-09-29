@@ -723,7 +723,7 @@ export default function ExploradorDatos() {
                     ["Fuente", resultado.interpretacion.fuente],
                   ].map(([k, v]) => (
                     <div key={k}>
-                      <div className="text-micro font-semibold text-gris uppercase tracking-wider">
+                      <div className="text-micro font-semibold text-gris">
                         {k}
                       </div>
                       <div className="mt-1 text-[13px] text-tuna break-words">{v}</div>
@@ -808,7 +808,7 @@ export default function ExploradorDatos() {
               }
             >
               <div className="num text-[34px] font-semibold text-cenco-deep leading-none">
-                <Contador valor={(disponible / PRESUPUESTO_TOTAL_USUARIO) * 100} decimales={0} />
+                <Contador valor={(disponible / PRESUPUESTO_TOTAL_USUARIO) * 100} decimales={0} clave="sql-presupuesto" />
                 <span className="text-[18px] font-normal text-gris ml-0.5">%</span>
               </div>
               <div className="mt-1 text-[12.5px] text-gris">disponible este mes</div>

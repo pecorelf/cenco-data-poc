@@ -77,6 +77,54 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Revisión completa: alcance, notas calculadas y sistema de motion
+
+### Correcciones de integridad (alcance de Unity Catalog)
+Tres pantallas ignoraban la sesión activa, lo que contradecía la promesa central de la demo:
+- **Inicio** sumaba toda la compañía (18.248 MM en agosto) en vez del alcance del usuario
+  (Fernanda Ávila: 4.414 MM).
+- **Ranking por categoría** (Certificados) listaba las 7 categorías a usuarios acotados a 2.
+- **Mis alertas** permitía crear alertas fuera del alcance.
+
+La regla vive ahora en un solo lugar: `filtrar()` acepta `enBanderas` / `enCategorias`, y
+`porCategoria()` recibe el alcance. Las pantallas solo pasan `alcance(usuario)`.
+
+### Notas calculadas, no texto fijo
+Las notas bajo los gráficos de Certificados y la lectura de Inicio se calculan desde la misma
+serie que se grafica (primer mes bajo plan, mes de mayor brecha, variación de margen y
+participación). Así no contradicen al gráfico al cambiar filtros o sesión.
+
+### Usabilidad
+- Al cambiar de pantalla el scroll vuelve arriba.
+- Inicio reemplaza las 7 tarjetas de acceso (que repetían la navegación lateral) por
+  "Requiere atención", con cifras vivas del store.
+- Fuera versalitas con tracking y flechas "→" en botones; el ítem activo de la navegación ya
+  no es un bloque azul sólido.
+
+### Sistema de motion (`src/lib/motion.ts` + `src/index.css`)
+Tres reglas: cada movimiento comunica algo; los datos se transforman, no se reinician;
+`prefers-reduced-motion` se respeta siempre.
+- **`useTween`**: interpola valores. La primera entrada es escalonada; los cambios posteriores
+  parten desde el valor que se está mostrando, aunque la animación anterior no haya terminado.
+  Todos los gráficos lo usan, incluidas las escalas de los ejes. Probado en React real con
+  `react-test-renderer`: escalonado, interrupción sin salto (continúa desde 58,2) y reduced
+  motion (valor inmediato).
+- **`Contador` con `clave`**: cuenta desde cero solo la primera vez en la sesión; después
+  rueda entre valores (por ejemplo, al cambiar de sesión).
+- **Pantallas**: fundido del contenedor + paneles en cascada de 180ms como máximo.
+- **Respuesta a acciones**: indicador de navegación que se desliza, campana que suena y
+  contador con "pop" al llegar una notificación, pieza que se levanta al arrastrar, zonas que
+  reaccionan, BIA y popovers que nacen desde su origen, guía del tooltip que se desliza, barra
+  del tour que sube desde el borde.
+- **Exportar PNG congelado**: la clase `.congelado` desactiva animaciones durante la captura;
+  el trazado de líneas guarda su estado final como estado estático, así la imagen sale completa.
+- `.estado` dejó de usar `transition-all`: solo propiedades baratas de animar.
+
+### Deliberadamente no aplicado
+Bordes finos y radio mínimo (regla base de las POCs): esta POC usa el lenguaje visual acordado
+para Cencosud (botones redondeados, sombras suaves). Cambiarlo sería un rediseño, no una
+corrección, y queda a decisión.
+
 ## Verificación visual — y sus límites reales en este entorno
 
 Antes de dar por buenos los badges de Origen, intenté conseguir una captura de pantalla

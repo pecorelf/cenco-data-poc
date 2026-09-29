@@ -180,10 +180,10 @@ function ZonaSoltar({
     <div
       ref={setNodeRef}
       className={`estado rounded-card border-2 border-dashed px-4 py-3.5 min-h-[76px] ${
-        isOver ? "border-cenco bg-cenco-soft" : "border-cenco-line/70 bg-papel"
+        isOver ? "border-cenco bg-cenco-soft scale-[1.01]" : "border-cenco-line/70 bg-papel"
       }`}
     >
-      <div className="text-micro font-semibold text-gris uppercase tracking-wider mb-2">
+      <div className="text-micro font-semibold text-gris mb-2">
         {titulo}
       </div>
       {vacio ? (
@@ -209,7 +209,7 @@ function PanelSoltar({
     <section
       ref={setNodeRef}
       className={`estado border rounded-card shadow-suave overflow-hidden ${
-        isOver ? "border-cenco bg-cenco-soft" : "border-cenco-line bg-white"
+        isOver ? "border-cenco bg-cenco-soft scale-[1.01]" : "border-cenco-line bg-white"
       }`}
     >
       <div className="flex items-center justify-between gap-4 px-6 py-4 border-b border-cenco-line">
@@ -409,8 +409,14 @@ export default function Constructor() {
   const exportarPNG = async () => {
     if (!vistaPreviaRef.current || !espec) return;
     setExportando(true);
+    const nodo = vistaPreviaRef.current;
+    // Congelado: sin animaciones ni transiciones durante la captura. La
+    // imagen clonada no hereda el tiempo transcurrido de las animaciones, así
+    // que sin esto una línea "dibujándose" podría salir vacía en el PNG.
+    nodo.classList.add("congelado");
     try {
-      const dataUrl = await toPng(vistaPreviaRef.current, {
+      await new Promise((r) => requestAnimationFrame(() => requestAnimationFrame(r)));
+      const dataUrl = await toPng(nodo, {
         pixelRatio: 2,
         backgroundColor: "#ffffff",
         cacheBust: true,
@@ -432,6 +438,7 @@ export default function Constructor() {
         texto: "No se pudo generar el PNG. Vuelve a intentarlo.",
       });
     } finally {
+      nodo.classList.remove("congelado");
       setExportando(false);
     }
   };
@@ -680,7 +687,7 @@ export default function Constructor() {
                     <Grafico
                       e={espec}
                       key={`${dimension}-${metricas.join(",")}-${
-                        modoCombo ? `combo:${metricas.map((id) => tipoDeMetrica(id)).join(",")}` : tipoFinal
+                        modoCombo ? `combo:${metricas.map((id) => tipoDeMetrica(id)).join(",")}` : "simple"
                       }`}
                     />
                   </div>
@@ -761,7 +768,7 @@ export default function Constructor() {
 
         <DragOverlay>
           {arrastrando && (
-            <div className="flex items-center gap-2 px-4 py-2 text-[13.5px] rounded-full bg-cenco-deep text-white shadow-alto pointer-events-none">
+            <div className="anim-levantar flex items-center gap-2 px-4 py-2 text-[13.5px] rounded-full bg-cenco-deep text-white pointer-events-none">
               {arrastrando}
             </div>
           )}

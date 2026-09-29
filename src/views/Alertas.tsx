@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ETIQUETA_METRICA_ALERTA,
   UNIDAD_METRICA_ALERTA,
@@ -25,7 +25,7 @@ import {
   IconoLapiz,
   IconoCerrar,
 } from "../components/Iconos";
-import { useStore } from "../lib/store";
+import { useStore, alcance } from "../lib/store";
 
 const METRICAS: MetricaAlerta[] = ["venta_neta", "plan", "margen_bruto", "share_mp", "quiebre"];
 const OPERADORES: Operador[] = ["<", ">", "<=", ">="];
@@ -172,8 +172,22 @@ export default function Alertas() {
   const [formulario, setFormulario] = useState<"cerrado" | "nueva" | string>("cerrado");
 
   const [metrica, setMetrica] = useState<MetricaAlerta>(ALERTA_VACIA.metrica);
-  const [bandera, setBandera] = useState<Bandera | "Todas">(ALERTA_VACIA.bandera);
-  const [categoria, setCategoria] = useState<Categoria | "Todas">(ALERTA_VACIA.categoria);
+  // El formulario respeta el alcance heredado de Unity Catalog: un usuario
+  // acotado solo puede crear alertas sobre sus banderas y categorías.
+  const uc = alcance(usuario);
+  const opcionesBandera = (uc.banderas ?? BANDERAS) as readonly Bandera[];
+  const opcionesCategoria = (uc.categorias ?? CATEGORIAS) as readonly Categoria[];
+  const banderaInicial: Bandera | "Todas" = uc.banderas ? opcionesBandera[0] : ALERTA_VACIA.bandera;
+  const categoriaInicial: Categoria | "Todas" = uc.categorias
+    ? opcionesCategoria[0]
+    : ALERTA_VACIA.categoria;
+  const [bandera, setBandera] = useState<Bandera | "Todas">(banderaInicial);
+  const [categoria, setCategoria] = useState<Categoria | "Todas">(categoriaInicial);
+  useEffect(() => {
+    setBandera(banderaInicial);
+    setCategoria(categoriaInicial);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [usuario.id]);
   const [operador, setOperador] = useState<Operador>(ALERTA_VACIA.operador);
   const [umbral, setUmbral] = useState(ALERTA_VACIA.umbral);
   const [frecuencia, setFrecuencia] = useState<Frecuencia>(ALERTA_VACIA.frecuencia);
@@ -183,8 +197,8 @@ export default function Alertas() {
 
   const abrirNueva = () => {
     setMetrica(ALERTA_VACIA.metrica);
-    setBandera(ALERTA_VACIA.bandera);
-    setCategoria(ALERTA_VACIA.categoria);
+    setBandera(banderaInicial);
+    setCategoria(categoriaInicial);
     setOperador(ALERTA_VACIA.operador);
     setUmbral(ALERTA_VACIA.umbral);
     setFrecuencia(ALERTA_VACIA.frecuencia);
@@ -329,8 +343,8 @@ export default function Alertas() {
                         onChange={(e) => setBandera(e.target.value as Bandera | "Todas")}
                         className="estado mt-1 w-full border border-cenco-line px-2.5 py-2 text-[13px]"
                       >
-                        <option value="Todas">Todas</option>
-                        {BANDERAS.map((b) => (
+                        {!uc.banderas && <option value="Todas">Todas</option>}
+                        {opcionesBandera.map((b) => (
                           <option key={b} value={b}>
                             {b}
                           </option>
@@ -344,8 +358,8 @@ export default function Alertas() {
                         onChange={(e) => setCategoria(e.target.value as Categoria | "Todas")}
                         className="estado mt-1 w-full border border-cenco-line px-2.5 py-2 text-[13px]"
                       >
-                        <option value="Todas">Todas</option>
-                        {CATEGORIAS.map((c) => (
+                        {!uc.categorias && <option value="Todas">Todas</option>}
+                        {opcionesCategoria.map((c) => (
                           <option key={c} value={c}>
                             {c}
                           </option>

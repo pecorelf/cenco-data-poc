@@ -118,6 +118,10 @@ export interface Filtro {
   bandera?: Bandera | "Todas";
   categoria?: Categoria | "Todas";
   mes?: Mes;
+  /** Alcance heredado de Unity Catalog: si viene, "Todas" significa todas
+   * las de esta lista, no todas las de la compañía. null = sin restricción. */
+  enBanderas?: readonly string[] | null;
+  enCategorias?: readonly string[] | null;
 }
 
 export function filtrar(f: Filtro = {}): FilaComercial[] {
@@ -125,7 +129,9 @@ export function filtrar(f: Filtro = {}): FilaComercial[] {
     (d) =>
       (!f.bandera || f.bandera === "Todas" || d.bandera === f.bandera) &&
       (!f.categoria || f.categoria === "Todas" || d.categoria === f.categoria) &&
-      (!f.mes || d.mes === f.mes)
+      (!f.mes || d.mes === f.mes) &&
+      (!f.enBanderas || f.enBanderas.includes(d.bandera)) &&
+      (!f.enCategorias || f.enCategorias.includes(d.categoria))
   );
 }
 
@@ -160,6 +166,7 @@ export function sharePonderado(filas: FilaComercial[]): number {
 }
 
 export function serieMensual(f: Filtro = {}) {
+  // Filtro completo (incluido el alcance) se propaga a cada mes.
   return MESES.map((mes) => {
     const filas = filtrar({ ...f, mes });
     return {
@@ -173,9 +180,17 @@ export function serieMensual(f: Filtro = {}) {
   });
 }
 
-export function porCategoria(mes: Mes, bandera: Bandera | "Todas" = "Todas") {
-  return CATEGORIAS.map((categoria) => {
-    const filas = filtrar({ mes, bandera, categoria });
+export function porCategoria(
+  mes: Mes,
+  bandera: Bandera | "Todas" = "Todas",
+  alcance: { banderas: readonly string[] | null; categorias: readonly string[] | null } = {
+    banderas: null,
+    categorias: null,
+  }
+) {
+  const visibles = alcance.categorias ?? CATEGORIAS;
+  return CATEGORIAS.filter((c) => visibles.includes(c)).map((categoria) => {
+    const filas = filtrar({ mes, bandera, categoria, enBanderas: alcance.banderas });
     return {
       categoria,
       venta: sumaVenta(filas),

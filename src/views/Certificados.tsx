@@ -12,15 +12,37 @@ import { Cifra, Encabezado, Filtros, Panel, Sello, clp } from "../components/UI"
 import { BadgeOrigen } from "../components/BadgeOrigen";
 import { IconoMoneda, IconoCheckEscudo, IconoReportes, IconoInsignia } from "../components/Iconos";
 import { Contador, Grafico } from "../components/Graficos";
-import { useStore } from "../lib/store";
+import { useStore, alcance } from "../lib/store";
+
+const NOMBRE_MES: Record<string, string> = {
+  Ene: "enero", Feb: "febrero", Mar: "marzo", Abr: "abril",
+  May: "mayo", Jun: "junio", Jul: "julio", Ago: "agosto",
+};
 
 export default function Certificados() {
-  const { bandera, categoria, mes } = useStore();
-  const f = { bandera, categoria };
+  const { bandera, categoria, mes, usuario } = useStore();
+  const uc = alcance(usuario);
+  const f = { bandera, categoria, enBanderas: uc.banderas, enCategorias: uc.categorias };
   const filasMes = filtrar({ ...f, mes });
   const serie = serieMensual(f);
-  const cats = porCategoria(mes, bandera);
+  const cats = porCategoria(mes, bandera, uc);
   const cumpl = cumplimiento(filasMes);
+
+  // Las notas se calculan desde la misma serie que se grafica: así nunca
+  // contradicen al gráfico cuando cambian los filtros o la sesión.
+  const primerMesBajoPlan = serie.find((s) => s.venta < s.plan)?.mes;
+  const peorMes = serie.reduce((a, b) => (b.cumplimiento < a.cumplimiento ? b : a));
+  const notaVentaPlan = primerMesBajoPlan
+    ? `La venta queda bajo el plan desde ${NOMBRE_MES[primerMesBajoPlan]}; la brecha más grande es en ${NOMBRE_MES[peorMes.mes]}, con ${peorMes.cumplimiento.toLocaleString("es-CL")}% de cumplimiento.`
+    : "La venta está sobre el plan en todos los meses del período.";
+  const ini = serie[0];
+  const fin = serie[serie.length - 1];
+  const dMargen = +(fin.margen - ini.margen).toFixed(1);
+  const dShare = +(fin.share - ini.share).toFixed(1);
+  const notaMargenShare =
+    dMargen < 0 && dShare > 0
+      ? `En el período el margen cae ${Math.abs(dMargen)} pts y la participación sube ${dShare} pts: la participación puede estar ganándose con precio.`
+      : `En el período el margen varía ${dMargen > 0 ? "+" : ""}${dMargen} pts y la participación ${dShare > 0 ? "+" : ""}${dShare} pts.`;
 
   const meses = [...MESES];
 
@@ -46,14 +68,14 @@ export default function Certificados() {
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
             <Cifra
               icono={IconoMoneda}
-              valor={<Contador valor={sumaVenta(filasMes)} decimales={0} />}
+              valor={<Contador valor={sumaVenta(filasMes)} decimales={0} clave="cert-venta" />}
               unidad=" MM"
               etiqueta="Venta neta marca propia"
               indicadorId="venta_neta_mp"
             />
             <Cifra
               icono={IconoCheckEscudo}
-              valor={<Contador valor={cumpl} />}
+              valor={<Contador valor={cumpl} clave="cert-cumpl" />}
               unidad="%"
               etiqueta="Cumplimiento de plan"
               indicadorId="cumplimiento_plan"
@@ -61,14 +83,14 @@ export default function Certificados() {
             />
             <Cifra
               icono={IconoReportes}
-              valor={<Contador valor={margenPonderado(filasMes)} />}
+              valor={<Contador valor={margenPonderado(filasMes)} clave="cert-margen" />}
               unidad="%"
               etiqueta="Margen bruto"
               indicadorId="margen_bruto_mp"
             />
             <Cifra
               icono={IconoInsignia}
-              valor={<Contador valor={sharePonderado(filasMes)} />}
+              valor={<Contador valor={sharePonderado(filasMes)} clave="cert-share" />}
               unidad="%"
               etiqueta="Participación en categoría"
               indicadorId="share_mp"
@@ -99,7 +121,7 @@ export default function Certificados() {
                 { nombre: "Plan", valores: serie.map((s) => s.plan), color: "gris" },
                 { nombre: "Venta neta", valores: serie.map((s) => s.venta), color: "azul" },
               ],
-              nota: "La brecha se abre desde mayo: el plan se fijó con un crecimiento de 6% que la venta no alcanzó a seguir.",
+              nota: notaVentaPlan,
             }}
           />
         </Panel>
@@ -109,7 +131,7 @@ export default function Certificados() {
             titulo="Margen y participación"
             accion={
               <div className="flex items-center gap-2">
-                <BadgeOrigen tipo="custom" detalle="Eje doble y componentes de gráfico propios" />
+                <BadgeOrigen tipo="custom" detalle="Componentes de gráfico propios" />
                 <Sello estado="certificado" />
               </div>
             }
@@ -133,7 +155,7 @@ export default function Certificados() {
                     color: "verde",
                   },
                 ],
-                nota: "Desde mayo la participación sube y el margen baja. Conviene revisarlo por categoría antes de leer el alza de participación como una buena noticia.",
+                nota: notaMargenShare,
               }}
             />
           </Panel>

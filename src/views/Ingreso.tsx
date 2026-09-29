@@ -137,7 +137,7 @@ export default function Ingreso() {
 
           <div className="mt-10 flex items-center gap-4">
             <span className="h-px flex-1 bg-cenco-line" />
-            <span className="text-micro font-semibold text-gris uppercase tracking-wider">
+            <span className="text-micro font-semibold text-gris">
               Módulos habilitados
             </span>
             <span className="h-px flex-1 bg-cenco-line" />
