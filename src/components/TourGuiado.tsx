@@ -95,6 +95,20 @@ const PARADAS: Parada[] = [
     duracionBase: 16,
   },
   {
+    vista: "variaciones",
+    titulo: "Arte de lo posible: ¿Por qué cambió?",
+    narracion:
+      "El margen cae 1,8 pts de enero a agosto. La cascada lo separa en mezcla y cambios dentro de cada categoría: casi todo viene de adentro, sobre todo Abarrotes.",
+    duracionBase: 18,
+  },
+  {
+    vista: "catalogo",
+    titulo: "Arte de lo posible: Catálogo de datos",
+    narracion:
+      "Antes de pedir un reporte se busca. Tres de las siete solicitudes de ejemplo ya tenían un indicador que las respondía; las que no, llegan al responsable del dominio.",
+    duracionBase: 18,
+  },
+  {
     vista: "home",
     titulo: "Una definición, tres motores",
     narracion:

@@ -20,7 +20,7 @@ const NOMBRE_MES: Record<string, string> = {
 };
 
 export default function Certificados() {
-  const { bandera, categoria, mes, usuario } = useStore();
+  const { bandera, categoria, mes, usuario, setVista } = useStore();
   const uc = alcance(usuario);
   const f = { bandera, categoria, enBanderas: uc.banderas, enCategorias: uc.categorias };
   const filasMes = filtrar({ ...f, mes });
@@ -158,6 +158,12 @@ export default function Certificados() {
                 nota: notaMargenShare,
               }}
             />
+            <button
+              onClick={() => setVista("variaciones")}
+              className="mt-4 inline-flex items-center gap-1.5 text-[13px] font-semibold text-cenco hover:text-cenco-deep"
+            >
+              ¿Por qué cambió el margen? Ver la explicación
+            </button>
           </Panel>
 
           <Panel titulo={`Ranking por categoría · ${mes}`} accion={<Sello estado="certificado" />}>

@@ -13,12 +13,14 @@ import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
 import ExploradorDatos from "./views/ExploradorDatos";
 import Notificaciones from "./components/Notificaciones";
-import { ICONO_SECCION, IconoSalir, IconoPregunta, IconoDatabricks } from "./components/Iconos";
+import { ICONO_SECCION, IconoSalir, IconoPregunta, IconoDatabricks, IconoDestellos } from "./components/Iconos";
 import MisGraficos from "./views/MisGraficos";
 import Alertas from "./views/Alertas";
+import Variaciones from "./views/Variaciones";
+import Catalogo from "./views/Catalogo";
 import Avisos from "./views/Avisos";
 
-const NAV: Array<{ id: Vista; label: string; desc: string; aValidar?: boolean }> = [
+const NAV: Array<{ id: Vista; label: string; desc: string; aValidar?: boolean; arte?: boolean }> = [
   { id: "home", label: "Inicio", desc: "Tu asistente y tus accesos" },
   {
     id: "certificados",
@@ -54,6 +56,8 @@ const NAV: Array<{ id: Vista; label: string; desc: string; aValidar?: boolean }>
     label: "Portal de ingesta certificada",
     desc: "Con plantilla y traza",
   },
+  { id: "variaciones", label: "¿Por qué cambió?", desc: "Explica una variación", arte: true },
+  { id: "catalogo", label: "Catálogo de datos", desc: "Busca antes de pedir", arte: true },
 ];
 
 export default function App() {
@@ -81,8 +85,11 @@ export default function App() {
   const listaRef = useRef<HTMLUListElement>(null);
   const [indicador, setIndicador] = useState<{ top: number; alto: number } | null>(null);
   useLayoutEffect(() => {
-    const el = listaRef.current?.querySelector<HTMLElement>(`[data-nav="${vista}"]`);
-    if (el) setIndicador({ top: el.offsetTop, alto: el.offsetHeight });
+    // Se mide el botón, no el <li>: el primer ítem de un grupo lleva además
+    // el encabezado del grupo, que no debe quedar resaltado.
+    const li = listaRef.current?.querySelector<HTMLElement>(`[data-nav="${vista}"]`);
+    const boton = li?.querySelector<HTMLElement>("button");
+    if (li && boton) setIndicador({ top: li.offsetTop + boton.offsetTop, alto: boton.offsetHeight });
   }, [vista, autenticado]);
 
   const pulsosGraficos = useAlSubir(graficos.length);
@@ -192,11 +199,17 @@ export default function App() {
                 <span className="absolute left-0 top-2.5 bottom-2.5 w-[3px] rounded-full bg-cenco" />
               </span>
             )}
-            {NAV.map((n) => {
+            {NAV.map((n, i) => {
               const activo = vista === n.id;
+              const inicioArte = n.arte && !NAV[i - 1]?.arte;
               const Icono = ICONO_SECCION[n.id];
               return (
                 <li key={n.id} data-nav={n.id} className="relative">
+                  {inicioArte && (
+                    <div className="flex items-center gap-1.5 px-4 pt-4 pb-2 mt-2 border-t border-cenco-line text-micro font-semibold text-naranjo-deep">
+                      <IconoDestellos size={12} /> Arte de lo posible
+                    </div>
+                  )}
                   <button
                     onClick={() => setVista(n.id)}
                     aria-current={activo ? "page" : undefined}
@@ -271,6 +284,8 @@ export default function App() {
           {vista === "certificados" && <Certificados />}
           {vista === "constructor" && <Constructor />}
           {vista === "graficos" && <MisGraficos />}
+          {vista === "variaciones" && <Variaciones />}
+          {vista === "catalogo" && <Catalogo />}
           </div>
         </main>
       </div>

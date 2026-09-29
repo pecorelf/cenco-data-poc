@@ -48,7 +48,8 @@ const VALOR = [
 
 
 export default function Home() {
-  const { usuario, setVista, alternarChat, alertas, notificaciones, graficos } = useStore();
+  const { usuario, setVista, alternarChat, alertas, notificaciones, graficos, solicitudes } = useStore();
+  const pendientes = solicitudes.filter((s) => s.estado === "recibida" || s.estado === "en_evaluacion").length;
   const uc = alcance(usuario);
   const enAlcance = { enBanderas: uc.banderas, enCategorias: uc.categorias };
   const mes = filtrar({ mes: "Ago", ...enAlcance });
@@ -78,6 +79,12 @@ export default function Home() {
       cifra: disparadas,
       texto: `de ${activas.length} ${activas.length === 1 ? "alerta activa" : "alertas activas"} con la condición cumplida`,
       tono: disparadas ? "alerta" : "neutro",
+    },
+    {
+      id: "catalogo" as const,
+      cifra: pendientes,
+      texto: pendientes === 1 ? "solicitud de datos esperando respuesta" : "solicitudes de datos esperando respuesta",
+      tono: pendientes ? "alerta" : "neutro",
     },
     {
       id: "graficos" as const,

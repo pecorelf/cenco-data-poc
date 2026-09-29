@@ -77,6 +77,39 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Arte de lo posible: "¿Por qué cambió?" y "Catálogo de datos"
+
+Dos pantallas marcadas en el menú y en su encabezado como **Arte de lo posible**: muestran hacia
+dónde puede crecer el portal, sin formar parte del alcance comprometido.
+
+**¿Por qué cambió?** (`views/Variaciones.tsx`, `data/variacion.ts`). Descompone la variación de
+margen, participación o venta entre dos meses, por categoría o por bandera, respetando el alcance
+del usuario.
+- Margen y participación (promedios ponderados por venta): efecto **mezcla** contra efecto
+  **dentro** de cada segmento. La descomposición es exacta; se verificó al cuarto decimal.
+- Venta: aporte de cada segmento.
+- Cascada animada: las barras crecen en el orden en que se lee la explicación.
+- Lectura calculada, nunca texto fijo. Si la mezcla es despreciable, lo dice.
+- Cada cifra se redondea por su cuenta, para que cascada, lectura y tabla digan lo mismo.
+- No separa precio, costo y volumen, porque el dataset no trae unidades ni precio unitario. La
+  pantalla lo declara.
+
+**Catálogo de datos** (`views/Catalogo.tsx`, `data/catalogo.ts`). Responde a las +90 solicitudes
+mensuales que menciona el RFP.
+- Búsqueda con sinónimos de negocio: "presupuesto" encuentra Cumplimiento de plan, "sin stock"
+  encuentra Quiebre en sala.
+- Las palabras de corte (tienda, bandera, categoría) no cuentan como coincidencia, y un
+  indicador debe cubrir al menos la mitad de la pregunta. Así un pedido nuevo no se confunde con
+  uno existente.
+- Si no existe, la solicitud se envía con la decisión que busca apoyar y llega al responsable del
+  dominio.
+- Antes de enviar, avisa si ya existe un indicador o una solicitud parecida (con opción de
+  sumarse).
+- Tablero de solicitudes por etapa. Cada cambio de etapa genera una notificación real.
+
+Conexiones: fila "solicitudes esperando respuesta" en Inicio, acceso desde el panel de margen en
+Certificados, y dos paradas nuevas en el tour guiado.
+
 ## Logos de banderas y escala de ejes
 
 - **Logos oficiales de Jumbo, Santa Isabel y Spid** (entregados por el cliente) embebidos en

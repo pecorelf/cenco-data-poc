@@ -338,6 +338,29 @@ export const IconoDatabricks = (p: Props) =>
     p
   );
 
+export const IconoCascada = (p: Props) =>
+  base(
+    <>
+      <path d="M4 20h16" />
+      <rect x="5" y="6" width="3" height="14" rx="0.6" />
+      <rect x="10.5" y="6" width="3" height="5" rx="0.6" />
+      <rect x="16" y="11" width="3" height="9" rx="0.6" />
+      <path d="M8 6h2.5M13.5 11H16" strokeDasharray="1.5 1.5" />
+    </>,
+    p
+  );
+
+export const IconoCatalogo = (p: Props) =>
+  base(
+    <>
+      <path d="M5 4.5h10.5A2.5 2.5 0 0 1 18 7v12.5H7.5A2.5 2.5 0 0 1 5 17V4.5Z" />
+      <path d="M5 17a2.5 2.5 0 0 1 2.5-2.5H18" />
+      <circle cx="11" cy="9.3" r="2.3" />
+      <path d="m12.7 11 1.6 1.6" />
+    </>,
+    p
+  );
+
 /** Ícono por identificador de sección, para reutilizar el mismo símbolo en
  * el nav, en las tarjetas del Inicio y en los módulos del login. Un solo
  * mapeo evita que cada pantalla invente su propio símbolo para lo mismo. */
@@ -350,4 +373,6 @@ export const ICONO_SECCION = {
   alertas: IconoIndicador,
   avisos: IconoCampana,
   cargas: IconoIngesta,
+  variaciones: IconoCascada,
+  catalogo: IconoCatalogo,
 } as const;

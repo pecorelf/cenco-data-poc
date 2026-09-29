@@ -3,7 +3,7 @@ import type { EstadoIndicador } from "../data/semantica";
 import { EXPLICACION_ESTADO } from "../data/semantica";
 import { BANDERAS, CATEGORIAS, MESES } from "../data/comercial";
 import { useStore, alcance } from "../lib/store";
-import { IconoCheckEscudo, IconoReloj, IconoAlerta, IconoPregunta } from "./Iconos";
+import { IconoCheckEscudo, IconoReloj, IconoAlerta, IconoPregunta, IconoDestellos as IconoDestellosUI } from "./Iconos";
 import { InfoIndicador } from "./InfoIndicador";
 import { LogoBandera } from "./LogoBandera";
 
@@ -286,3 +286,18 @@ export function Filtros() {
 
 export const clp = (n: number) =>
   n.toLocaleString("es-CL", { maximumFractionDigits: 0 });
+
+/** Marca de las pantallas que muestran hacia dónde puede crecer el portal.
+ * Distinta de NotaDiscovery: aquí no hay alcance que validar, es visión. */
+export function NotaArteDeLoPosible({ queFalta }: { queFalta: string }) {
+  return (
+    <div className="mt-5 flex items-start gap-3 border border-naranjo/30 bg-naranjo-soft/60 rounded-control px-4 py-3 max-w-[92ch]">
+      <IconoDestellosUI size={16} className="text-naranjo-deep shrink-0 mt-0.5" />
+      <div className="text-[12.5px] leading-relaxed text-tuna">
+        <span className="font-semibold text-naranjo-deep">Arte de lo posible.</span> Muestra hacia
+        dónde puede crecer el portal; no forma parte del alcance comprometido en la propuesta.{" "}
+        <span className="text-gris">{queFalta}</span>
+      </div>
+    </div>
+  );
+}

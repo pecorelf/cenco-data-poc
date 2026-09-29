@@ -6,6 +6,14 @@ import type { Notificacion } from "../components/Notificaciones";
 import { ALERTAS_SEMILLA, type AlertaConfigurada } from "../data/alertas";
 import { cargar, guardar as persistir, type Modo } from "./persistencia";
 
+import {
+  SOLICITUDES_SEMILLA,
+  ETAPAS,
+  type Solicitud,
+  type EstadoSolicitud,
+} from "../data/catalogo";
+import { porId } from "../data/semantica";
+
 export type Vista =
   | "home"
   | "certificados"
@@ -14,7 +22,9 @@ export type Vista =
   | "sql"
   | "alertas"
   | "avisos"
-  | "cargas";
+  | "cargas"
+  | "variaciones"
+  | "catalogo";
 
 export interface ReporteGuardado {
   id: string;
@@ -104,6 +114,9 @@ interface Estado {
   alternarAlerta: (id: string) => void;
   borrarAlerta: (id: string) => void;
   registrarNotificacion: (n: Notificacion) => void;
+  solicitudes: Solicitud[];
+  crearSolicitud: (s: Solicitud) => void;
+  cambiarEstadoSolicitud: (id: string, estado: EstadoSolicitud, resueltaCon?: string) => void;
   alternarNotificaciones: () => void;
   cerrarNotificaciones: () => void;
   marcarTodasLeidas: () => void;
@@ -242,6 +255,32 @@ export const useStore = create<Estado>((set) => ({
       alertas: s.alertas.map((a) => (a.id === id ? { ...a, ...cambios } : a)),
     })),
   registrarNotificacion: (n) => set((s) => ({ notificaciones: [n, ...s.notificaciones] })),
+  solicitudes: SOLICITUDES_SEMILLA,
+  crearSolicitud: (sol) => set((s) => ({ solicitudes: [sol, ...s.solicitudes] })),
+  cambiarEstadoSolicitud: (id, estado, resueltaCon) =>
+    set((s) => {
+      const sol = s.solicitudes.find((x) => x.id === id);
+      if (!sol) return {};
+      const etapa = ETAPAS.find((e) => e.id === estado)?.texto.toLowerCase();
+      const detalle =
+        estado === "resuelta_existente" && resueltaCon
+          ? `Ya existe un indicador que la responde: ${porId(resueltaCon)?.nombre ?? resueltaCon}.`
+          : estado === "publicada"
+          ? "El nuevo indicador ya está disponible en el portal, en Power BI y en BIA."
+          : `Responsable: ${sol.responsable}.`;
+      const aviso: Notificacion = {
+        id: crypto.randomUUID(),
+        tipo: "definicion",
+        titulo: `Solicitud «${sol.titulo}»: ${estado === "resuelta_existente" ? "ya existía" : etapa}`,
+        detalle,
+        cuando: "ahora",
+        leida: false,
+      };
+      return {
+        solicitudes: s.solicitudes.map((x) => (x.id === id ? { ...x, estado, resueltaCon } : x)),
+        notificaciones: [aviso, ...s.notificaciones],
+      };
+    }),
   alternarAlerta: (id) =>
     set((s) => ({
       alertas: s.alertas.map((a) => (a.id === id ? { ...a, activa: !a.activa } : a)),
