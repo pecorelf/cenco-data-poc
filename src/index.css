@@ -29,7 +29,7 @@
   /* Estados de control: elevación sutil al pasar, hundido al presionar. */
   /* Solo propiedades baratas de animar: nunca transition-all. */
   .estado {
-    transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+    transition-property: color, background-color, border-color, box-shadow, opacity, transform, filter;
     transition-duration: 180ms;
     transition-timing-function: var(--curva-salida);
   }

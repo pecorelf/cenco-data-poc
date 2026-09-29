@@ -6,6 +6,8 @@ import Certificados from "./views/Certificados";
 import Constructor from "./views/Constructor";
 import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
+import { LogoBandera } from "./components/LogoBandera";
+import { BANDERAS } from "./data/comercial";
 import TourGuiado from "./components/TourGuiado";
 import Ingreso from "./views/Ingreso";
 import Home from "./views/Home";
@@ -247,6 +249,11 @@ export default function App() {
           <div className="mx-6 mt-3 pt-5 border-t border-cenco-line">
             <div className="text-micro text-gris font-medium">
               Alcance heredado de Unity Catalog
+            </div>
+            <div key={usuario.id} className="mt-2.5 flex items-center gap-1.5 anim-texto">
+              {(usuario.banderas === "todas" ? BANDERAS : usuario.banderas).map((b) => (
+                <LogoBandera key={b} bandera={b} size={30} />
+              ))}
             </div>
             <div className="mt-2 text-[12.5px] text-tuna leading-relaxed">
               {usuario.nota}

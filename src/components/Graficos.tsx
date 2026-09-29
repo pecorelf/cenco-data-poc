@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type MouseEvent } from "react";
 import { useTween, DURACION, reduceMovimiento, salida } from "../lib/motion";
+import { LOGO_BANDERA } from "../data/logosBanderas";
+import { LogoBandera } from "./LogoBandera";
 
 // Gráficos en SVG, sin librería de charting. El motion lo maneja useTween:
 // la primera vez los datos entran escalonados; después, cada cambio de
@@ -49,6 +51,20 @@ const H = 260;
 const PAD_L = 46;
 const PAD_B = 30;
 const PAD_T = 10;
+
+/** Máximo "redondo" para el eje: pasos de 1, 2, 2,5 o 5 × 10^n, en 4 tramos.
+ * Así el eje dice 0 · 3.000 · 6.000 · 9.000 · 12.000, no 3080 o 9240. */
+export function maximoRedondo(max: number, tramos = 4): number {
+  if (!(max > 0)) return 1;
+  const bruto = max / tramos;
+  const mag = Math.pow(10, Math.floor(Math.log10(bruto)));
+  const paso = [1, 1.5, 2, 2.5, 3, 4, 5, 6, 8, 10].map((m) => m * mag).find((x) => x * tramos >= max)!;
+  return paso * tramos;
+}
+const etiquetaEje = (v: number) =>
+  Math.round(v).toLocaleString("es-CL", { maximumFractionDigits: 0 });
+/** Con pocas categorías las barras pueden ser más anchas. */
+const topeBarra = (nCategorias: number) => (nCategorias <= 4 ? 46 : nCategorias <= 8 ? 30 : 22);
 
 /** Aplana series a un solo arreglo para interpolarlas juntas. */
 const aplanar = (series: Serie[]) => series.flatMap((s) => s.valores);
@@ -246,11 +262,17 @@ function Grilla({
 function EjeX({ categorias, px }: { categorias: string[]; px: (i: number) => number }) {
   return (
     <>
-      {categorias.map((c, i) => (
-        <text key={c} x={px(i)} y={H - 10} textAnchor="middle" fontSize={11.5} fill="#6B7480">
-          {c}
-        </text>
-      ))}
+      {categorias.map((c, i) =>
+        LOGO_BANDERA[c] ? (
+          <image key={c} href={LOGO_BANDERA[c]} x={px(i) - 13} y={H - 28} width={26} height={26}>
+            <title>{c}</title>
+          </image>
+        ) : (
+          <text key={c} x={px(i)} y={H - 10} textAnchor="middle" fontSize={11.5} fill="#6B7480">
+            {c}
+          </text>
+        )
+      )}
     </>
   );
 }
@@ -258,7 +280,7 @@ function EjeX({ categorias, px }: { categorias: string[]; px: (i: number) => num
 // --- Barras verticales agrupadas --------------------------------------------
 
 function Barras({ e }: { e: EspecGrafico }) {
-  const destinoMax = Math.max(...aplanar(e.series)) * 1.1 || 1;
+  const destinoMax = maximoRedondo(Math.max(...aplanar(e.series)) * 1.04);
   const plano = aplanar(e.series);
   const [maxT, ...valT] = useTween([destinoMax, ...plano], {
     inicial: [destinoMax, ...plano.map(() => 0)],
@@ -267,7 +289,7 @@ function Barras({ e }: { e: EspecGrafico }) {
   const vals = desaplanar(valT, e.series);
   const anchoGrupo = (W - PAD_L) / e.categorias.length;
   const nS = e.series.length;
-  const anchoBarra = Math.min(26, (anchoGrupo * 0.68) / nS);
+  const anchoBarra = Math.min(topeBarra(e.categorias.length), (anchoGrupo * 0.68) / nS);
   const px = (i: number) => PAD_L + anchoGrupo * i + anchoGrupo / 2;
   const py = (v: number) => H - PAD_B - (v / maxT) * (H - PAD_B - PAD_T);
 
@@ -276,7 +298,7 @@ function Barras({ e }: { e: EspecGrafico }) {
       <Grilla
         ticks={[0, 0.25, 0.5, 0.75, 1].map((t) => t * maxT)}
         py={py}
-        etiqueta={(v) => String(Math.round(v))}
+        etiqueta={etiquetaEje}
       />
       <EjeX categorias={e.categorias} px={px} />
       {e.series.map((s, si) =>
@@ -375,7 +397,9 @@ function BarrasH({ e }: { e: EspecGrafico }) {
     <div className="space-y-2.5">
       {e.categorias.map((c, i) => (
         <div key={c} className="flex items-center gap-3">
-          <div className="w-28 shrink-0 text-[12.5px] text-tuna truncate text-right">{c}</div>
+          <div className="w-28 shrink-0 text-[12.5px] text-tuna truncate flex justify-end">
+            {LOGO_BANDERA[c] ? <LogoBandera bandera={c} size={28} /> : c}
+          </div>
           <div className="flex-1 h-7 bg-cenco-soft/60 rounded-control overflow-hidden">
             <div
               className="h-full rounded-control flex items-center justify-end pr-2.5 min-w-[46px]"
@@ -434,6 +458,7 @@ function Dona({ e }: { e: EspecGrafico }) {
         {e.categorias.map((c, i) => (
           <li key={c} className="flex items-center gap-2.5 text-[13px]">
             <span className="w-3 h-3 rounded-sm" style={{ background: PALETA[ORDEN[i % ORDEN.length]] }} />
+            <LogoBandera bandera={c} size={22} />
             <span className="text-tuna">{c}</span>
             <span className="num text-gris ml-auto pl-4">{fmt(valT[i], e.unidad)}</span>
           </li>
@@ -457,7 +482,7 @@ function Combo({ e }: { e: EspecGrafico }) {
   const lineales = e.series.filter((s) => s.tipo === "linea");
   const hayDer = lineales.length > 0;
 
-  const maxIzqD = Math.max(0, ...aplanar(principales)) * 1.1 || 1;
+  const maxIzqD = maximoRedondo(Math.max(0, ...aplanar(principales)) * 1.04);
   const vDer = aplanar(lineales);
   const minD = vDer.length ? Math.min(...vDer) : 0;
   const maxD = vDer.length ? Math.max(...vDer) : 1;
@@ -482,14 +507,14 @@ function Combo({ e }: { e: EspecGrafico }) {
   const barras = principales.filter((s) => s.tipo !== "area");
   const areas = principales.filter((s) => s.tipo === "area");
   const nB = barras.length || 1;
-  const anchoBarra = Math.min(22, (anchoGrupo * 0.5) / nB);
+  const anchoBarra = Math.min(topeBarra(n), (anchoGrupo * 0.5) / nB);
 
   return (
     <svg viewBox={`0 0 ${W} ${H}`} className="w-full h-auto" role="img">
       <Grilla
         ticks={[0, 0.25, 0.5, 0.75, 1].map((t) => t * maxIzq)}
         py={pyIzq}
-        etiqueta={(v) => String(Math.round(v))}
+        etiqueta={etiquetaEje}
         hasta={hayDer ? W - 30 : W}
       />
       {hayDer &&

@@ -5,6 +5,7 @@ import { BANDERAS, CATEGORIAS, MESES } from "../data/comercial";
 import { useStore, alcance } from "../lib/store";
 import { IconoCheckEscudo, IconoReloj, IconoAlerta, IconoPregunta } from "./Iconos";
 import { InfoIndicador } from "./InfoIndicador";
+import { LogoBandera } from "./LogoBandera";
 
 export function Encabezado({
   titulo,
@@ -201,21 +202,46 @@ export function Filtros() {
 
   return (
     <div className="mt-6 flex flex-wrap items-end gap-4">
-      <label className="flex flex-col gap-1.5">
+      {/* Bandera como logos: el alcance se ve, no solo se lee. Una bandera
+          fuera del alcance del usuario simplemente no aparece. */}
+      <div className="flex flex-col gap-1.5">
         <span className="text-micro text-gris font-medium">Bandera</span>
-        <select
-          className={SELECT}
-          value={bandera}
-          onChange={(e) => setBandera(e.target.value as never)}
-        >
-          {!banderas && <option value="Todas">Todas</option>}
-          {opcionesBandera.map((b) => (
-            <option key={b} value={b}>
-              {b}
-            </option>
-          ))}
-        </select>
-      </label>
+        <div role="radiogroup" aria-label="Bandera" className="flex items-center gap-1.5">
+          {!banderas && (
+            <button
+              role="radio"
+              aria-checked={bandera === "Todas"}
+              onClick={() => setBandera("Todas" as never)}
+              className={`estado h-10 px-3.5 rounded-full border text-[13px] font-medium ${
+                bandera === "Todas"
+                  ? "border-cenco bg-cenco text-white"
+                  : "border-cenco-line text-tuna hover:border-cenco/50"
+              }`}
+            >
+              Todas
+            </button>
+          )}
+          {opcionesBandera.map((b) => {
+            const activa = bandera === b;
+            return (
+              <button
+                key={b}
+                role="radio"
+                aria-checked={activa}
+                aria-label={b}
+                onClick={() => setBandera(b as never)}
+                className={`estado w-10 h-10 rounded-full flex items-center justify-center ${
+                  activa
+                    ? "ring-2 ring-cenco ring-offset-2 scale-105"
+                    : "opacity-45 grayscale hover:opacity-80 hover:grayscale-0"
+                }`}
+              >
+                <LogoBandera bandera={b} size={40} />
+              </button>
+            );
+          })}
+        </div>
+      </div>
 
       <label className="flex flex-col gap-1.5">
         <span className="text-micro text-gris font-medium">Categoría</span>

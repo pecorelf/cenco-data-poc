@@ -77,6 +77,21 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Logos de banderas y escala de ejes
+
+- **Logos oficiales de Jumbo, Santa Isabel y Spid** (entregados por el cliente) embebidos en
+  `src/data/logosBanderas.ts` como data URI de 96px con fondo transparente, para que también
+  salgan al exportar un gráfico a PNG. Componente `LogoBandera`.
+- **Filtro de bandera como logos**: una bandera fuera del alcance del usuario simplemente no
+  aparece (con Fernanda Ávila se ven Jumbo y Santa Isabel, no Spid).
+- Barra lateral: el bloque de alcance muestra los logos de las banderas de la sesión.
+- Gráficos: cuando una categoría es una bandera, el logo reemplaza el texto del eje, del
+  ranking y de la leyenda de la dona.
+- **Escala de ejes con números redondos** (`maximoRedondo`): 0 · 3.000 · 6.000 · 9.000 · 12.000
+  en vez de 3080 · 6160 · 9240; usa entre 86% y 97% del alto. Separador de miles es-CL.
+  Detectado al renderizar un gráfico real del lado del servidor (SSR + cairosvg).
+- Con pocas categorías, las barras son más anchas (tope 46px hasta 4 categorías).
+
 ## Revisión completa: alcance, notas calculadas y sistema de motion
 
 ### Correcciones de integridad (alcance de Unity Catalog)
