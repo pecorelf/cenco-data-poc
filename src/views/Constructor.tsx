@@ -224,6 +224,16 @@ function PanelSoltar({
   );
 }
 
+const NOMBRE_MES: Record<Mes, string> = {
+  Ene: "Enero", Feb: "Febrero", Mar: "Marzo", Abr: "Abril",
+  May: "Mayo", Jun: "Junio", Jul: "Julio", Ago: "Agosto",
+};
+const ATAJOS: { texto: string; desde: Mes; hasta: Mes }[] = [
+  { texto: "Último mes", desde: "Ago", hasta: "Ago" },
+  { texto: "Últimos 3 meses", desde: "Jun", hasta: "Ago" },
+  { texto: "Año a la fecha", desde: "Ene", hasta: "Ago" },
+];
+
 const slugDe = (t: string) =>
   t
     .toLowerCase()
@@ -237,6 +247,9 @@ export default function Constructor() {
   const { banderas, categorias } = alcance(usuario);
 
   const [dimension, setDimension] = useState<Dimension | null>("mes");
+  const [desde, setDesde] = useState<Mes>("Ene");
+  const [hasta, setHasta] = useState<Mes>("Ago");
+  const mesesRango = MESES.slice(MESES.indexOf(desde), MESES.indexOf(hasta) + 1);
   const [metricas, setMetricas] = useState<MetricaId[]>(["margen_bruto_mp", "share_mp"]);
   const [tipoElegido, setTipoElegido] = useState<EspecGrafico["tipo"] | null>(null);
   const [combinarModo, setCombinarModo] = useState(false);
@@ -262,7 +275,9 @@ export default function Constructor() {
   const tipoAuto: EspecGrafico["tipo"] = !dimension
     ? "barras"
     : dimension === "mes"
-    ? "lineas"
+    ? mesesRango.length === 1
+      ? "barras"
+      : "lineas"
     : metricas.length === 1
     ? "barras_horizontal"
     : "barras";
@@ -352,7 +367,7 @@ export default function Constructor() {
 
     const valoresDim =
       dimension === "mes"
-        ? [...MESES]
+        ? mesesRango
         : dimension === "categoria"
         ? (categorias ?? [...CATEGORIAS])
         : (banderas ?? [...BANDERAS]);
@@ -360,12 +375,18 @@ export default function Constructor() {
     const series = elegidas.map((m, i) => ({
       nombre: m.etiqueta,
       valores: valoresDim.map((v) => {
-        const f =
-          dimension === "mes"
+        // Cada punto respeta el alcance del usuario en las TRES dimensiones
+        // y el período elegido, no solo la dimensión por la que se agrupa.
+        const f = {
+          ...(dimension === "mes"
             ? { mes: v as Mes }
             : dimension === "categoria"
             ? { categoria: v as Categoria }
-            : { bandera: v as Bandera };
+            : { bandera: v as Bandera }),
+          enBanderas: banderas,
+          enCategorias: categorias,
+          enMeses: mesesRango,
+        };
         return calcular(m.id, filtrar(f));
       }),
       color: (["azul", "verde", "naranjo", "azulMedio", "gris"] as const)[i % 5],
@@ -386,7 +407,7 @@ export default function Constructor() {
       }`,
       subtitulo: `Marca propia · ${
         banderas ? banderas.join(", ") : "todas las banderas"
-      } · 2026`,
+      } · ${desde === hasta ? NOMBRE_MES[desde] : `${NOMBRE_MES[desde]} a ${NOMBRE_MES[hasta].toLowerCase()}`} 2026`,
       unidad: modoCombo
         ? mezclaUnidadesIzq
           ? ""
@@ -414,6 +435,8 @@ export default function Constructor() {
     tipoFinal,
     modoCombo,
     tiposPorMetrica,
+    desde,
+    hasta,
   ]);
 
   // Excel con logo, contexto, totales por fórmula y la fuente certificada
@@ -642,6 +665,68 @@ export default function Constructor() {
                   );
                 })}
               </ZonaSoltar>
+
+              <section className="sm:col-span-2 rounded-card border-2 border-dashed border-cenco-line/70 bg-papel px-4 py-3.5">
+                <div className="flex flex-wrap items-end gap-x-5 gap-y-3">
+                  <div className="text-micro font-semibold text-gris w-full">Período</div>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-micro text-gris">Desde</span>
+                    <select
+                      value={desde}
+                      onChange={(e) => {
+                        const d = e.target.value as Mes;
+                        setDesde(d);
+                        if (MESES.indexOf(hasta) < MESES.indexOf(d)) setHasta(d);
+                      }}
+                      className="estado border border-cenco-line bg-white rounded-control px-3 py-2 text-[13px]"
+                    >
+                      {MESES.map((m) => (
+                        <option key={m} value={m}>{NOMBRE_MES[m]} 2026</option>
+                      ))}
+                    </select>
+                  </label>
+                  <label className="flex flex-col gap-1">
+                    <span className="text-micro text-gris">Hasta</span>
+                    <select
+                      value={hasta}
+                      onChange={(e) => setHasta(e.target.value as Mes)}
+                      className="estado border border-cenco-line bg-white rounded-control px-3 py-2 text-[13px]"
+                    >
+                      {MESES.slice(MESES.indexOf(desde)).map((m) => (
+                        <option key={m} value={m}>{NOMBRE_MES[m]} 2026</option>
+                      ))}
+                    </select>
+                  </label>
+                  <div className="flex flex-wrap gap-1.5 pb-0.5">
+                    {ATAJOS.map((a) => {
+                      const activo = a.desde === desde && a.hasta === hasta;
+                      return (
+                        <button
+                          key={a.texto}
+                          onClick={() => {
+                            setDesde(a.desde);
+                            setHasta(a.hasta);
+                          }}
+                          className={`estado px-3 py-1.5 rounded-full text-[12.5px] font-medium border ${
+                            activo
+                              ? "bg-cenco text-white border-cenco"
+                              : "border-cenco-line text-tuna bg-white hover:border-cenco/50"
+                          }`}
+                        >
+                          {a.texto}
+                        </button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-micro text-gris leading-relaxed w-full">
+                    {dimension === "mes"
+                      ? `Muestra cada mes entre ${NOMBRE_MES[desde].toLowerCase()} y ${NOMBRE_MES[hasta].toLowerCase()}.`
+                      : `Agrupado por ${dimension === "bandera" ? "bandera" : "categoría"}: cada barra ${
+                          desde === hasta ? `es ${NOMBRE_MES[desde].toLowerCase()}` : `acumula ${mesesRango.length} meses`
+                        }. La venta se suma; margen y participación se ponderan por venta.`}
+                  </p>
+                </div>
+              </section>
             </div>
 
             <Panel

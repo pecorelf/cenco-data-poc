@@ -104,7 +104,7 @@ export default function App() {
   if (!autenticado) return <Ingreso />;
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col overflow-x-clip">
       <header className="bg-cenco text-white">
         <div className="px-6 min-h-[68px] py-2 flex items-center gap-6 flex-wrap">
           <img

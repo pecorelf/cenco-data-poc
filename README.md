@@ -77,6 +77,19 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Período en Reportería Personalizados
+
+- Bloque **Período** (desde / hasta) con atajos: último mes, últimos 3 meses y año a la fecha.
+- Agrupado por mes, muestra cada mes del rango. Agrupado por categoría o bandera, acumula el
+  período: la venta se suma, y el margen y la participación se ponderan por venta.
+  `filtrar()` acepta `enMeses`.
+- El período aparece en el subtítulo del gráfico, y por lo tanto en el PNG y en el Excel.
+- Con un solo mes agrupado por mes, el gráfico pasa a barras (una línea de un punto no se lee).
+- **Corrección de alcance:** cada punto se filtraba solo por la dimensión agrupada. Con Fernanda
+  Ávila, agrupar por mes mostraba toda la compañía (18.248 MM en agosto en vez de 4.414 MM). Ahora
+  aplica el alcance en las tres dimensiones.
+- La página no puede desplazarse hacia el costado (`overflow-x-clip` en el contenedor raíz).
+
 ## Exportar a Excel y PNG con logo de Cencosud
 
 En Reportería Personalizados, junto a **PNG**, ahora está **Excel** (`src/lib/exportarExcel.ts`,

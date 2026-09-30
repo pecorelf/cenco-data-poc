@@ -122,6 +122,8 @@ export interface Filtro {
    * las de esta lista, no todas las de la compañía. null = sin restricción. */
   enBanderas?: readonly string[] | null;
   enCategorias?: readonly string[] | null;
+  /** Rango de meses (incluidos). null o ausente = todos. */
+  enMeses?: readonly string[] | null;
 }
 
 export function filtrar(f: Filtro = {}): FilaComercial[] {
@@ -131,7 +133,8 @@ export function filtrar(f: Filtro = {}): FilaComercial[] {
       (!f.categoria || f.categoria === "Todas" || d.categoria === f.categoria) &&
       (!f.mes || d.mes === f.mes) &&
       (!f.enBanderas || f.enBanderas.includes(d.bandera)) &&
-      (!f.enCategorias || f.enCategorias.includes(d.categoria))
+      (!f.enCategorias || f.enCategorias.includes(d.categoria)) &&
+      (!f.enMeses || f.enMeses.includes(d.mes))
   );
 }
 
