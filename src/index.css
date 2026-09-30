@@ -197,6 +197,10 @@
 .anim-crecer { transform-origin: bottom; animation: crecer 0.75s var(--curva-salida) both; }
 .anim-crecer-x { transform-origin: left; animation: crecer-x 0.75s var(--curva-salida) both; }
 
+/* Elementos que solo aparecen en la imagen exportada (logo, contexto). */
+.solo-exportar { display: none; }
+.congelado .solo-exportar { display: flex; }
+
 /* --- Congelado: para exportar a PNG en el estado final, sin animaciones ---- */
 .congelado *,
 .congelado *::before,

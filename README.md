@@ -77,6 +77,28 @@ archivo en `public/portada.jpg`: se superpone automáticamente sobre el fondo, c
 degradado de legibilidad ya aplicado. Si el archivo no existe, no pasa nada y queda el
 fondo gráfico.
 
+## Exportar a Excel y PNG con logo de Cencosud
+
+En Reportería Personalizados, junto a **PNG**, ahora está **Excel** (`src/lib/exportarExcel.ts`,
+con ExcelJS cargado recién al hacer clic, en un bloque aparte de la carga inicial).
+
+El Excel lleva:
+- Franja azul con el logo de Cencosud y el contexto: título, alcance, quién lo generó y cuándo.
+- Números como números: porcentajes guardados como fracción con formato `0.0%`, venta con
+  `#,##0`, y la unidad en cada encabezado. Fuente Arial y encabezado inmovilizado.
+- Total del período como fórmula. `=SUM()` para la venta; margen y participación ponderados por
+  venta con `SUMPRODUCT`, igual que en la capa semántica. Cumplimiento y porcentajes sin venta
+  para ponderar quedan sin total, porque sumarlos daría una cifra incorrecta.
+- Al pie, de qué indicador certificado sale cada columna, con versión, estado y responsable. Los
+  indicadores exploratorios se marcan en naranjo.
+- Hoja "Definiciones" con definición, fórmula, responsable, estado, versión y frescura.
+
+Verificado generando archivos reales: fórmulas recalculadas con LibreOffice sin errores, venta
+total 142.472 y margen del período 25,87%, que coinciden con la capa semántica.
+
+El **PNG** incorpora una franja con el logo, que solo aparece en la imagen exportada
+(`.solo-exportar`), no en la vista previa.
+
 ## Arte de lo posible: "¿Por qué cambió?" y "Catálogo de datos"
 
 Dos pantallas marcadas en el menú y en su encabezado como **Arte de lo posible**: muestran hacia

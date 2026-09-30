@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState, type ReactNode, type CSSProperties } from "react";
 import { toPng } from "html-to-image";
+import { descargarExcel } from "../lib/exportarExcel";
 import {
   DndContext,
   DragOverlay,
@@ -223,6 +224,14 @@ function PanelSoltar({
   );
 }
 
+const slugDe = (t: string) =>
+  t
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/(^-|-$)/g, "") || "reporte";
+
 export default function Constructor() {
   const { usuario, guardarGrafico, setVista } = useStore();
   const { banderas, categorias } = alcance(usuario);
@@ -238,6 +247,7 @@ export default function Constructor() {
   const [arrastrando, setArrastrando] = useState<string | null>(null);
   const [aviso, setAviso] = useState<{ tono: "ok" | "bloqueo"; texto: string } | null>(null);
   const [exportando, setExportando] = useState(false);
+  const [exportandoXls, setExportandoXls] = useState(false);
   const vistaPreviaRef = useRef<HTMLDivElement>(null);
 
   const elegidas = metricas.map((id) => METRICAS.find((m) => m.id === id)!);
@@ -406,6 +416,43 @@ export default function Constructor() {
     tiposPorMetrica,
   ]);
 
+  // Excel con logo, contexto, totales por fórmula y la fuente certificada
+  // de cada columna. Usa exactamente los mismos datos que el gráfico.
+  const exportarExcel = async () => {
+    if (!espec || !dimension) return;
+    setExportandoXls(true);
+    try {
+      const dimNombre = DIMENSIONES.find((d) => d.id === dimension)!.nombre;
+      await descargarExcel(
+        {
+          titulo: nombre.trim() || espec.titulo,
+          subtitulo: espec.subtitulo ?? "",
+          dimension: dimNombre,
+          categorias: espec.categorias,
+          columnas: elegidas.map((m, i) => ({
+            indicadorId: m.id,
+            nombre: m.etiqueta,
+            unidad: m.unidad,
+            valores: espec.series[i].valores,
+          })),
+          generadoPor: usuario.nombre,
+          alcance:
+            banderas || categorias
+              ? `${banderas ? banderas.join(" y ") : "todas las banderas"}; ${
+                  categorias ? categorias.join(" y ") : "todas las categorías"
+                }`
+              : "todas las banderas y categorías",
+          fecha: new Date(),
+        },
+        slugDe(nombre.trim() || espec.titulo)
+      );
+    } catch {
+      setAviso({ tono: "bloqueo", texto: "No se pudo generar el Excel. Vuelve a intentarlo." });
+    } finally {
+      setExportandoXls(false);
+    }
+  };
+
   const exportarPNG = async () => {
     if (!vistaPreviaRef.current || !espec) return;
     setExportando(true);
@@ -421,13 +468,7 @@ export default function Constructor() {
         backgroundColor: "#ffffff",
         cacheBust: true,
       });
-      const slug =
-        (nombre.trim() || espec.titulo)
-          .toLowerCase()
-          .normalize("NFD")
-          .replace(/[\u0300-\u036f]/g, "")
-          .replace(/[^a-z0-9]+/g, "-")
-          .replace(/(^-|-$)/g, "") || "reporte";
+      const slug = slugDe(nombre.trim() || espec.titulo);
       const a = document.createElement("a");
       a.href = dataUrl;
       a.download = `${slug}.png`;
@@ -607,10 +648,16 @@ export default function Constructor() {
               titulo="Vista previa"
               accion={
                 espec && (
-                  <Boton variante="contorno" onClick={exportarPNG} disabled={exportando}>
-                    {exportando ? <IconoSpinner size={14} /> : <IconoDescargar size={14} />}
-                    {exportando ? "Generando…" : "Exportar PNG"}
-                  </Boton>
+                  <div className="flex items-center gap-2">
+                    <Boton variante="contorno" onClick={exportarExcel} disabled={exportandoXls}>
+                      {exportandoXls ? <IconoSpinner size={14} /> : <IconoDescargar size={14} />}
+                      {exportandoXls ? "Generando…" : "Excel"}
+                    </Boton>
+                    <Boton variante="contorno" onClick={exportarPNG} disabled={exportando}>
+                      {exportando ? <IconoSpinner size={14} /> : <IconoDescargar size={14} />}
+                      {exportando ? "Generando…" : "PNG"}
+                    </Boton>
+                  </div>
                 )
               }
             >
@@ -684,6 +731,12 @@ export default function Constructor() {
                   )}
 
                   <div ref={vistaPreviaRef} className="bg-white p-3">
+                    <div className="solo-exportar items-center justify-between gap-4 bg-cenco -mx-3 -mt-3 mb-4 px-4 py-2.5">
+                      <img src="/cencosud-exportar.png" alt="Cencosud" className="h-9 w-auto" />
+                      <span className="text-[11px] text-white/80">
+                        Portal BI Unificado 360° · {usuario.nombre}
+                      </span>
+                    </div>
                     <Grafico
                       e={espec}
                       key={`${dimension}-${metricas.join(",")}-${
