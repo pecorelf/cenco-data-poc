@@ -1,3 +1,6 @@
+import { LogoBandera } from "../components/LogoBandera";
+import { NOTA_BANDERAS } from "../data/logosBanderas";
+import { BANDERAS } from "../data/comercial";
 import { useStore } from "../lib/store";
 import { Boton } from "../components/UI";
 import {
@@ -161,7 +164,16 @@ export default function Ingreso() {
             ))}
           </ul>
 
-          <div className="mt-10 flex items-center justify-between gap-4">
+          <div className="mt-8 flex items-start gap-3 border border-cenco-line bg-papel rounded-control px-4 py-3">
+            <div className="flex -space-x-1.5 shrink-0 pt-0.5">
+              {BANDERAS.map((b) => (
+                <LogoBandera key={b} bandera={b} size={24} />
+              ))}
+            </div>
+            <p className="text-micro text-gris leading-relaxed">{NOTA_BANDERAS.completa}</p>
+          </div>
+
+          <div className="mt-8 flex items-center justify-between gap-4">
             <span className="text-micro text-gris">© 2026 Cencosud S.A.</span>
             <img
               src="/deloitte-digital.png"

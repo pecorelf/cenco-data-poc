@@ -7,6 +7,7 @@ import Constructor from "./views/Constructor";
 import Cargas from "./views/Cargas";
 import BIA from "./components/BIA";
 import { LogoBandera } from "./components/LogoBandera";
+import { NOTA_BANDERAS } from "./data/logosBanderas";
 import { BANDERAS } from "./data/comercial";
 import TourGuiado from "./components/TourGuiado";
 import Ingreso from "./views/Ingreso";
@@ -268,6 +269,11 @@ export default function App() {
                 <LogoBandera key={b} bandera={b} size={30} />
               ))}
             </div>
+            {usuario.banderas === "todas" && (
+              <div className="mt-1 text-micro text-gris" title={NOTA_BANDERAS.completa}>
+                {NOTA_BANDERAS.corta}
+              </div>
+            )}
             <div className="mt-2 text-[12.5px] text-tuna leading-relaxed">
               {usuario.nota}
             </div>

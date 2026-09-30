@@ -6,6 +6,7 @@ import { useStore, alcance } from "../lib/store";
 import { IconoCheckEscudo, IconoReloj, IconoAlerta, IconoPregunta, IconoDestellos as IconoDestellosUI } from "./Iconos";
 import { InfoIndicador } from "./InfoIndicador";
 import { LogoBandera } from "./LogoBandera";
+import { NOTA_BANDERAS } from "../data/logosBanderas";
 
 export function Encabezado({
   titulo,
@@ -241,6 +242,7 @@ export function Filtros() {
             );
           })}
         </div>
+        <span className="text-micro text-gris">{NOTA_BANDERAS.corta}</span>
       </div>
 
       <label className="flex flex-col gap-1.5">
